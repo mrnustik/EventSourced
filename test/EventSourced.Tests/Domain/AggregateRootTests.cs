@@ -41,6 +41,27 @@ namespace EventSourced.Tests.Domain
                 .Should()
                 .Be(testParameterValue);
         }
+        
+        [Fact]
+        public void EnqueuedDomainEvent_DequeuedForSecondTimeShouldBeEmpty()
+        {
+            //Arrange
+            var sut = CreateTestAggregateRootWithApplyForTestEvent();
+            const string testParameterValue = "Test value";
+
+            //Act
+            sut.EnqueueTestDomainEvent(testParameterValue);
+            var firstDequeuedEvents = sut.DequeueDomainEvents();
+            var secondDequeuedEvents = sut.DequeueDomainEvents();
+
+            //Assert
+            firstDequeuedEvents
+                .Should()
+                .HaveCount(1);
+            secondDequeuedEvents
+                .Should()
+                .BeEmpty();
+        }
 
         private TestAggregateRootWithApplyForTestEvent CreateTestAggregateRootWithApplyForTestEvent()
         {

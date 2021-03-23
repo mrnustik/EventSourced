@@ -18,7 +18,7 @@ namespace EventSourced.Domain
 
         public IList<IDomainEvent> DequeueDomainEvents()
         {
-            return uncommittedDomainEvents.ToList();
+            return uncommittedDomainEvents.DequeueAll();
         }
 
         protected void EnqueueAndApplyEvent(IDomainEvent domainEvent)
