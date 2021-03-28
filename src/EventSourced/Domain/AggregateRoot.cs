@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using EventSourced.Abstractions.Domain.Events;
 using EventSourced.Domain.Events;
 using EventSourced.Helpers;
 

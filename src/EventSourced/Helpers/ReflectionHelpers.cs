@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Reflection;
+using EventSourced.Abstractions.Domain.Events;
 using EventSourced.Domain;
 using EventSourced.Domain.Events;
 

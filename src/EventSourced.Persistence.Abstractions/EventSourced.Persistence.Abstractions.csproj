@@ -2,12 +2,10 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\EventSourced.Abstractions\EventSourced.Abstractions.csproj" />
-      <ProjectReference Include="..\EventSourced.Persistence.Abstractions\EventSourced.Persistence.Abstractions.csproj" />
     </ItemGroup>
 
 </Project>

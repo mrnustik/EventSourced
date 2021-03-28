@@ -1,4 +1,5 @@
 ﻿using System;
+using EventSourced.Abstractions.Domain.Events;
 
 namespace EventSourced.Domain.Events
 {
@@ -6,7 +7,7 @@ namespace EventSourced.Domain.Events
     {
         public Guid Id { get; }
 
-        public DomainEvent()
+        protected DomainEvent()
         {
             Id = Guid.NewGuid();
         }
