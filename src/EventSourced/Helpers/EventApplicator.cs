@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using EventSourced.Abstractions.Domain.Events;
+[assembly: InternalsVisibleTo("EventSourced.Tests")]
 
 namespace EventSourced.Helpers
 {
