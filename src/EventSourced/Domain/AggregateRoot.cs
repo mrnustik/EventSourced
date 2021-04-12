@@ -34,16 +34,7 @@ namespace EventSourced.Domain
 
         private void TryToApplyEvent(IDomainEvent domainEvent)
         {
-            var applyMethod = ReflectionHelpers.GetApplyMethodForEventInObject(this, domainEvent);
-            if (applyMethod != null)
-            {
-                applyMethod.Invoke(this, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public , null , new[] {domainEvent}, null);
-            }
-            else
-            {
-                throw new ArgumentException(
-                    $"Missing Apply event for domain event of type {domainEvent.GetType()} on aggregate {GetType()}");
-            }
+            this.ApplyEventsToObject(domainEvent);
         }
     }
 }

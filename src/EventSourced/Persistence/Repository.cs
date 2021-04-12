@@ -28,19 +28,7 @@ namespace EventSourced.Persistence
         {
             var domainEvents = await _eventStore.GetByStreamIdAsync(id.ToString(), ct);
             var aggregateRoot = new TAggregateRoot();
-            foreach (var domainEvent in domainEvents)
-            {
-                var applyMethod = ReflectionHelpers.GetApplyMethodForEventInObject(aggregateRoot, domainEvent);
-                if (applyMethod != null)
-                {
-                    applyMethod.Invoke(aggregateRoot, new[] {domainEvent});
-                }
-                else
-                {
-                    throw new ArgumentException(
-                        $"Missing Apply event for domain event of type {domainEvent.GetType()} on aggregate {aggregateRoot.GetType()}");
-                }
-            }
+            aggregateRoot.ApplyEventsToObject(domainEvents);
             return aggregateRoot;
         }
     }

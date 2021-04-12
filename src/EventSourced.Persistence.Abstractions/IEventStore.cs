@@ -9,6 +9,6 @@ namespace EventSourced.Persistence.Abstractions
     public interface IEventStore
     {
         Task StoreEventsAsync(string streamId, IList<IDomainEvent> domainEvents, CancellationToken ct);
-        Task<IList<IDomainEvent>> GetByStreamIdAsync(string streamId, CancellationToken ct);
+        Task<IDomainEvent[]> GetByStreamIdAsync(string streamId, CancellationToken ct);
     }
 }
