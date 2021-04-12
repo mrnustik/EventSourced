@@ -9,12 +9,4 @@
       <ProjectReference Include="..\EventSourced.Abstractions\EventSourced.Abstractions.csproj" />
       <ProjectReference Include="..\EventSourced.Persistence.Abstractions\EventSourced.Persistence.Abstractions.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.179-rc">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-    </ItemGroup>
-
 </Project>
