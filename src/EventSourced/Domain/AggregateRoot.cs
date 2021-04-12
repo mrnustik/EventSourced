@@ -33,7 +33,7 @@ namespace EventSourced.Domain
             var applyMethod = ReflectionHelpers.GetApplyMethodForEventInAggregateRoot(this, domainEvent);
             if (applyMethod != null)
             {
-                applyMethod.Invoke(this, new[] {domainEvent});
+                applyMethod.Invoke(this, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public , null , new[] {domainEvent}, null);
             }
             else
             {

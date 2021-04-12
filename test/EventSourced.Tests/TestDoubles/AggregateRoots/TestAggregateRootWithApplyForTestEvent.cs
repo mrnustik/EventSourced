@@ -13,7 +13,7 @@ namespace EventSourced.Tests.TestDoubles.AggregateRoots
             EnqueueAndApplyEvent(domainEvent);
         }
 
-        public void Apply(TestDomainEvent domainEvent)
+        private void Apply(TestDomainEvent domainEvent)
         {
             ParameterValue = domainEvent.Parameter;
         }
