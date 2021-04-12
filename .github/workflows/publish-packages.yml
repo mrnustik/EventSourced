@@ -29,7 +29,6 @@ jobs:
           PROJECT_FILE_PATH: src/EventSourced.Abstractions/EventSourced.Abstractions.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
           NUGET_SOURCE: https://api.nuget.org
-          INCLUDE_SYMBOLS: true
           VERSION_STATIC: 0.1-alpha
     - name: Publish EventSourced
       uses: brandedoutcast/publish-nuget@v2.5.2
@@ -37,7 +36,6 @@ jobs:
           PROJECT_FILE_PATH: src/EventSourced/EventSourced.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
           NUGET_SOURCE: https://api.nuget.org
-          INCLUDE_SYMBOLS: true
           VERSION_STATIC: 0.1-alpha
     - name: Publish EventSourced.Persistence.Abstractions
       uses: brandedoutcast/publish-nuget@v2.5.2
@@ -45,5 +43,4 @@ jobs:
           PROJECT_FILE_PATH: src/EventSourced.Persistence.Abstractions/EventSourced.Persistence.Abstractions.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
           NUGET_SOURCE: https://api.nuget.org
-          INCLUDE_SYMBOLS: true
           VERSION_STATIC: 0.1-alpha
