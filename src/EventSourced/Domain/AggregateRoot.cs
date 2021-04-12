@@ -8,12 +8,16 @@ using EventSourced.Helpers;
 
 namespace EventSourced.Domain
 {
-    public abstract class AggregateRoot
+    public abstract class AggregateRoot<TId>
+        where TId : notnull
     {
+        public TId Id { get; }
+        
         private readonly Queue<IDomainEvent> uncommittedDomainEvents;
 
-        protected AggregateRoot()
+        protected AggregateRoot(TId id)
         {
+            Id = id;
             uncommittedDomainEvents = new Queue<IDomainEvent>();
         }
 
@@ -30,7 +34,7 @@ namespace EventSourced.Domain
 
         private void TryToApplyEvent(IDomainEvent domainEvent)
         {
-            var applyMethod = ReflectionHelpers.GetApplyMethodForEventInAggregateRoot(this, domainEvent);
+            var applyMethod = ReflectionHelpers.GetApplyMethodForEventInObject(this, domainEvent);
             if (applyMethod != null)
             {
                 applyMethod.Invoke(this, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public , null , new[] {domainEvent}, null);

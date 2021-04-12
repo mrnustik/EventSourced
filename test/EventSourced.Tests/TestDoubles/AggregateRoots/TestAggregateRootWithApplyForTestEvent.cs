@@ -1,11 +1,16 @@
-﻿using EventSourced.Domain;
+﻿using System;
+using EventSourced.Domain;
 using EventSourced.Tests.TestDoubles.DomainEvents;
 
 namespace EventSourced.Tests.TestDoubles.AggregateRoots
 {
-    public class TestAggregateRootWithApplyForTestEvent : AggregateRoot
+    public class TestAggregateRootWithApplyForTestEvent : AggregateRoot<Guid>
     {
         public string ParameterValue { get; private set; } = string.Empty;
+
+        public TestAggregateRootWithApplyForTestEvent(Guid id) : base(id)
+        {
+        }
         
         public void EnqueueTestDomainEvent(string parameter)
         {

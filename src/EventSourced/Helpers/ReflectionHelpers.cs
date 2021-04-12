@@ -8,9 +8,9 @@ namespace EventSourced.Helpers
 {
     public static class ReflectionHelpers
     {
-        public static MethodInfo? GetApplyMethodForEventInAggregateRoot(AggregateRoot root, IDomainEvent domainEvent)
+        public static MethodInfo? GetApplyMethodForEventInObject(object @object, IDomainEvent domainEvent)
         {
-            var aggregateType = root.GetType();
+            var aggregateType = @object.GetType();
             var methods = aggregateType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             return methods
                 .Where(m => m.Name == "Apply")

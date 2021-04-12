@@ -1,4 +1,5 @@
-﻿using EventSourced.Tests.TestDoubles.AggregateRoots;
+﻿using System;
+using EventSourced.Tests.TestDoubles.AggregateRoots;
 using EventSourced.Tests.TestDoubles.DomainEvents;
 using FluentAssertions;
 using Xunit;
@@ -65,7 +66,7 @@ namespace EventSourced.Tests.Domain
 
         private TestAggregateRootWithApplyForTestEvent CreateTestAggregateRootWithApplyForTestEvent()
         {
-            return new TestAggregateRootWithApplyForTestEvent();
+            return new TestAggregateRootWithApplyForTestEvent(Guid.NewGuid());
         }
     }
 }
