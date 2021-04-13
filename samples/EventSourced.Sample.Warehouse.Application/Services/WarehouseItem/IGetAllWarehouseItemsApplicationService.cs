@@ -8,5 +8,6 @@ namespace EventSourced.Sample.Warehouse.Application.Services.WarehouseItem
     public interface IGetAllWarehouseItemsApplicationService
     {
         Task<ICollection<WarehouseLisItemModel>> GetAllAsync(CancellationToken ct);
+        Task<int> GetCountAsync(CancellationToken ct);
     }
 }

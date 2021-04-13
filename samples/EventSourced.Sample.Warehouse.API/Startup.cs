@@ -1,6 +1,7 @@
 using EventSourced.Configuration;
 using EventSourced.Persistence.InMemory.Configuration;
 using EventSourced.Sample.Warehouse.Application.Configuration;
+using EventSourced.Sample.Warehouse.Domain.WarehouseItem.Projections;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -29,7 +30,10 @@ namespace EventSourced.Sample.Warehouse.API
             });
 
             services.AddApplicationServices();
-            services.AddEventSourced(options => options.UseInMemoryEventStore());
+            services.AddEventSourced(options => options
+                    .UseInMemoryEventStore()
+                    .UseInMemoryProjectionStore()
+                    .RegisterAutomaticProjection<WarehouseItemsCountProjection>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

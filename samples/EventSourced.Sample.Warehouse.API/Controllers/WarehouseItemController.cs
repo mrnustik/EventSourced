@@ -35,5 +35,11 @@ namespace EventSourced.Sample.Warehouse.API.Controllers
         {
             return _getAllWarehouseItemsApplicationService.GetAllAsync(ct);
         }
+        
+        [HttpGet("count")]
+        public Task<int> GetCount(CancellationToken ct)
+        {
+            return _getAllWarehouseItemsApplicationService.GetCountAsync(ct);
+        }
     }
 }
