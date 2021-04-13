@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EventSourced.Configuration;
 using EventSourced.Persistence.InMemory.Configuration;
+using EventSourced.Sample.Warehouse.Application.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -34,6 +35,7 @@ namespace EventSourced.Sample.Warehouse.API
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "EventSourced.Sample.Warehouse.API", Version = "v1"});
             });
             
+            services.AddApplicationServices();
             services.AddEventSourced(options => options.UseInMemoryEventStore());
         }
 
