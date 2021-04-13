@@ -7,11 +7,5 @@
         {
             options.AutomaticProjectionOptions.RegisteredAutomaticProjections.Add(typeof(TProjection));
         }
-        
-        public static void RegisterAutomaticAggregateProjection<TProjection>(this EventSourcedOptions options)
-            where TProjection : new()
-        {
-            options.AutomaticProjectionOptions.RegisteredAutomaticAggregateProjections.Add(typeof(TProjection));
-        }
     }
 }
