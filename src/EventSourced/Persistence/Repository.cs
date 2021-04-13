@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain;
+using EventSourced.Domain.Events;
 using EventSourced.Helpers;
 
 namespace EventSourced.Persistence
@@ -12,16 +13,19 @@ namespace EventSourced.Persistence
         where TAggregateRootId : notnull
     {
         private readonly IEventStore _eventStore;
+        private readonly IEnumerable<IDomainEventHandler> _domainEventHandlers;
 
-        public Repository(IEventStore eventStore)
+        public Repository(IEventStore eventStore, IEnumerable<IDomainEventHandler> domainEventHandlers)
         {
             _eventStore = eventStore;
+            _domainEventHandlers = domainEventHandlers;
         }
 
-        public Task SaveAsync(TAggregateRoot aggregateRoot, CancellationToken ct)
+        public async Task SaveAsync(TAggregateRoot aggregateRoot, CancellationToken ct)
         {
             var newDomainEvents = aggregateRoot.DequeueDomainEvents();
-            return _eventStore.StoreEventsAsync(aggregateRoot.Id.ToString(), typeof(TAggregateRoot), newDomainEvents, ct);
+            await _eventStore.StoreEventsAsync(aggregateRoot.Id.ToString(), typeof(TAggregateRoot), newDomainEvents, ct);
+            await InvokeDomainEventHandlersAsync(newDomainEvents, ct);
         }
 
         public async Task<TAggregateRoot> GetByIdAsync(TAggregateRootId id, CancellationToken ct)
@@ -31,7 +35,6 @@ namespace EventSourced.Persistence
             aggregateRoot.ApplyEventsToObject(domainEvents);
             return aggregateRoot;
         }
-
 
         public async Task<ICollection<TAggregateRoot>> GetAllAsync(CancellationToken ct)
         {
@@ -47,6 +50,17 @@ namespace EventSourced.Persistence
             return aggregateCollection;
         }
 
+        private async Task InvokeDomainEventHandlersAsync(IList<IDomainEvent> domainEvents, CancellationToken ct)
+        {
+            foreach (var domainEventHandler in _domainEventHandlers)
+            {
+                foreach (var domainEvent in domainEvents)
+                {
+                    await domainEventHandler.HandleDomainEventAsync(domainEvent, ct);
+                }
+            }
+        }
+        
         private TAggregateRootId MapStringStreamIdToAggregateRootId(string streamId)
         {
             var idType = typeof(TAggregateRootId);

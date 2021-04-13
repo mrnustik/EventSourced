@@ -106,6 +106,22 @@ namespace EventSourced.Tests.Persistence
                 .Should()
                 .OnlyContain(x => x.EventsCount == 4);
         }
+        
+        [Fact]
+        public async Task SaveAsync_WithDomainEventHandlers_HandlersAreCalled()
+        {
+            //Arrange
+            var mockDomainEventListener = new Mock<IDomainEventHandler>();
+            var testAggregate = new TestAggregate();
+            testAggregate.EnqueueTestEvent();
+            var repository = CreateSut(mockDomainEventListener.Object);
+
+            //Act
+            await repository.SaveAsync(testAggregate, CancellationToken.None);
+
+            //Assert
+            mockDomainEventListener.Verify(s => s.HandleDomainEventAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
 
         private void SetupEventsInEventStore(string streamId, IEnumerable<IDomainEvent> domainEvents)
         {
@@ -131,9 +147,9 @@ namespace EventSourced.Tests.Persistence
                 Times.Once);
         }
 
-        private IRepository<TestAggregate, Guid> CreateSut()
+        private IRepository<TestAggregate, Guid> CreateSut(params IDomainEventHandler[] domainEventHandlers)
         {
-            return new Repository<TestAggregate, Guid>(eventStoreMock.Object);
+            return new Repository<TestAggregate, Guid>(eventStoreMock.Object, domainEventHandlers.ToList());
         }
 
         private class TestEvent : DomainEvent
