@@ -4,11 +4,11 @@ namespace EventSourced.Configuration
 {
     public class EventSourcedOptions
     {
-        public IServiceCollection ServiceCollection { get; }
-
         public EventSourcedOptions(IServiceCollection serviceCollection)
         {
             ServiceCollection = serviceCollection;
         }
+
+        public IServiceCollection ServiceCollection { get; }
     }
 }

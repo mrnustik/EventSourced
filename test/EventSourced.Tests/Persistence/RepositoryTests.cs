@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EventSourced.Abstractions.Domain.Events;
 using EventSourced.Domain;
 using EventSourced.Domain.Events;
 using EventSourced.Persistence;
-using EventSourced.Persistence.Abstractions;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -17,7 +15,7 @@ namespace EventSourced.Tests.Persistence
     public class RepositoryTests
     {
         private readonly Mock<IEventStore> eventStoreMock = new();
-        
+
         [Fact]
         public async Task SaveAsync_WithExistingChanges_DequeuesAllEventsFromAggregate()
         {
@@ -35,7 +33,7 @@ namespace EventSourced.Tests.Persistence
                 .Should()
                 .BeEmpty();
         }
-        
+
         [Fact]
         public async Task SaveAsync_WithExistingChanges_StoresThemInEventStore()
         {
@@ -50,7 +48,7 @@ namespace EventSourced.Tests.Persistence
             //Assert
             VerifyEventStoreSaveMethodCalled();
         }
-        
+
         [Fact]
         public async Task GetByIdAsync_WithExistingAggregate_RebuildsItFromEvents()
         {
@@ -61,7 +59,7 @@ namespace EventSourced.Tests.Persistence
                 new TestEvent(),
                 new TestEvent(),
                 new TestEvent(),
-                new TestEvent(),
+                new TestEvent()
             };
             SetupEventsInEventStore(aggregateId.ToString(), existingEvents);
             var repository = CreateSut();
@@ -75,7 +73,7 @@ namespace EventSourced.Tests.Persistence
                 .Be(4);
         }
 
-                
+
         [Fact]
         public async Task GetAllAsync_WithExistingAggregates_RebuildsAllFromEvents()
         {
@@ -87,9 +85,9 @@ namespace EventSourced.Tests.Persistence
                 new TestEvent(),
                 new TestEvent(),
                 new TestEvent(),
-                new TestEvent(),
+                new TestEvent()
             };
-            SetupMultipleAggregateEventsInEventStore(new Dictionary<string, IDomainEvent[]>()
+            SetupMultipleAggregateEventsInEventStore(new Dictionary<string, IDomainEvent[]>
             {
                 {aggregateId.ToString(), existingEvents.ToArray()},
                 {aggregateId2.ToString(), existingEvents.ToArray()}
@@ -108,7 +106,7 @@ namespace EventSourced.Tests.Persistence
                 .Should()
                 .OnlyContain(x => x.EventsCount == 4);
         }
-        
+
         private void SetupEventsInEventStore(string streamId, IEnumerable<IDomainEvent> domainEvents)
         {
             eventStoreMock
@@ -126,7 +124,10 @@ namespace EventSourced.Tests.Persistence
         private void VerifyEventStoreSaveMethodCalled()
         {
             eventStoreMock.Verify(
-                s => s.StoreEventsAsync(It.IsAny<string>(), It.IsAny<Type>(), It.IsAny<IList<IDomainEvent>>(), It.IsAny<CancellationToken>()),
+                s => s.StoreEventsAsync(It.IsAny<string>(),
+                    It.IsAny<Type>(),
+                    It.IsAny<IList<IDomainEvent>>(),
+                    It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
@@ -134,23 +135,23 @@ namespace EventSourced.Tests.Persistence
         {
             return new Repository<TestAggregate, Guid>(eventStoreMock.Object);
         }
-        
+
         private class TestEvent : DomainEvent
         {
         }
-        
+
         private class TestAggregate : AggregateRoot<Guid>
         {
-            public int EventsCount { get; private set; }
-            
-            public TestAggregate() 
-                :this(Guid.NewGuid())
+            public TestAggregate()
+                : this(Guid.NewGuid())
             {
             }
-            
+
             public TestAggregate(Guid id) : base(id)
             {
             }
+
+            public int EventsCount { get; private set; }
 
             public void EnqueueTestEvent()
             {
@@ -160,7 +161,7 @@ namespace EventSourced.Tests.Persistence
             public void Apply(TestEvent testEvent)
             {
                 EventsCount++;
-            }            
+            }
         }
     }
 }

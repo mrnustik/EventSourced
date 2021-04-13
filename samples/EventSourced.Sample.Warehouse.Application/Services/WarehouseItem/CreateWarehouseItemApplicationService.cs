@@ -12,7 +12,7 @@ namespace EventSourced.Sample.Warehouse.Application.Services.WarehouseItem
 
         public CreateWarehouseItemApplicationService(IRepository<WarehouseItemAggregateRoot, Guid> repository)
         {
-            this._repository = repository;
+            _repository = repository;
         }
 
         public Task CreateWarehouseItemAsync(string title, CancellationToken ct)

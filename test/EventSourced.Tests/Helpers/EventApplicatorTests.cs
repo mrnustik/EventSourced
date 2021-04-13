@@ -1,5 +1,5 @@
 ﻿using System;
-using EventSourced.Abstractions.Domain.Events;
+using EventSourced.Domain.Events;
 using EventSourced.Helpers;
 using FluentAssertions;
 using Xunit;
@@ -20,13 +20,13 @@ namespace EventSourced.Tests.Helpers
 
             //Act
             testObject!.ApplyEventsToObject(testEvent);
-            
+
             //Assert
             testObject.Number
                 .Should()
                 .Be(42);
         }
-        
+
         [Theory]
         [InlineData(typeof(ObjectWithPublicApplyEvent))]
         [InlineData(typeof(ObjectWithProtectedApplyEvent))]
@@ -39,34 +39,34 @@ namespace EventSourced.Tests.Helpers
 
             //Act
             Action act = () => testObject!.ApplyEventsToObject(testEvent);
-            
+
             //Assert
             act.Should()
                 .Throw<ArgumentException>();
         }
-        
+
         private class TestEvent : IDomainEvent
         {
-            public Guid Id { get; }
-            public int Number { get; }
-
             public TestEvent(Guid id, int number)
             {
                 Id = id;
                 Number = number;
             }
+
+            public int Number { get; }
+            public Guid Id { get; }
         }
-        
+
         private class OtherTestEvent : IDomainEvent
         {
-            public Guid Id { get; }
-            public int Number { get; }
-
             public OtherTestEvent(Guid id, int number)
             {
                 Id = id;
                 Number = number;
             }
+
+            public int Number { get; }
+            public Guid Id { get; }
         }
 
 
@@ -74,31 +74,31 @@ namespace EventSourced.Tests.Helpers
         {
             public int Number { get; }
         }
-        
+
         private class ObjectWithPublicApplyEvent : IObjectWithNumber
         {
             public int Number { get; private set; }
-            
+
             public void Apply(TestEvent testEvent)
             {
                 Number = testEvent.Number;
             }
         }
-        
+
         private class ObjectWithProtectedApplyEvent : IObjectWithNumber
         {
             public int Number { get; private set; }
-            
+
             protected void Apply(TestEvent testEvent)
             {
                 Number = testEvent.Number;
             }
         }
-        
+
         private class ObjectWithPrivateApplyEvent : IObjectWithNumber
         {
             public int Number { get; private set; }
-            
+
             private void Apply(TestEvent testEvent)
             {
                 Number = testEvent.Number;

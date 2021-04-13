@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain;
 
 namespace EventSourced.Persistence
 {
-    public interface IRepository<TAggregateRoot, in TAggregateRootId> 
+    public interface IRepository<TAggregateRoot, in TAggregateRootId>
         where TAggregateRoot : AggregateRoot<TAggregateRootId>
         where TAggregateRootId : notnull
     {

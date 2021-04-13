@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using EventSourced.Abstractions.Domain.Events;
-using EventSourced.Domain;
 using EventSourced.Domain.Events;
 
 namespace EventSourced.Helpers
 {
     internal static class ReflectionHelpers
     {
-        private const BindingFlags DefaultApplyMethodBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+        private const BindingFlags DefaultApplyMethodBindingFlags =
+            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
         public static MethodInfo? GetApplyMethodForEventInObject(object @object, IDomainEvent domainEvent)
         {

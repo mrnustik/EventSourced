@@ -26,7 +26,7 @@ namespace EventSourced.Tests.Domain
                 .And
                 .ContainSingle(e => e.As<TestDomainEvent>().Parameter == testParameterValue);
         }
-        
+
         [Fact]
         public void EnqueuedDomainEvent_AppliesTheEventToAggregate()
         {
@@ -42,7 +42,7 @@ namespace EventSourced.Tests.Domain
                 .Should()
                 .Be(testParameterValue);
         }
-        
+
         [Fact]
         public void EnqueuedDomainEvent_DequeuedForSecondTimeShouldBeEmpty()
         {
@@ -66,7 +66,7 @@ namespace EventSourced.Tests.Domain
 
         private TestAggregateRootWithApplyForTestEvent CreateTestAggregateRootWithApplyForTestEvent()
         {
-            return new TestAggregateRootWithApplyForTestEvent(Guid.NewGuid());
+            return new(Guid.NewGuid());
         }
     }
 }

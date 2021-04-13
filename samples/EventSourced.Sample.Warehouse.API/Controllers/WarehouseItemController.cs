@@ -12,17 +12,20 @@ namespace EventSourced.Sample.Warehouse.API.Controllers
     public class WarehouseItemController : ControllerBase
     {
         private readonly ICreateWarehouseItemApplicationService _createWarehouseItemApplicationService;
+
         private readonly IGetAllWarehouseItemsApplicationService _getAllWarehouseItemsApplicationService;
 
-        public WarehouseItemController(ICreateWarehouseItemApplicationService createWarehouseItemApplicationService, IGetAllWarehouseItemsApplicationService getAllWarehouseItemsApplicationService)
+        public WarehouseItemController(ICreateWarehouseItemApplicationService createWarehouseItemApplicationService,
+            IGetAllWarehouseItemsApplicationService getAllWarehouseItemsApplicationService)
         {
             _createWarehouseItemApplicationService = createWarehouseItemApplicationService;
             _getAllWarehouseItemsApplicationService = getAllWarehouseItemsApplicationService;
         }
 
         [HttpPost("create")]
-        public Task Create([FromBody] CreateWarehouseItemRequest request,
-                           CancellationToken ct)
+        public Task Create([FromBody]
+            CreateWarehouseItemRequest request,
+            CancellationToken ct)
         {
             return _createWarehouseItemApplicationService.CreateWarehouseItemAsync(request.Title, ct);
         }
@@ -31,6 +34,6 @@ namespace EventSourced.Sample.Warehouse.API.Controllers
         public Task<ICollection<WarehouseLisItemModel>> GetAll(CancellationToken ct)
         {
             return _getAllWarehouseItemsApplicationService.GetAllAsync(ct);
-        } 
+        }
     }
 }
