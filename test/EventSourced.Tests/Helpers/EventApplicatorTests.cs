@@ -27,6 +27,24 @@ namespace EventSourced.Tests.Helpers
                 .Be(42);
         }
         
+        [Theory]
+        [InlineData(typeof(ObjectWithPublicApplyEvent))]
+        [InlineData(typeof(ObjectWithProtectedApplyEvent))]
+        [InlineData(typeof(ObjectWithPrivateApplyEvent))]
+        public void ApplyEventsToObject_WithMissingApplyMethod_FailsInAllInstances(Type type)
+        {
+            //Arrange
+            var testObject = (IObjectWithNumber) Activator.CreateInstance(type);
+            var testEvent = new OtherTestEvent(Guid.NewGuid(), 42);
+
+            //Act
+            Action act = () => testObject!.ApplyEventsToObject(testEvent);
+            
+            //Assert
+            act.Should()
+                .Throw<ArgumentException>();
+        }
+        
         private class TestEvent : IDomainEvent
         {
             public Guid Id { get; }
@@ -38,6 +56,19 @@ namespace EventSourced.Tests.Helpers
                 Number = number;
             }
         }
+        
+        private class OtherTestEvent : IDomainEvent
+        {
+            public Guid Id { get; }
+            public int Number { get; }
+
+            public OtherTestEvent(Guid id, int number)
+            {
+                Id = id;
+                Number = number;
+            }
+        }
+
 
         private interface IObjectWithNumber
         {
