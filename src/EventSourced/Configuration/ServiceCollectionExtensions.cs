@@ -1,6 +1,7 @@
 ﻿using System;
 using EventSourced.Persistence;
 using EventSourced.Projections;
+using EventSourced.Projections.Automatic;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EventSourced.Configuration
@@ -14,8 +15,9 @@ namespace EventSourced.Configuration
 
             var options = new EventSourcedOptions(serviceCollection);
             optionsConfiguration(options);
-            serviceCollection.AddSingleton(options);
-            serviceCollection.AddSingleton(options.AutomaticProjectionOptions);
+
+            var automaticProjectionsEventMapper = new AutomaticProjectionsEventMapper(options.AutomaticProjectionOptions);
+            serviceCollection.AddSingleton(automaticProjectionsEventMapper);
         }
     }
 }
