@@ -11,29 +11,32 @@ namespace EventSourced.Persistence.InMemory
 {
     public class InMemoryEventStore : IEventStore
     {
-        private ConcurrentDictionary<string, List<IDomainEvent>> StreamsDictionary { get; }
+        private ConcurrentDictionary<StreamIdentification, List<IDomainEvent>> StreamsDictionary { get; }
 
         public InMemoryEventStore()
-            : this(new Dictionary<string, List<IDomainEvent>>())
+            : this(new Dictionary<StreamIdentification, List<IDomainEvent>>())
         {
         }
         
-        public InMemoryEventStore(IDictionary<string, List<IDomainEvent>> originalState)
+        public InMemoryEventStore(IDictionary<StreamIdentification, List<IDomainEvent>> originalState)
         {
-            StreamsDictionary = new ConcurrentDictionary<string, List<IDomainEvent>>(originalState);
+            StreamsDictionary = new ConcurrentDictionary<StreamIdentification, List<IDomainEvent>>(originalState);
         }
 
-        public Task StoreEventsAsync(string streamId, IList<IDomainEvent> domainEvents, CancellationToken ct)
+        public Task StoreEventsAsync(string streamId, Type aggregateRootType, IList<IDomainEvent> domainEvents, CancellationToken ct)
         {
-            StreamsDictionary.AddOrUpdate(streamId,
+            var streamIdentification = new StreamIdentification(streamId, aggregateRootType);
+            StreamsDictionary.AddOrUpdate(streamIdentification,
                 _ => domainEvents.ToList(),
                 (_, existingEvents) => existingEvents.Concat(domainEvents).ToList());
             return Task.CompletedTask;
         }
 
-        public Task<IDomainEvent[]> GetByStreamIdAsync(string streamId, CancellationToken ct)
+        public Task<IDomainEvent[]> GetByStreamIdAsync(string streamId, Type aggregateRootType, CancellationToken ct)
         {
-            if (StreamsDictionary.TryGetValue(streamId, out var events))
+            var streamIdentification = new StreamIdentification(streamId, aggregateRootType);
+            
+            if (StreamsDictionary.TryGetValue(streamIdentification, out var events))
             {
                 var eventsArray = events.ToArray();
                 return Task.FromResult(eventsArray);
@@ -42,4 +45,6 @@ namespace EventSourced.Persistence.InMemory
             throw new NotImplementedException();
         }
     }
+    
+    public record StreamIdentification(string StreamId, Type AggregateRootType);
 }

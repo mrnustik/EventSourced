@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,12 +14,14 @@ namespace EventSourced.Tests.Persistence.InMemory
 {
     public class InMemoryEventStoreTests
     {
+        private static readonly Type AnyAggregateType = typeof(object);
+        private static readonly Guid AnyStreamId = Guid.NewGuid();
+        
         [Fact]
         public async Task StoreEventsAsync_WithNonExistingAggregate_PreserversOrder()
         {
             //Arrange
             var sut = CreateSut();
-            var streamId = Guid.NewGuid();
             var testEvents = new[]
             {
                 new TestEvent(1),
@@ -27,10 +30,10 @@ namespace EventSourced.Tests.Persistence.InMemory
             };
             
             //Act
-            await sut.StoreEventsAsync(streamId.ToString(), testEvents.Cast<IDomainEvent>().ToList(), CancellationToken.None);
+            await sut.StoreEventsAsync(AnyStreamId.ToString(), AnyAggregateType, testEvents.Cast<IDomainEvent>().ToList(), CancellationToken.None);
 
             //Assert
-            var events = await sut.GetByStreamIdAsync(streamId.ToString(), CancellationToken.None);
+            var events = await sut.GetByStreamIdAsync(AnyStreamId.ToString(), AnyAggregateType, CancellationToken.None);
             events.Should()
                 .HaveCount(3)
                 .And
@@ -46,10 +49,9 @@ namespace EventSourced.Tests.Persistence.InMemory
         public async Task StoreEventsAsync_WithExistingAggregate_PreserversOrder()
         {
             //Arrange
-            var streamId = Guid.NewGuid();
-            var sut = CreateSut(new Dictionary<string, List<IDomainEvent>>()
+            var sut = CreateSut(new Dictionary<StreamIdentification, List<IDomainEvent>>()
             {
-                {streamId.ToString(), new List<IDomainEvent> { new TestEvent(1)} }
+                {new StreamIdentification(AnyStreamId.ToString(), AnyAggregateType), new List<IDomainEvent> { new TestEvent(1)} }
             });
             var testEvents = new[]
             {
@@ -58,10 +60,10 @@ namespace EventSourced.Tests.Persistence.InMemory
             };
             
             //Act
-            await sut.StoreEventsAsync(streamId.ToString(), testEvents.Cast<IDomainEvent>().ToList(), CancellationToken.None);
+            await sut.StoreEventsAsync(AnyStreamId.ToString(), AnyAggregateType, testEvents.Cast<IDomainEvent>().ToList(), CancellationToken.None);
 
             //Assert
-            var events = await sut.GetByStreamIdAsync(streamId.ToString(), CancellationToken.None);
+            var events = await sut.GetByStreamIdAsync(AnyStreamId.ToString(), AnyAggregateType, CancellationToken.None);
             events
                 .Should()
                 .HaveCount(3)
@@ -79,13 +81,13 @@ namespace EventSourced.Tests.Persistence.InMemory
         {
             //Arrange
             var streamId = Guid.NewGuid();
-            var sut = CreateSut(new Dictionary<string, List<IDomainEvent>>()
+            var sut = CreateSut(new Dictionary<StreamIdentification, List<IDomainEvent>>()
             {
-                {streamId.ToString(), new List<IDomainEvent> { new TestEvent(1)} }
+                {new StreamIdentification(AnyStreamId.ToString(), AnyAggregateType), new List<IDomainEvent> { new TestEvent(1)} }
             });
             
             //Act
-            var events = await sut.GetByStreamIdAsync(streamId.ToString(), CancellationToken.None);
+            var events = await sut.GetByStreamIdAsync(streamId.ToString(), AnyAggregateType, CancellationToken.None);
 
             //Assert
             events
@@ -99,11 +101,10 @@ namespace EventSourced.Tests.Persistence.InMemory
         public async Task GetByStreamIdAsync_WithNonExistingAggregate_Throws()
         {
             //Arrange
-            var streamId = Guid.NewGuid();
             var sut = CreateSut();
 
             //Act
-            Func<Task> action = () => sut.GetByStreamIdAsync(streamId.ToString(), CancellationToken.None);
+            Func<Task> action = () => sut.GetByStreamIdAsync(AnyStreamId.ToString(), AnyAggregateType, CancellationToken.None);
 
             //Assert
             await action
@@ -117,7 +118,7 @@ namespace EventSourced.Tests.Persistence.InMemory
             return new InMemoryEventStore();
         }
         
-        private InMemoryEventStore CreateSut(Dictionary<string, List<IDomainEvent>> dictionary)
+        private InMemoryEventStore CreateSut(Dictionary<StreamIdentification, List<IDomainEvent>> dictionary)
         {
             return new InMemoryEventStore(dictionary);
         }
