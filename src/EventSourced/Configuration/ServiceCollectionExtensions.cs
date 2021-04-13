@@ -1,4 +1,5 @@
 ﻿using System;
+using EventSourced.Domain.Events;
 using EventSourced.Persistence;
 using EventSourced.Projections;
 using EventSourced.Projections.Automatic;
@@ -12,12 +13,14 @@ namespace EventSourced.Configuration
         {
             serviceCollection.AddTransient(typeof(IRepository<,>), typeof(Repository<,>));
             serviceCollection.AddTransient<IManualProjectionBuilder, ManualProjectionBuilder>();
+            serviceCollection.AddTransient<IDomainEventHandler, AutomaticProjectionDomainEventHandler>();
 
             var options = new EventSourcedOptions(serviceCollection);
             optionsConfiguration(options);
 
             var automaticProjectionsEventMapper = new AutomaticProjectionsEventMapper(options.AutomaticProjectionOptions);
-            serviceCollection.AddSingleton(automaticProjectionsEventMapper);
+            automaticProjectionsEventMapper.Initialize();
+            serviceCollection.AddSingleton<IAutomaticProjectionsEventMapper>(automaticProjectionsEventMapper);
         }
     }
 }
