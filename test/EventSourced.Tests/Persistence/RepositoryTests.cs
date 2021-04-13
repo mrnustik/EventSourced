@@ -78,14 +78,14 @@ namespace EventSourced.Tests.Persistence
         private void SetupEventsInEventStore(string streamId, IEnumerable<IDomainEvent> domainEvents)
         {
             eventStoreMock
-                .Setup(s => s.GetByStreamIdAsync(streamId, It.IsAny<CancellationToken>()))
+                .Setup(s => s.GetByStreamIdAsync(streamId, It.IsAny<Type>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(domainEvents.ToArray());
         }
 
         private void VerifyEventStoreSaveMethodCalled()
         {
             eventStoreMock.Verify(
-                s => s.StoreEventsAsync(It.IsAny<string>(), It.IsAny<IList<IDomainEvent>>(), It.IsAny<CancellationToken>()),
+                s => s.StoreEventsAsync(It.IsAny<string>(), It.IsAny<Type>(), It.IsAny<IList<IDomainEvent>>(), It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
