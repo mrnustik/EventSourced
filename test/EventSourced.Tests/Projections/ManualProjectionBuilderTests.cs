@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EventSourced.Abstractions.Domain.Events;
 using EventSourced.Domain;
 using EventSourced.Domain.Events;
-using EventSourced.Persistence.Abstractions;
+using EventSourced.Persistence;
 using EventSourced.Projections;
 using FluentAssertions;
 using Moq;
@@ -22,13 +21,14 @@ namespace EventSourced.Tests.Projections
         public async Task BuildProjectionAsync_WithExistingApplicableEvents_BuildsTheProjection()
         {
             //Arrange
-            IDomainEvent[] existingEvents = {
+            IDomainEvent[] existingEvents =
+            {
                 new TestEvent(),
                 new TestEvent(),
                 new TestEvent()
             };
             SetupExistingEventsInEventStore(existingEvents);
-            var sut= CreateSut();
+            var sut = CreateSut();
 
             //Act
             var projection = await sut.BuildProjectionAsync<EventCountProjection>(CancellationToken.None);
@@ -50,27 +50,28 @@ namespace EventSourced.Tests.Projections
                 new TestEvent(),
                 new TestEvent(),
                 new TestEvent(),
-                new TestEvent(),
+                new TestEvent()
             };
             SetupEventsInEventStore(aggregateId.ToString(), existingEvents);
-            var sut= CreateSut();
+            var sut = CreateSut();
 
             //Act
-            var projection = await sut.BuildAggregateProjection<EventCountProjection, TestAggregateRoot, Guid>(aggregateId, CancellationToken.None);
+            var projection =
+                await sut.BuildAggregateProjection<EventCountProjection, TestAggregateRoot, Guid>(aggregateId, CancellationToken.None);
 
             //Assert
             projection.AppliedEventsCount
                 .Should()
                 .Be(4);
         }
-        
+
         private void SetupEventsInEventStore(string streamId, IEnumerable<IDomainEvent> domainEvents)
         {
             _eventStoreMock
                 .Setup(s => s.GetByStreamIdAsync(streamId, It.IsAny<Type>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(domainEvents.ToArray());
         }
-        
+
         private void SetupExistingEventsInEventStore(IDomainEvent[] existingEvents)
         {
             _eventStoreMock.Setup(s => s.GetEventsOfTypeAsync(It.IsAny<Type>(), It.IsAny<CancellationToken>()))
@@ -92,15 +93,15 @@ namespace EventSourced.Tests.Projections
         private class TestEvent : DomainEvent
         {
         }
-        
+
         private class EventCountProjection
         {
             public int AppliedEventsCount { get; private set; }
-            
+
             private void Apply(TestEvent @event)
             {
                 AppliedEventsCount++;
-            } 
+            }
         }
     }
 }

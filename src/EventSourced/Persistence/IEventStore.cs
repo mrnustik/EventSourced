@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using EventSourced.Abstractions.Domain.Events;
+using EventSourced.Domain.Events;
 
-namespace EventSourced.Persistence.Abstractions
+namespace EventSourced.Persistence
 {
     public interface IEventStore
     {

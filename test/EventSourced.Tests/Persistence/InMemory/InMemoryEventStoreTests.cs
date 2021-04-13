@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EventSourced.Abstractions.Domain.Events;
 using EventSourced.Domain.Events;
 using EventSourced.Persistence.InMemory;
 using FluentAssertions;
@@ -15,7 +13,9 @@ namespace EventSourced.Tests.Persistence.InMemory
     public class InMemoryEventStoreTests
     {
         private static readonly Type AnyAggregateType = typeof(object);
+
         private static readonly string AnyStreamId = Guid.NewGuid().ToString();
+
         private static readonly string AnyStreamId2 = Guid.NewGuid().ToString();
 
         [Fact]
@@ -53,7 +53,7 @@ namespace EventSourced.Tests.Persistence.InMemory
         public async Task StoreEventsAsync_WithExistingAggregate_PreserversOrder()
         {
             //Arrange
-            var sut = CreateSut(new Dictionary<StreamIdentification, List<IDomainEvent>>()
+            var sut = CreateSut(new Dictionary<StreamIdentification, List<IDomainEvent>>
             {
                 {new StreamIdentification(AnyStreamId, AnyAggregateType), new List<IDomainEvent> {new TestEvent(1)}}
             });
@@ -87,7 +87,7 @@ namespace EventSourced.Tests.Persistence.InMemory
         public async Task GetByStreamIdAsync_WithExistingAggregate_ReturnsEvents()
         {
             //Arrange
-            var sut = CreateSut(new Dictionary<StreamIdentification, List<IDomainEvent>>()
+            var sut = CreateSut(new Dictionary<StreamIdentification, List<IDomainEvent>>
             {
                 {new StreamIdentification(AnyStreamId, AnyAggregateType), new List<IDomainEvent> {new TestEvent(1)}}
             });
@@ -139,10 +139,13 @@ namespace EventSourced.Tests.Persistence.InMemory
         {
             //Arrange
             var sut = CreateSut(
-                new Dictionary<StreamIdentification, List<IDomainEvent>>()
+                new Dictionary<StreamIdentification, List<IDomainEvent>>
                 {
-                    {new StreamIdentification(AnyStreamId, AnyAggregateType), new List<IDomainEvent> {new TestEvent(1), new TestEvent(1)}},
-                    {new StreamIdentification(AnyStreamId2, AnyAggregateType), new List<IDomainEvent> {new TestEvent(1)}},
+                    {
+                        new StreamIdentification(AnyStreamId, AnyAggregateType),
+                        new List<IDomainEvent> {new TestEvent(1), new TestEvent(1)}
+                    },
+                    {new StreamIdentification(AnyStreamId2, AnyAggregateType), new List<IDomainEvent> {new TestEvent(1)}}
                 });
 
             //Act
@@ -161,16 +164,19 @@ namespace EventSourced.Tests.Persistence.InMemory
                 .Should()
                 .HaveCount(1);
         }
-        
+
         [Fact]
         public async Task GetEventsOfTypeAsync_WithExistingValues_ReturnsEventsOfType()
         {
             //Arrange
             var sut = CreateSut(
-                new Dictionary<StreamIdentification, List<IDomainEvent>>()
+                new Dictionary<StreamIdentification, List<IDomainEvent>>
                 {
-                    {new StreamIdentification(AnyStreamId, AnyAggregateType), new List<IDomainEvent> {new TestEvent(1), new TestEvent(1)}},
-                    {new StreamIdentification(AnyStreamId2, AnyAggregateType), new List<IDomainEvent> {new TestEvent(1)}},
+                    {
+                        new StreamIdentification(AnyStreamId, AnyAggregateType),
+                        new List<IDomainEvent> {new TestEvent(1), new TestEvent(1)}
+                    },
+                    {new StreamIdentification(AnyStreamId2, AnyAggregateType), new List<IDomainEvent> {new TestEvent(1)}}
                 });
 
             //Act
@@ -184,22 +190,22 @@ namespace EventSourced.Tests.Persistence.InMemory
 
         private InMemoryEventStore CreateSut()
         {
-            return new InMemoryEventStore();
+            return new();
         }
 
         private InMemoryEventStore CreateSut(Dictionary<StreamIdentification, List<IDomainEvent>> dictionary)
         {
-            return new InMemoryEventStore(dictionary);
+            return new(dictionary);
         }
 
         private class TestEvent : DomainEvent
         {
-            public int Number { get; }
-
             public TestEvent(int number)
             {
                 Number = number;
             }
+
+            public int Number { get; }
         }
     }
 }

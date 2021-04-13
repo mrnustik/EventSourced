@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using EventSourced.Abstractions.Domain.Events;
+using EventSourced.Domain.Events;
 [assembly: InternalsVisibleTo("EventSourced.Tests")]
 
 namespace EventSourced.Helpers
@@ -13,15 +12,10 @@ namespace EventSourced.Helpers
             foreach (var domainEvent in domainEvents)
             {
                 var applyMethod = ReflectionHelpers.GetApplyMethodForEventInObject(@object, domainEvent);
-                if (applyMethod != null)
-                {
-                    applyMethod.Invoke(@object, new[] {domainEvent});
-                }
+                if (applyMethod != null) applyMethod.Invoke(@object, new[] {domainEvent});
                 else
-                {
                     throw new ArgumentException(
                         $"Missing Apply event for domain event of type {domainEvent.GetType()} on object {@object.GetType()}");
-                }
             }
         }
     }

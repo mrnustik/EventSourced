@@ -3,11 +3,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain;
 using EventSourced.Helpers;
-using EventSourced.Persistence.Abstractions;
+using EventSourced.Persistence;
 
 namespace EventSourced.Projections
 {
-    class ManualProjectionBuilder : IManualProjectionBuilder
+    internal class ManualProjectionBuilder : IManualProjectionBuilder
     {
         private readonly IEventStore _eventStore;
 
@@ -28,7 +28,9 @@ namespace EventSourced.Projections
             return projection;
         }
 
-        public async Task<TAggregateProjection> BuildAggregateProjection<TAggregateProjection, TAggregateRoot, TAggregateRootId>(TAggregateRootId id, CancellationToken ct)
+        public async Task<TAggregateProjection> BuildAggregateProjection<TAggregateProjection, TAggregateRoot, TAggregateRootId>(
+            TAggregateRootId id,
+            CancellationToken ct)
             where TAggregateProjection : new()
             where TAggregateRootId : notnull
             where TAggregateRoot : AggregateRoot<TAggregateRootId>

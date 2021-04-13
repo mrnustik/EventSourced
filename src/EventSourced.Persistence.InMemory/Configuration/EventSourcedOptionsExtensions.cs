@@ -1,5 +1,4 @@
 ﻿using EventSourced.Configuration;
-using EventSourced.Persistence.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EventSourced.Persistence.InMemory.Configuration

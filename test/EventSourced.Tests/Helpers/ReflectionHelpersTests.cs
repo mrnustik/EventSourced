@@ -8,7 +8,6 @@ namespace EventSourced.Tests.Helpers
 {
     public class ReflectionHelpersTests
     {
-
         [Theory]
         [InlineData(typeof(ObjectWithPublicApplyEvent))]
         [InlineData(typeof(ObjectWithProtectedApplyEvent))]
@@ -28,38 +27,38 @@ namespace EventSourced.Tests.Helpers
 
         private class TestEvent : DomainEvent
         {
-            public int Number { get; }
-
             protected TestEvent(int number)
             {
                 Number = number;
             }
+
+            public int Number { get; }
         }
-        
+
         private class ObjectWithPublicApplyEvent
         {
             public int Number { get; private set; }
-            
+
             public void Apply(TestEvent testEvent)
             {
                 Number = testEvent.Number;
             }
         }
-        
-        private class ObjectWithProtectedApplyEvent 
+
+        private class ObjectWithProtectedApplyEvent
         {
             public int Number { get; private set; }
-            
+
             protected void Apply(TestEvent testEvent)
             {
                 Number = testEvent.Number;
             }
         }
-        
-        private class ObjectWithPrivateApplyEvent 
+
+        private class ObjectWithPrivateApplyEvent
         {
             public int Number { get; private set; }
-            
+
             private void Apply(TestEvent testEvent)
             {
                 Number = testEvent.Number;
