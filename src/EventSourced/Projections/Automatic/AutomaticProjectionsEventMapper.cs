@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EventSourced.Configuration;
+using EventSourced.Domain.Events;
 using EventSourced.Helpers;
 
 namespace EventSourced.Projections.Automatic
 {
-    public class AutomaticProjectionsEventMapper : IAutomaticProjectionsEventMapper
+    internal class AutomaticProjectionsEventMapper : IAutomaticProjectionsEventMapper
     {
         private readonly AutomaticProjectionOptions _options;
         private bool _isInitialized;
@@ -38,8 +39,9 @@ namespace EventSourced.Projections.Automatic
             _isInitialized = true;
         }
 
-        public IEnumerable<Type> GetProjectionsAffectedByEvent(Type eventType)
+        public IEnumerable<Type> GetProjectionsAffectedByEvent(IDomainEvent domainEvent)
         {
+            var eventType = domainEvent.GetType();
             if (EventsToProjectionMap.TryGetValue(eventType, out var eventsCollection))
             {
                 return eventsCollection.ToList().AsReadOnly();
