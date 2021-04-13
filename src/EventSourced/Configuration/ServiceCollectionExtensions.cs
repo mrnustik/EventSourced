@@ -15,6 +15,7 @@ namespace EventSourced.Configuration
             var options = new EventSourcedOptions(serviceCollection);
             optionsConfiguration(options);
             serviceCollection.AddSingleton(options);
+            serviceCollection.AddSingleton(options.AutomaticProjectionOptions);
         }
     }
 }
