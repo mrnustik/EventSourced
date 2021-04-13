@@ -1,5 +1,7 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using EventSourced.Domain;
 using EventSourced.Helpers;
 using EventSourced.Persistence.Abstractions;
 
@@ -23,6 +25,19 @@ namespace EventSourced.Projections
                 var events = await _eventStore.GetEventsOfTypeAsync(type, ct);
                 projection.ApplyEventsToObject(events);
             }
+            return projection;
+        }
+
+        public async Task<TAggregateProjection> BuildAggregateProjection<TAggregateProjection, TAggregateRoot, TAggregateRootId>(TAggregateRootId id, CancellationToken ct)
+            where TAggregateProjection : new()
+            where TAggregateRootId : notnull
+            where TAggregateRoot : AggregateRoot<TAggregateRootId>
+        {
+            var types = ReflectionHelpers.GetTypesOfDomainEventsApplicableToObject(typeof(TAggregateProjection));
+            var allEvents = await _eventStore.GetByStreamIdAsync(id.ToString(), typeof(TAggregateRoot), ct);
+            var applicableEvents = allEvents.Where(e => types.Contains(e.GetType()));
+            var projection = new TAggregateProjection();
+            projection.ApplyEventsToObject(applicableEvents.ToArray());
             return projection;
         }
     }
