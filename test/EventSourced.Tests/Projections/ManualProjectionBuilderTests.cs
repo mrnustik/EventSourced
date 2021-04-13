@@ -61,7 +61,7 @@ namespace EventSourced.Tests.Projections
             //Assert
             projection.AppliedEventsCount
                 .Should()
-                .Be(3);
+                .Be(4);
         }
         
         private void SetupEventsInEventStore(string streamId, IEnumerable<IDomainEvent> domainEvents)
