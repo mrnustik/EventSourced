@@ -11,7 +11,7 @@ namespace EventSourced.Projections.Automatic
         private readonly AutomaticProjectionOptions _options;
         private bool _isInitialized;
         
-        private Dictionary<Type, ICollection<Type>> EventsToProjectionMap { get; } = new Dictionary<Type, ICollection<Type>>();
+        private Dictionary<Type, ICollection<Type>> EventsToProjectionMap { get; } = new();
 
         public AutomaticProjectionsEventMapper(AutomaticProjectionOptions options)
         {
