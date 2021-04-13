@@ -161,6 +161,26 @@ namespace EventSourced.Tests.Persistence.InMemory
                 .Should()
                 .HaveCount(1);
         }
+        
+        [Fact]
+        public async Task GetEventsOfTypeAsync_WithExistingValues_ReturnsEventsOfType()
+        {
+            //Arrange
+            var sut = CreateSut(
+                new Dictionary<StreamIdentification, List<IDomainEvent>>()
+                {
+                    {new StreamIdentification(AnyStreamId, AnyAggregateType), new List<IDomainEvent> {new TestEvent(1), new TestEvent(1)}},
+                    {new StreamIdentification(AnyStreamId2, AnyAggregateType), new List<IDomainEvent> {new TestEvent(1)}},
+                });
+
+            //Act
+            var dictionary = await sut.GetEventsOfTypeAsync(typeof(TestEvent), CancellationToken.None);
+
+            //Assert
+            dictionary
+                .Should()
+                .HaveCount(3);
+        }
 
         private InMemoryEventStore CreateSut()
         {
