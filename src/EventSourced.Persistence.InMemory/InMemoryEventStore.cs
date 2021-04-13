@@ -53,6 +53,15 @@ namespace EventSourced.Persistence.InMemory
                                  .ToDictionary(d => d.StreamId, d => d.DomainEvents);
             return Task.FromResult(allStreams);
         }
+
+        public Task<IDomainEvent[]> GetEventsOfTypeAsync(Type type, CancellationToken ct)
+        {
+            var events = StreamsDictionary.Values
+                .SelectMany(v => v)
+                .Where(v => v.GetType() == type)
+                .ToArray();
+            return Task.FromResult(events);
+        }
     }
     
     public record StreamIdentification(string StreamId, Type AggregateRootType);
