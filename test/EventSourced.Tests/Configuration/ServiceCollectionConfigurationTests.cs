@@ -18,7 +18,9 @@ namespace EventSourced.Tests.Configuration
             var serviceCollection = new ServiceCollection();
 
             //Act
-            serviceCollection.AddEventSourced(options => options.UseInMemoryEventStore());
+            serviceCollection.AddEventSourced(options => options
+                .UseInMemoryEventStore()
+                .UseInMemoryProjectionStore());
 
             //Assert
             var serviceProvider = serviceCollection.BuildServiceProvider();
