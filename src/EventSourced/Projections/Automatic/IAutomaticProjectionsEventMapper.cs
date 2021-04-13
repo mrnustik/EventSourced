@@ -4,7 +4,7 @@ using EventSourced.Domain.Events;
 
 namespace EventSourced.Projections.Automatic
 {
-    internal interface IAutomaticProjectionsEventMapper
+    public interface IAutomaticProjectionsEventMapper
     {
         void Initialize();
         IEnumerable<Type> GetProjectionsAffectedByEvent(IDomainEvent domainEvent);
