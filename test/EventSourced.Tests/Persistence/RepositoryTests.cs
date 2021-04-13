@@ -75,11 +75,52 @@ namespace EventSourced.Tests.Persistence
                 .Be(4);
         }
 
+                
+        [Fact]
+        public async Task GetAllAsync_WithExistingAggregates_RebuildsAllFromEvents()
+        {
+            //Arrange
+            var aggregateId = Guid.NewGuid();
+            var aggregateId2 = Guid.NewGuid();
+            var existingEvents = new[]
+            {
+                new TestEvent(),
+                new TestEvent(),
+                new TestEvent(),
+                new TestEvent(),
+            };
+            SetupMultipleAggregateEventsInEventStore(new Dictionary<string, IDomainEvent[]>()
+            {
+                {aggregateId.ToString(), existingEvents.ToArray()},
+                {aggregateId2.ToString(), existingEvents.ToArray()}
+            });
+            var repository = CreateSut();
+
+            //Act
+            var aggregates = await repository.GetAllAsync(CancellationToken.None);
+
+            //Assert
+            aggregates
+                .Should()
+                .HaveCount(2);
+
+            aggregates
+                .Should()
+                .OnlyContain(x => x.EventsCount == 4);
+        }
+        
         private void SetupEventsInEventStore(string streamId, IEnumerable<IDomainEvent> domainEvents)
         {
             eventStoreMock
                 .Setup(s => s.GetByStreamIdAsync(streamId, It.IsAny<Type>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(domainEvents.ToArray());
+        }
+
+        private void SetupMultipleAggregateEventsInEventStore(IDictionary<string, IDomainEvent[]> aggregateToEventsMap)
+        {
+            eventStoreMock
+                .Setup(s => s.GetAllStreamsOfType(It.IsAny<Type>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(aggregateToEventsMap);
         }
 
         private void VerifyEventStoreSaveMethodCalled()
