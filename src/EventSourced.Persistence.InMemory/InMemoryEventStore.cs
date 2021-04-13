@@ -44,6 +44,15 @@ namespace EventSourced.Persistence.InMemory
 
             throw new NotImplementedException();
         }
+
+        public Task<IDictionary<string, IDomainEvent[]>> GetAllStreamsOfType(Type aggregateRootType, CancellationToken ct)
+        {
+            IDictionary<string, IDomainEvent[]> allStreams =
+                StreamsDictionary.Where(d => d.Key.AggregateRootType == aggregateRootType)
+                                 .Select(d => new {d.Key.StreamId, DomainEvents = d.Value.ToArray()})
+                                 .ToDictionary(d => d.StreamId, d => d.DomainEvents);
+            return Task.FromResult(allStreams);
+        }
     }
     
     public record StreamIdentification(string StreamId, Type AggregateRootType);
