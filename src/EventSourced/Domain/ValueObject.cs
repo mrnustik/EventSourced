@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace EventSourced.Domain
 {
-    public abstract class ValueObject 
+    public abstract class ValueObject
     {
         protected bool Equals(ValueObject? other)
         {
@@ -15,17 +15,14 @@ namespace EventSourced.Domain
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals(obj as ValueObject);
         }
 
         public override int GetHashCode()
         {
             var hashCode = new HashCode();
-            foreach (var equalityComponent in GetEqualityComponents())
-            {
-                hashCode.Add(equalityComponent);
-            }
+            foreach (var equalityComponent in GetEqualityComponents()) hashCode.Add(equalityComponent);
             return hashCode.ToHashCode();
         }
 

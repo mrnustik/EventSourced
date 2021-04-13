@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EventSourced.Persistence;
 using EventSourced.Projections;
 using EventSourced.Sample.Warehouse.Application.Model;
-using EventSourced.Sample.Warehouse.Domain.WarehouseItem;
 using EventSourced.Sample.Warehouse.Domain.WarehouseItem.Projections;
 
 namespace EventSourced.Sample.Warehouse.Application.Services.WarehouseItem
 {
-    class GetAllWarehouseItemsApplicationService : ApplicationServiceBase, IGetAllWarehouseItemsApplicationService
+    internal class GetAllWarehouseItemsApplicationService : ApplicationServiceBase, IGetAllWarehouseItemsApplicationService
     {
         private readonly IManualProjectionBuilder _manualProjectionBuilder;
 
@@ -19,10 +16,11 @@ namespace EventSourced.Sample.Warehouse.Application.Services.WarehouseItem
         {
             _manualProjectionBuilder = manualProjectionBuilder;
         }
-        
+
         public async Task<ICollection<WarehouseLisItemModel>> GetAllAsync(CancellationToken ct)
         {
-            var allWarehouseItemsListProjection = await _manualProjectionBuilder.BuildProjectionAsync<AllWarehouseItemsListProjection>(ct);
+            var allWarehouseItemsListProjection =
+                await _manualProjectionBuilder.BuildProjectionAsync<AllWarehouseItemsListProjection>(ct);
             var warehouseItems = allWarehouseItemsListProjection.Items;
             return warehouseItems
                 .Select(i => new WarehouseLisItemModel(i.Id, i.Title))

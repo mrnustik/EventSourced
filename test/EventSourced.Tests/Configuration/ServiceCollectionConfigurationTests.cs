@@ -4,8 +4,8 @@ using EventSourced.Domain;
 using EventSourced.Persistence;
 using EventSourced.Persistence.InMemory.Configuration;
 using FluentAssertions;
-using Xunit;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace EventSourced.Tests.Configuration
 {
@@ -27,13 +27,13 @@ namespace EventSourced.Tests.Configuration
                 .Should()
                 .NotBeNull();
         }
-        
+
         private class TestAggregateRoot : AggregateRoot<Guid>
         {
             public TestAggregateRoot() : base(Guid.NewGuid())
             {
             }
-            
+
             public TestAggregateRoot(Guid id) : base(id)
             {
             }

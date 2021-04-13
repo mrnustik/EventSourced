@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using EventSourced.Abstractions.Domain.Events;
+﻿using System.Collections.Generic;
 using EventSourced.Domain.Events;
 using EventSourced.Helpers;
 
@@ -11,8 +7,6 @@ namespace EventSourced.Domain
     public abstract class AggregateRoot<TId>
         where TId : notnull
     {
-        public TId Id { get; }
-        
         private readonly Queue<IDomainEvent> uncommittedDomainEvents;
 
         protected AggregateRoot(TId id)
@@ -20,6 +14,8 @@ namespace EventSourced.Domain
             Id = id;
             uncommittedDomainEvents = new Queue<IDomainEvent>();
         }
+
+        public TId Id { get; }
 
         public IList<IDomainEvent> DequeueDomainEvents()
         {

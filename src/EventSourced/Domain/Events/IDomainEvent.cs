@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EventSourced.Abstractions.Domain.Events
+namespace EventSourced.Domain.Events
 {
     public interface IDomainEvent
     {

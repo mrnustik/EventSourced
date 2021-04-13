@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain;
 using EventSourced.Helpers;
-using EventSourced.Persistence.Abstractions;
 
 namespace EventSourced.Persistence
 {
@@ -20,7 +17,7 @@ namespace EventSourced.Persistence
         {
             _eventStore = eventStore;
         }
-        
+
         public Task SaveAsync(TAggregateRoot aggregateRoot, CancellationToken ct)
         {
             var newDomainEvents = aggregateRoot.DequeueDomainEvents();
@@ -34,7 +31,6 @@ namespace EventSourced.Persistence
             aggregateRoot.ApplyEventsToObject(domainEvents);
             return aggregateRoot;
         }
-
 
 
         public async Task<ICollection<TAggregateRoot>> GetAllAsync(CancellationToken ct)
@@ -54,16 +50,10 @@ namespace EventSourced.Persistence
         private TAggregateRootId MapStringStreamIdToAggregateRootId(string streamId)
         {
             var idType = typeof(TAggregateRootId);
-            if (idType.IsPrimitive)
-            {
-                return (TAggregateRootId) Convert.ChangeType(streamId, idType);
-            }
-            else
-            {
-                return (TAggregateRootId) Activator.CreateInstance(typeof(TAggregateRootId), streamId)!;
-            }
+            if (idType.IsPrimitive) return (TAggregateRootId) Convert.ChangeType(streamId, idType);
+            return (TAggregateRootId) Activator.CreateInstance(typeof(TAggregateRootId), streamId)!;
         }
-        
+
         private static TAggregateRoot ConstructAggregateRoot(TAggregateRootId id)
         {
             var aggregateRoot = (TAggregateRoot) Activator.CreateInstance(typeof(TAggregateRoot), id)!;
