@@ -57,9 +57,13 @@ namespace EventSourced.Tests.Projections
 
             //Act
             var projection =
-                await sut.BuildAggregateProjection<EventCountProjection, TestAggregateRoot, Guid>(aggregateId, CancellationToken.None);
+                await sut.BuildAggregateProjection<EventCountAggregateProjection, TestAggregateRoot, Guid>(aggregateId, CancellationToken.None);
 
             //Assert
+            projection.Id
+                .Should()
+                .Be(aggregateId);
+            
             projection.AppliedEventsCount
                 .Should()
                 .Be(4);
@@ -97,7 +101,21 @@ namespace EventSourced.Tests.Projections
         private class EventCountProjection
         {
             public int AppliedEventsCount { get; private set; }
-
+            
+            private void Apply(TestEvent @event)
+            {
+                AppliedEventsCount++;
+            }
+        }
+        
+        private class EventCountAggregateProjection : AggregateProjection<TestAggregateRoot, Guid>
+        {
+            public int AppliedEventsCount { get; private set; }
+            
+            public EventCountAggregateProjection(Guid id) : base(id)
+            {
+            }
+            
             private void Apply(TestEvent @event)
             {
                 AppliedEventsCount++;

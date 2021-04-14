@@ -15,7 +15,7 @@ namespace EventSourced.Projections
         Task<TAggregateProjection> BuildAggregateProjection<TAggregateProjection, TAggregateRoot, TAggregateRootId>(
             TAggregateRootId id,
             CancellationToken ct)
-            where TAggregateProjection : new()
+            where TAggregateProjection : AggregateProjection<TAggregateRoot, TAggregateRootId>
             where TAggregateRootId : notnull
             where TAggregateRoot : AggregateRoot<TAggregateRootId>;
     }
