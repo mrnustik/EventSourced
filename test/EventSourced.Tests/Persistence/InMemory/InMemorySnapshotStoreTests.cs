@@ -9,7 +9,7 @@ using Xunit;
 
 namespace EventSourced.Tests.Persistence.InMemory
 {
-    public class InMemorySnapshotStore
+    public class InMemorySnapshotStoreTests
     {
         [Fact]
         public async Task LoadSnapshotAsync_AfterStoringItFirst_ReturnsTheCopy()
@@ -26,6 +26,20 @@ namespace EventSourced.Tests.Persistence.InMemory
             loadedSnapshot.Version
                           .Should()
                           .Be(42);
+        }
+        
+        [Fact]
+        public async Task LoadSnapshotAsync_WithoutStoringItFirst_ReturnsNull()
+        {
+            //Arrange
+            var sut = CreateSut();
+
+            //Act
+            var loadedSnapshot = await sut.LoadSnapshotAsync(Guid.NewGuid(), CancellationToken.None);
+
+            //Assert
+            loadedSnapshot.Should()
+                          .BeNull();
         }
 
         private ISnapshotStore<TestAggregateRoot> CreateSut()
