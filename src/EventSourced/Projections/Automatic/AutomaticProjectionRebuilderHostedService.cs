@@ -1,26 +1,22 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using EventSourced.Helpers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace EventSourced.Projections.Automatic
 {
-    public class AutomaticProjectionRebuilderHostedService : IHostedService
+    public class AutomaticProjectionRebuilderHostedService : HostedServiceBase
     {
-        private readonly IAutomaticProjectionRebuilder _automaticProjectionRebuilder;
-
-        public AutomaticProjectionRebuilderHostedService(IAutomaticProjectionRebuilder automaticProjectionRebuilder)
+        public AutomaticProjectionRebuilderHostedService(IServiceScopeFactory serviceScopeFactory)
+            : base(serviceScopeFactory)
         {
-            _automaticProjectionRebuilder = automaticProjectionRebuilder;
         }
 
-        public Task StartAsync(CancellationToken ct)
+        protected override Task StartAsync(IServiceScope serviceScope, CancellationToken ct)
         {
-            return _automaticProjectionRebuilder.RebuildAllRegisteredAutomaticProjections(ct);
-        }
-
-        public Task StopAsync(CancellationToken ct)
-        {
-            return Task.CompletedTask;
+            var automaticProjectionRebuilder = serviceScope.ServiceProvider.GetRequiredService<IAutomaticProjectionRebuilder>();
+            return automaticProjectionRebuilder.RebuildAllRegisteredAutomaticProjections(ct);
         }
     }
 }
