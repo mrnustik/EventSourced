@@ -9,6 +9,7 @@ namespace EventSourced.Persistence.InMemory
     public class InMemoryProjectionStore : IProjectionStore
     {
         private ConcurrentDictionary<Type, object> ProjectionsMap { get; }
+        private ConcurrentDictionary<Type, ConcurrentDictionary<Guid, object>> AggregateProjectionsMap { get; }
 
         public InMemoryProjectionStore() : this(new ConcurrentDictionary<Type, object>())
         {
@@ -17,6 +18,7 @@ namespace EventSourced.Persistence.InMemory
         public InMemoryProjectionStore(ConcurrentDictionary<Type, object> projectionsMap)
         {
             ProjectionsMap = projectionsMap;
+            AggregateProjectionsMap = new ConcurrentDictionary<Type, ConcurrentDictionary<Guid, object>>();
         }
         
         public Task<object?> LoadProjectionAsync(Type projectionType, CancellationToken ct)
@@ -27,7 +29,14 @@ namespace EventSourced.Persistence.InMemory
 
         public Task<object?> LoadAggregateProjectionAsync(Type aggregateRootProjection, Guid aggregateRootId, CancellationToken ct)
         {
-            throw new NotImplementedException();
+            if (AggregateProjectionsMap.TryGetValue(aggregateRootProjection, out var projectionByIdDictionary))
+            {
+                if (projectionByIdDictionary.TryGetValue(aggregateRootId, out var projection))
+                {
+                    return Task.FromResult<object?>(projection);
+                }
+            }
+            return Task.FromResult<object?>(null);
         }
 
         public Task StoreProjectionAsync(object projection, CancellationToken ct)
@@ -38,7 +47,14 @@ namespace EventSourced.Persistence.InMemory
 
         public Task StoreAggregateProjectionAsync(Guid streamId, object aggregateProjection, CancellationToken ct)
         {
-            throw new NotImplementedException();
+            var projectionType = aggregateProjection.GetType();
+            if (!AggregateProjectionsMap.ContainsKey(projectionType))
+            {
+                AggregateProjectionsMap[projectionType] = new ConcurrentDictionary<Guid, object>();
+            }
+
+            AggregateProjectionsMap[projectionType][streamId] = aggregateProjection;
+            return Task.CompletedTask;
         }
     }
 }

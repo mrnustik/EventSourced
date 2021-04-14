@@ -14,6 +14,7 @@ namespace EventSourced.Configuration
             serviceCollection.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             serviceCollection.AddTransient<IManualProjectionBuilder, ManualProjectionBuilder>();
             serviceCollection.AddTransient<IDomainEventHandler, AutomaticProjectionDomainEventHandler>();
+            serviceCollection.AddTransient<IDomainEventHandler, AutomaticAggregateProjectionDomainEventHandler>();
             serviceCollection.AddTransient<IAutomaticProjectionRebuilder, AutomaticProjectionRebuilder>();
 
             var options = new EventSourcedOptions(serviceCollection);
