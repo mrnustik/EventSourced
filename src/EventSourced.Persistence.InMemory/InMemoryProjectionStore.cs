@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using EventSourced.Persistence.InMemory.Helpers;
 
 namespace EventSourced.Persistence.InMemory
 {
@@ -42,7 +43,7 @@ namespace EventSourced.Persistence.InMemory
 
         public Task StoreProjectionAsync(object projection, CancellationToken ct)
         {
-            ProjectionsMap[projection.GetType()] = projection;
+            ProjectionsMap[projection.GetType()] = projection.DeepClone();
             return Task.CompletedTask;
         }
 
@@ -54,7 +55,7 @@ namespace EventSourced.Persistence.InMemory
                 AggregateProjectionsMap[projectionType] = new ConcurrentDictionary<Guid, object>();
             }
 
-            AggregateProjectionsMap[projectionType][streamId] = aggregateProjection;
+            AggregateProjectionsMap[projectionType][streamId] = aggregateProjection.DeepClone();
             return Task.CompletedTask;
         }
     }
