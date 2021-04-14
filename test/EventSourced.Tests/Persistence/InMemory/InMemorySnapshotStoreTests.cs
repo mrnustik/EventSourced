@@ -16,18 +16,22 @@ namespace EventSourced.Tests.Persistence.InMemory
         {
             //Arrange
             var aggregateRoot = new TestAggregateRoot(Guid.NewGuid(), 42);
+            aggregateRoot.SetNumber(42);
             var sut = CreateSut();
 
             //Act
             await sut.StoreSnapshotAsync(aggregateRoot, CancellationToken.None);
+            aggregateRoot.SetNumber(420);
             var loadedSnapshot = await sut.LoadSnapshotAsync(aggregateRoot.Id, CancellationToken.None);
 
             //Assert
-            loadedSnapshot.Version
-                          .Should()
+            loadedSnapshot.Version.Should()
+                          .Be(42);
+
+            loadedSnapshot.Number.Should()
                           .Be(42);
         }
-        
+
         [Fact]
         public async Task LoadSnapshotAsync_WithoutStoringItFirst_ReturnsNull()
         {
@@ -49,10 +53,17 @@ namespace EventSourced.Tests.Persistence.InMemory
 
         private class TestAggregateRoot : AggregateRoot
         {
+            public int Number { get; private set; }
+
             public TestAggregateRoot(Guid id, int version)
                 : base(id)
             {
                 Version = version;
+            }
+
+            public void SetNumber(int number)
+            {
+                Number = number;
             }
         }
     }

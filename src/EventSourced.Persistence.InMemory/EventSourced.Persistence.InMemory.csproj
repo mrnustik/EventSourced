@@ -7,4 +7,9 @@
     <ItemGroup>
       <ProjectReference Include="..\EventSourced\EventSourced.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="JsonNet.ContractResolvers" Version="2.0.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    </ItemGroup>
 </Project>
