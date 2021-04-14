@@ -8,5 +8,6 @@ namespace EventSourced.Projections.Automatic
     {
         void Initialize();
         IEnumerable<Type> GetProjectionsAffectedByEvent(IDomainEvent domainEvent);
+        IEnumerable<Type> GetProjectionsAffectedByAggregateChange(Type aggregateType);
     }
 }

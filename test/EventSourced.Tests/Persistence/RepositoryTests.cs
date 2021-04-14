@@ -61,7 +61,7 @@ namespace EventSourced.Tests.Persistence
                 new TestEvent(),
                 new TestEvent()
             };
-            SetupEventsInEventStore(aggregateId.ToString(), existingEvents);
+            SetupEventsInEventStore(aggregateId, existingEvents);
             var repository = CreateSut();
 
             //Act
@@ -87,10 +87,10 @@ namespace EventSourced.Tests.Persistence
                 new TestEvent(),
                 new TestEvent()
             };
-            SetupMultipleAggregateEventsInEventStore(new Dictionary<string, IDomainEvent[]>
+            SetupMultipleAggregateEventsInEventStore(new Dictionary<Guid, IDomainEvent[]>
             {
-                {aggregateId.ToString(), existingEvents.ToArray()},
-                {aggregateId2.ToString(), existingEvents.ToArray()}
+                {aggregateId, existingEvents.ToArray()},
+                {aggregateId2, existingEvents.ToArray()}
             });
             var repository = CreateSut();
 
@@ -120,17 +120,19 @@ namespace EventSourced.Tests.Persistence
             await repository.SaveAsync(testAggregate, CancellationToken.None);
 
             //Assert
-            mockDomainEventListener.Verify(s => s.HandleDomainEventAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+            mockDomainEventListener.Verify(
+                s => s.HandleDomainEventAsync(It.IsAny<Type>(), It.IsAny<Guid>(), It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()), 
+                Times.Once);
         }
 
-        private void SetupEventsInEventStore(string streamId, IEnumerable<IDomainEvent> domainEvents)
+        private void SetupEventsInEventStore(Guid streamId, IEnumerable<IDomainEvent> domainEvents)
         {
             eventStoreMock
                 .Setup(s => s.GetByStreamIdAsync(streamId, It.IsAny<Type>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(domainEvents.ToArray());
         }
 
-        private void SetupMultipleAggregateEventsInEventStore(IDictionary<string, IDomainEvent[]> aggregateToEventsMap)
+        private void SetupMultipleAggregateEventsInEventStore(IDictionary<Guid, IDomainEvent[]> aggregateToEventsMap)
         {
             eventStoreMock
                 .Setup(s => s.GetAllStreamsOfType(It.IsAny<Type>(), It.IsAny<CancellationToken>()))
@@ -140,23 +142,23 @@ namespace EventSourced.Tests.Persistence
         private void VerifyEventStoreSaveMethodCalled()
         {
             eventStoreMock.Verify(
-                s => s.StoreEventsAsync(It.IsAny<string>(),
+                s => s.StoreEventsAsync(It.IsAny<Guid>(),
                     It.IsAny<Type>(),
                     It.IsAny<IList<IDomainEvent>>(),
                     It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
-        private IRepository<TestAggregate, Guid> CreateSut(params IDomainEventHandler[] domainEventHandlers)
+        private IRepository<TestAggregate> CreateSut(params IDomainEventHandler[] domainEventHandlers)
         {
-            return new Repository<TestAggregate, Guid>(eventStoreMock.Object, domainEventHandlers.ToList());
+            return new Repository<TestAggregate>(eventStoreMock.Object, domainEventHandlers.ToList());
         }
 
         private class TestEvent : DomainEvent
         {
         }
 
-        private class TestAggregate : AggregateRoot<Guid>
+        private class TestAggregate : AggregateRoot
         {
             public TestAggregate()
                 : this(Guid.NewGuid())

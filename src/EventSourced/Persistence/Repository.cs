@@ -8,9 +8,8 @@ using EventSourced.Helpers;
 
 namespace EventSourced.Persistence
 {
-    public class Repository<TAggregateRoot, TAggregateRootId> : IRepository<TAggregateRoot, TAggregateRootId>
-        where TAggregateRoot : AggregateRoot<TAggregateRootId>
-        where TAggregateRootId : notnull
+    public class Repository<TAggregateRoot> : IRepository<TAggregateRoot>
+        where TAggregateRoot : AggregateRoot
     {
         private readonly IEventStore _eventStore;
         private readonly IEnumerable<IDomainEventHandler> _domainEventHandlers;
@@ -24,13 +23,13 @@ namespace EventSourced.Persistence
         public async Task SaveAsync(TAggregateRoot aggregateRoot, CancellationToken ct)
         {
             var newDomainEvents = aggregateRoot.DequeueDomainEvents();
-            await _eventStore.StoreEventsAsync(aggregateRoot.Id.ToString(), typeof(TAggregateRoot), newDomainEvents, ct);
-            await InvokeDomainEventHandlersAsync(newDomainEvents, ct);
+            await _eventStore.StoreEventsAsync(aggregateRoot.Id, typeof(TAggregateRoot), newDomainEvents, ct);
+            await InvokeDomainEventHandlersAsync(aggregateRoot.Id, newDomainEvents, ct);
         }
 
-        public async Task<TAggregateRoot> GetByIdAsync(TAggregateRootId id, CancellationToken ct)
+        public async Task<TAggregateRoot> GetByIdAsync(Guid id, CancellationToken ct)
         {
-            var domainEvents = await _eventStore.GetByStreamIdAsync(id.ToString(), typeof(TAggregateRoot), ct);
+            var domainEvents = await _eventStore.GetByStreamIdAsync(id, typeof(TAggregateRoot), ct);
             var aggregateRoot = ConstructAggregateRoot(id);
             aggregateRoot.ApplyEventsToObject(domainEvents);
             return aggregateRoot;
@@ -42,7 +41,7 @@ namespace EventSourced.Persistence
             var aggregateCollection = new List<TAggregateRoot>();
             foreach (var (streamId, events) in aggregateToEventsMap)
             {
-                var aggregateRootId = streamId.ToAggregateRootId<TAggregateRootId>();
+                var aggregateRootId = streamId;
                 var aggregateRoot = ConstructAggregateRoot(aggregateRootId);
                 aggregateRoot.ApplyEventsToObject(events);
                 aggregateCollection.Add(aggregateRoot);
@@ -50,18 +49,18 @@ namespace EventSourced.Persistence
             return aggregateCollection;
         }
 
-        private async Task InvokeDomainEventHandlersAsync(IList<IDomainEvent> domainEvents, CancellationToken ct)
+        private async Task InvokeDomainEventHandlersAsync(Guid aggregateRootId, IList<IDomainEvent> domainEvents, CancellationToken ct)
         {
             foreach (var domainEventHandler in _domainEventHandlers)
             {
                 foreach (var domainEvent in domainEvents)
                 {
-                    await domainEventHandler.HandleDomainEventAsync(domainEvent, ct);
+                    await domainEventHandler.HandleDomainEventAsync(typeof(TAggregateRoot), aggregateRootId, domainEvent, ct);
                 }
             }
         }
 
-        private static TAggregateRoot ConstructAggregateRoot(TAggregateRootId id)
+        private static TAggregateRoot ConstructAggregateRoot(Guid id)
         {
             var aggregateRoot = (TAggregateRoot) Activator.CreateInstance(typeof(TAggregateRoot), id)!;
             return aggregateRoot;

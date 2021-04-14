@@ -14,6 +14,7 @@ namespace EventSourced.Tests.Projections.Automatic
     {
         private readonly Mock<IManualProjectionBuilder> _manualProjectionBuilderMock = new();
         private readonly Mock<IProjectionStore> _projectionStoreMock = new();
+        private readonly Mock<IEventStore> _eventStoreMock = new();
 
         [Fact]
         public async Task RebuildAllProjectionsAsync_WithRegisteredProjection_RebuildsThem()
@@ -37,7 +38,8 @@ namespace EventSourced.Tests.Projections.Automatic
             return new AutomaticProjectionRebuilder(
                 options,
                 _manualProjectionBuilderMock.Object,
-                _projectionStoreMock.Object);
+                _projectionStoreMock.Object,
+                _eventStoreMock.Object);
         }
 
         private class TestProjection

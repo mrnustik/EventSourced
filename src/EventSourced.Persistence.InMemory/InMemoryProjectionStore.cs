@@ -25,10 +25,20 @@ namespace EventSourced.Persistence.InMemory
             return Task.FromResult(projection);
         }
 
+        public Task<object?> LoadAggregateProjectionAsync(Type aggregateRootProjection, Guid aggregateRootId, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task StoreProjectionAsync(object projection, CancellationToken ct)
         {
             ProjectionsMap[projection.GetType()] = projection;
             return Task.CompletedTask;
+        }
+
+        public Task StoreAggregateProjectionAsync(Guid streamId, object aggregateProjection, CancellationToken ct)
+        {
+            throw new NotImplementedException();
         }
     }
 }

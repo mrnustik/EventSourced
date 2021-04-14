@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain.Events;
@@ -14,6 +15,8 @@ namespace EventSourced.Tests.Projections.Automatic
     {
         private readonly Mock<IAutomaticProjectionsEventMapper> _automaticProjectionEventMapperMock = new();
         private readonly Mock<IProjectionStore> _projectionStoreMock = new();
+        private static readonly Type AnyAggregateType = typeof(object);
+        private static readonly Guid AnyAggregateId = Guid.NewGuid();
         
         [Fact]
         public async Task HandleDomainEventAsync_WithNonExistingProjection_CreatesIt()
@@ -25,7 +28,7 @@ namespace EventSourced.Tests.Projections.Automatic
             var sut = CreateSut();
             
             //Act
-            await sut.HandleDomainEventAsync(domainEvent, CancellationToken.None);
+            await sut.HandleDomainEventAsync(AnyAggregateType, AnyAggregateId, domainEvent, CancellationToken.None);
 
             //Assert
             var storedProjection = GetProjectionStoredInProjectionStore();
@@ -50,7 +53,7 @@ namespace EventSourced.Tests.Projections.Automatic
             var sut = CreateSut();
             
             //Act
-            await sut.HandleDomainEventAsync(domainEvent, CancellationToken.None);
+            await sut.HandleDomainEventAsync(AnyAggregateType, AnyAggregateId, domainEvent, CancellationToken.None);
 
             //Assert
             var updatedProjection = GetProjectionStoredInProjectionStore();
@@ -76,8 +79,7 @@ namespace EventSourced.Tests.Projections.Automatic
         private TestProjection GetProjectionStoredInProjectionStore()
         {
             return _projectionStoreMock.Invocations
-                .Where(i => i.Method.Name == nameof(IProjectionStore.StoreProjectionAsync))
-                .Single()
+                .Single(i => i.Method.Name == nameof(IProjectionStore.StoreProjectionAsync))
                 .Arguments
                 .OfType<TestProjection>()
                 .Single();

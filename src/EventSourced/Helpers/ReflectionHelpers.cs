@@ -32,11 +32,11 @@ namespace EventSourced.Helpers
                 .Select(p => p.ParameterType);
         }
 
-        public static (Type aggregateRootType, Type aggregateIdType) GetAggregateInformationFromProjection(
+        public static Type GetAggregateRootTypeFromProjection(
             Type aggregateProjectionType)
         {
             var projectionType = aggregateProjectionType;
-            while (!projectionType.IsGenericType || projectionType.GetGenericTypeDefinition() != typeof(AggregateProjection<,>))
+            while (!projectionType.IsGenericType || projectionType.GetGenericTypeDefinition() != typeof(AggregateProjection<>))
             {
                 projectionType = aggregateProjectionType.BaseType;
                 if (projectionType == null)
@@ -45,7 +45,7 @@ namespace EventSourced.Helpers
                 }
             }
             var genericArguments = projectionType.GetGenericArguments();
-            return (genericArguments[0], genericArguments[1]);
+            return genericArguments.Single();
         }
     }
 }

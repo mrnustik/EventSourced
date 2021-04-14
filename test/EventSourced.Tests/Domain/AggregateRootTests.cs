@@ -1,6 +1,6 @@
 ﻿using System;
-using EventSourced.Tests.TestDoubles.AggregateRoots;
-using EventSourced.Tests.TestDoubles.DomainEvents;
+using EventSourced.Domain;
+using EventSourced.Domain.Events;
 using FluentAssertions;
 using Xunit;
 
@@ -67,6 +67,36 @@ namespace EventSourced.Tests.Domain
         private TestAggregateRootWithApplyForTestEvent CreateTestAggregateRootWithApplyForTestEvent()
         {
             return new(Guid.NewGuid());
+        }
+        
+        private class TestAggregateRootWithApplyForTestEvent : AggregateRoot
+        {
+            public TestAggregateRootWithApplyForTestEvent(Guid id) : base(id)
+            {
+            }
+
+            public string ParameterValue { get; private set; } = string.Empty;
+
+            public void EnqueueTestDomainEvent(string parameter)
+            {
+                var domainEvent = new TestDomainEvent(parameter);
+                EnqueueAndApplyEvent(domainEvent);
+            }
+
+            private void Apply(TestDomainEvent domainEvent)
+            {
+                ParameterValue = domainEvent.Parameter;
+            }
+        }
+        
+        private class TestDomainEvent : DomainEvent
+        {
+            public TestDomainEvent(string parameter)
+            {
+                Parameter = parameter;
+            }
+
+            public string Parameter { get; }
         }
     }
 }

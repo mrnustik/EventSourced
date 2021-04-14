@@ -52,12 +52,12 @@ namespace EventSourced.Tests.Projections
                 new TestEvent(),
                 new TestEvent()
             };
-            SetupEventsInEventStore(aggregateId.ToString(), existingEvents);
+            SetupEventsInEventStore(aggregateId, existingEvents);
             var sut = CreateSut();
 
             //Act
             var projection =
-                await sut.BuildAggregateProjection<EventCountAggregateProjection, TestAggregateRoot, Guid>(aggregateId, CancellationToken.None);
+                await sut.BuildAggregateProjection<EventCountAggregateProjection, TestAggregateRoot>(aggregateId, CancellationToken.None);
 
             //Assert
             projection.Id
@@ -69,7 +69,7 @@ namespace EventSourced.Tests.Projections
                 .Be(4);
         }
 
-        private void SetupEventsInEventStore(string streamId, IEnumerable<IDomainEvent> domainEvents)
+        private void SetupEventsInEventStore(Guid streamId, IEnumerable<IDomainEvent> domainEvents)
         {
             _eventStoreMock
                 .Setup(s => s.GetByStreamIdAsync(streamId, It.IsAny<Type>(), It.IsAny<CancellationToken>()))
@@ -87,7 +87,7 @@ namespace EventSourced.Tests.Projections
             return new ManualProjectionBuilder(_eventStoreMock.Object);
         }
 
-        private class TestAggregateRoot : AggregateRoot<Guid>
+        private class TestAggregateRoot : AggregateRoot
         {
             public TestAggregateRoot(Guid id) : base(id)
             {
@@ -108,7 +108,7 @@ namespace EventSourced.Tests.Projections
             }
         }
         
-        private class EventCountAggregateProjection : AggregateProjection<TestAggregateRoot, Guid>
+        private class EventCountAggregateProjection : AggregateProjection<TestAggregateRoot>
         {
             public int AppliedEventsCount { get; private set; }
             

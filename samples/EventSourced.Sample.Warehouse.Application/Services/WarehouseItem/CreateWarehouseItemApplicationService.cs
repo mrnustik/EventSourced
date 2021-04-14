@@ -8,9 +8,9 @@ namespace EventSourced.Sample.Warehouse.Application.Services.WarehouseItem
 {
     public class CreateWarehouseItemApplicationService : ApplicationServiceBase, ICreateWarehouseItemApplicationService
     {
-        private readonly IRepository<WarehouseItemAggregateRoot, Guid> _repository;
+        private readonly IRepository<WarehouseItemAggregateRoot> _repository;
 
-        public CreateWarehouseItemApplicationService(IRepository<WarehouseItemAggregateRoot, Guid> repository)
+        public CreateWarehouseItemApplicationService(IRepository<WarehouseItemAggregateRoot> repository)
         {
             _repository = repository;
         }

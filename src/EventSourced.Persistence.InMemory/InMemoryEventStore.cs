@@ -22,7 +22,7 @@ namespace EventSourced.Persistence.InMemory
 
         private ConcurrentDictionary<StreamIdentification, List<IDomainEvent>> StreamsDictionary { get; }
 
-        public Task StoreEventsAsync(string streamId, Type aggregateRootType, IList<IDomainEvent> domainEvents, CancellationToken ct)
+        public Task StoreEventsAsync(Guid streamId, Type aggregateRootType, IList<IDomainEvent> domainEvents, CancellationToken ct)
         {
             var streamIdentification = new StreamIdentification(streamId, aggregateRootType);
             StreamsDictionary.AddOrUpdate(streamIdentification,
@@ -31,7 +31,7 @@ namespace EventSourced.Persistence.InMemory
             return Task.CompletedTask;
         }
 
-        public Task<IDomainEvent[]> GetByStreamIdAsync(string streamId, Type aggregateRootType, CancellationToken ct)
+        public Task<IDomainEvent[]> GetByStreamIdAsync(Guid streamId, Type aggregateRootType, CancellationToken ct)
         {
             var streamIdentification = new StreamIdentification(streamId, aggregateRootType);
 
@@ -44,9 +44,9 @@ namespace EventSourced.Persistence.InMemory
             throw new NotImplementedException();
         }
 
-        public Task<IDictionary<string, IDomainEvent[]>> GetAllStreamsOfType(Type aggregateRootType, CancellationToken ct)
+        public Task<IDictionary<Guid, IDomainEvent[]>> GetAllStreamsOfType(Type aggregateRootType, CancellationToken ct)
         {
-            IDictionary<string, IDomainEvent[]> allStreams =
+            IDictionary<Guid, IDomainEvent[]> allStreams =
                 StreamsDictionary.Where(d => d.Key.AggregateRootType == aggregateRootType)
                     .Select(d => new {d.Key.StreamId, DomainEvents = d.Value.ToArray()})
                     .ToDictionary(d => d.StreamId, d => d.DomainEvents);
@@ -63,5 +63,5 @@ namespace EventSourced.Persistence.InMemory
         }
     }
 
-    public record StreamIdentification(string StreamId, Type AggregateRootType);
+    public record StreamIdentification(Guid StreamId, Type AggregateRootType);
 }

@@ -26,7 +26,7 @@ namespace EventSourced.Tests.Configuration
 
             //Assert
             var serviceProvider = serviceCollection.BuildServiceProvider();
-            var repository = serviceProvider.GetRequiredService<IRepository<TestAggregateRoot, Guid>>();
+            var repository = serviceProvider.GetRequiredService<IRepository<TestAggregateRoot>>();
             repository
                 .Should()
                 .NotBeNull();
@@ -39,7 +39,7 @@ namespace EventSourced.Tests.Configuration
             }
         }
 
-        private class TestAggregateRoot : AggregateRoot<Guid>
+        private class TestAggregateRoot : AggregateRoot
         {
             public TestAggregateRoot() : base(Guid.NewGuid())
             {

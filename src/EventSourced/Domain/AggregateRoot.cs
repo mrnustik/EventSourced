@@ -1,21 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using EventSourced.Domain.Events;
 using EventSourced.Helpers;
 
 namespace EventSourced.Domain
 {
-    public abstract class AggregateRoot<TId>
-        where TId : notnull
+    public abstract class AggregateRoot
     {
         private readonly Queue<IDomainEvent> uncommittedDomainEvents;
 
-        protected AggregateRoot(TId id)
+        protected AggregateRoot(Guid id)
         {
             Id = id;
             uncommittedDomainEvents = new Queue<IDomainEvent>();
         }
 
-        public TId Id { get; }
+        public Guid Id { get; }
 
         public IList<IDomainEvent> DequeueDomainEvents()
         {

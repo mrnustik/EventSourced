@@ -12,11 +12,10 @@ namespace EventSourced.Projections
         
         Task<object> BuildProjectionAsync(Type projectionType, CancellationToken ct);
 
-        Task<TAggregateProjection> BuildAggregateProjection<TAggregateProjection, TAggregateRoot, TAggregateRootId>(
-            TAggregateRootId id,
+        Task<TAggregateProjection> BuildAggregateProjection<TAggregateProjection, TAggregateRoot>(
+            Guid aggregateRootId,
             CancellationToken ct)
-            where TAggregateProjection : AggregateProjection<TAggregateRoot, TAggregateRootId>
-            where TAggregateRootId : notnull
-            where TAggregateRoot : AggregateRoot<TAggregateRootId>;
+            where TAggregateProjection : AggregateProjection<TAggregateRoot>
+            where TAggregateRoot : AggregateRoot;
     }
 }

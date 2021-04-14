@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using EventSourced.Configuration;
 using EventSourced.Domain.Events;
 using EventSourced.Helpers;
@@ -13,6 +14,7 @@ namespace EventSourced.Projections.Automatic
         private bool _isInitialized;
         
         private Dictionary<Type, ICollection<Type>> EventsToProjectionMap { get; } = new();
+        private Dictionary<Type, ICollection<Type>> AggregateToAggregateProjectionMap { get; } = new();
 
         public AutomaticProjectionsEventMapper(AutomaticProjectionOptions options)
         {
@@ -22,20 +24,8 @@ namespace EventSourced.Projections.Automatic
         public void Initialize()
         {
             EnsureNotAlreadyInitialized();
-            foreach (var projectionType in _options.RegisteredAutomaticProjections)
-            {
-                var applicableEvents = ReflectionHelpers.GetTypesOfDomainEventsApplicableToObject(projectionType)
-                    .ToList();
-                if (!applicableEvents.Any())
-                {
-                    throw new ArgumentException($"Projection of type {projectionType.Name} has no applicable event.");
-                }
-                
-                foreach (var applicableEvent in applicableEvents)
-                {
-                    AddOrUpdateProjectionInEventMap(applicableEvent, projectionType);
-                }
-            }
+            InitializeAutomaticProjectionsMap();
+            InitializeAutomaticAggregateProjectionMap();
             _isInitialized = true;
         }
 
@@ -49,6 +39,45 @@ namespace EventSourced.Projections.Automatic
             else
             {
                 return Enumerable.Empty<Type>();
+            }
+        }
+        
+        public IEnumerable<Type> GetProjectionsAffectedByAggregateChange(Type aggregateType)
+        {
+            if (AggregateToAggregateProjectionMap.TryGetValue(aggregateType, out var eventsCollection))
+            {
+                return eventsCollection.ToList().AsReadOnly();
+            }
+            else
+            {
+                return Enumerable.Empty<Type>();
+            }
+        }
+        
+        private void InitializeAutomaticAggregateProjectionMap()
+        {
+            foreach (var aggregateProjectionType in _options.RegisteredAutomaticAggregateProjections)
+            {
+                var aggregateRootType = ReflectionHelpers.GetAggregateRootTypeFromProjection(aggregateProjectionType);
+                AddOrUpdateAggregateProjectionInAggregateMap(aggregateRootType, aggregateProjectionType);
+            }
+        }
+
+        private void InitializeAutomaticProjectionsMap()
+        {
+            foreach (var projectionType in _options.RegisteredAutomaticProjections)
+            {
+                var applicableEvents = ReflectionHelpers.GetTypesOfDomainEventsApplicableToObject(projectionType)
+                    .ToList();
+                if (!applicableEvents.Any())
+                {
+                    throw new ArgumentException($"Projection of type {projectionType.Name} has no applicable event.");
+                }
+
+                foreach (var applicableEvent in applicableEvents)
+                {
+                    AddOrUpdateProjectionInEventMap(applicableEvent, projectionType);
+                }
             }
         }
         
@@ -69,6 +98,18 @@ namespace EventSourced.Projections.Automatic
             else
             {
                 EventsToProjectionMap[eventType] = new List<Type> {projectionType};
+            }
+        }
+
+        private void AddOrUpdateAggregateProjectionInAggregateMap(Type aggregateType, Type projectionType)
+        {
+            if (AggregateToAggregateProjectionMap.ContainsKey(aggregateType))
+            {
+                AggregateToAggregateProjectionMap[aggregateType].Add(projectionType);
+            }
+            else
+            {
+                AggregateToAggregateProjectionMap[aggregateType] = new List<Type> {projectionType};
             }
         }
     }
