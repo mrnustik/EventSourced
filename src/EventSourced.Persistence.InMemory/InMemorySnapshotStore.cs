@@ -26,7 +26,7 @@ namespace EventSourced.Persistence.InMemory
 
         public Task StoreSnapshotAsync(TAggregateRoot aggregateRoot, CancellationToken ct)
         {
-            var aggregateSnapshot = new AggregateSnapshot<TAggregateRoot>(aggregateRoot.Id, aggregateRoot.Version, aggregateRoot.DeepClone());
+            var aggregateSnapshot = new AggregateSnapshot<TAggregateRoot>(aggregateRoot.Id, aggregateRoot.Version, aggregateRoot.DeepCloneGeneric());
             Snapshots[aggregateRoot.Id] = aggregateSnapshot;
             return Task.CompletedTask;
         }
