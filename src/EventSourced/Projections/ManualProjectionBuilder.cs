@@ -39,14 +39,14 @@ namespace EventSourced.Projections
         public async Task<TAggregateProjection> BuildAggregateProjection<TAggregateProjection, TAggregateRoot, TAggregateRootId>(
             TAggregateRootId id,
             CancellationToken ct)
-            where TAggregateProjection : new()
+            where TAggregateProjection : AggregateProjection<TAggregateRoot, TAggregateRootId>
             where TAggregateRootId : notnull
             where TAggregateRoot : AggregateRoot<TAggregateRootId>
         {
             var types = ReflectionHelpers.GetTypesOfDomainEventsApplicableToObject(typeof(TAggregateProjection));
             var allEvents = await _eventStore.GetByStreamIdAsync(id.ToString(), typeof(TAggregateRoot), ct);
             var applicableEvents = allEvents.Where(e => types.Contains(e.GetType()));
-            var projection = new TAggregateProjection();
+            var projection = (TAggregateProjection) Activator.CreateInstance(typeof(TAggregateProjection), id)!;
             projection.ApplyEventsToObject(applicableEvents.ToArray());
             return projection;
         }
