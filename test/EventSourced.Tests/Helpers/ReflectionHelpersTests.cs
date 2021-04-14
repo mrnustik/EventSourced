@@ -1,6 +1,8 @@
 ﻿using System;
+using EventSourced.Domain;
 using EventSourced.Domain.Events;
 using EventSourced.Helpers;
+using EventSourced.Projections;
 using FluentAssertions;
 using Xunit;
 
@@ -23,6 +25,35 @@ namespace EventSourced.Tests.Helpers
                 .HaveCount(1)
                 .And
                 .ContainSingle(t => t == typeof(TestEvent));
+        }
+
+        [Fact]
+        public void GetAggregateInformationFromProjection_WithValidProjection_ReturnsAggregateInformation()
+        {
+            //Act
+            var aggregateInformation = ReflectionHelpers.GetAggregateInformationFromProjection(typeof(TestAggregateProjection));
+
+            //Assert
+            aggregateInformation
+                .aggregateRootType
+                .Should()
+                .Be(typeof(TestAggregateRoot));
+            aggregateInformation
+                .aggregateIdType
+                .Should()
+                .Be(typeof(Guid));
+        }
+
+        [Fact]
+        public void GetAggregateInformationFromProjection_WithoutValidProjection_Throws()
+        {
+            //Act
+            Action action = () => ReflectionHelpers.GetAggregateInformationFromProjection(typeof(object));
+            
+            //Assert
+            action
+                .Should()
+                .Throw<ArgumentException>();
         }
 
         private class TestEvent : DomainEvent
@@ -62,6 +93,20 @@ namespace EventSourced.Tests.Helpers
             private void Apply(TestEvent testEvent)
             {
                 Number = testEvent.Number;
+            }
+        }
+        
+        private class TestAggregateRoot : AggregateRoot<Guid>
+        {
+            public TestAggregateRoot(Guid id) : base(id)
+            {
+            }
+        }
+
+        private class TestAggregateProjection : AggregateProjection<TestAggregateRoot, Guid>
+        {
+            public TestAggregateProjection(Guid id) : base(id)
+            {
             }
         }
     }

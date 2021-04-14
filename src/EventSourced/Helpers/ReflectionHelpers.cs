@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using EventSourced.Domain.Events;
+using EventSourced.Projections;
 
 namespace EventSourced.Helpers
 {
@@ -29,6 +30,22 @@ namespace EventSourced.Helpers
                 .SelectMany(m => m.GetParameters())
                 .Where(p => p.ParameterType.IsAssignableTo(typeof(IDomainEvent)))
                 .Select(p => p.ParameterType);
+        }
+
+        public static (Type aggregateRootType, Type aggregateIdType) GetAggregateInformationFromProjection(
+            Type aggregateProjectionType)
+        {
+            var projectionType = aggregateProjectionType;
+            while (!projectionType.IsGenericType || projectionType.GetGenericTypeDefinition() != typeof(AggregateProjection<,>))
+            {
+                projectionType = aggregateProjectionType.BaseType;
+                if (projectionType == null)
+                {
+                    throw new ArgumentException("Expected subclass of type AggregateProjection.");
+                }
+            }
+            var genericArguments = projectionType.GetGenericArguments();
+            return (genericArguments[0], genericArguments[1]);
         }
     }
 }
