@@ -1,10 +1,12 @@
 using EventSourced.Configuration;
+using EventSourced.Persistence.EntityFramework.Configuration;
 using EventSourced.Persistence.InMemory.Configuration;
 using EventSourced.Sample.Warehouse.Application.Configuration;
 using EventSourced.Sample.Warehouse.Domain.WarehouseItem;
 using EventSourced.Sample.Warehouse.Domain.WarehouseItem.Projections;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,13 +33,15 @@ namespace EventSourced.Sample.Warehouse.API
             });
 
             services.AddApplicationServices();
-            services.AddEventSourced(options => options.UseInMemoryEventStore()
-                                                       .UseInMemoryProjectionStore()
-                                                       .UseInMemorySnapshotStore()
-                                                       .UseEventCountBasedSnapshotStrategy(1)
-                                                       .RegisterAutomaticProjection<WarehouseItemsCountProjection>()
-                                                       .RegisterAutomaticAggregateProjection<WarehouseItemDetailProjection,
-                                                           WarehouseItemAggregateRoot>());
+            services.AddEventSourced(options => options
+                                                .UseEntityFrameworkEventStore(
+                                                    x => x.UseSqlServer(Configuration.GetConnectionString("EventStore")))
+                                                .UseInMemoryProjectionStore()
+                                                .UseInMemorySnapshotStore()
+                                                .UseEventCountBasedSnapshotStrategy(1)
+                                                .RegisterAutomaticProjection<WarehouseItemsCountProjection>()
+                                                .RegisterAutomaticAggregateProjection<WarehouseItemDetailProjection,
+                                                    WarehouseItemAggregateRoot>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
