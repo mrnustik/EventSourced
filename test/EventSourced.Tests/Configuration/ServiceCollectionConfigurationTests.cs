@@ -4,6 +4,7 @@ using EventSourced.Domain;
 using EventSourced.Domain.Events;
 using EventSourced.Persistence;
 using EventSourced.Persistence.InMemory.Configuration;
+using EventSourced.Projections;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -22,7 +23,8 @@ namespace EventSourced.Tests.Configuration
             serviceCollection.AddEventSourced(options => options
                 .UseInMemoryEventStore()
                 .UseInMemoryProjectionStore()
-                .RegisterAutomaticProjection<TestProjection>());
+                .RegisterAutomaticProjection<TestProjection>()
+                .RegisterAutomaticAggregateProjection<TestAggregateProjection, TestAggregateRoot>());
 
             //Assert
             var serviceProvider = serviceCollection.BuildServiceProvider();
@@ -34,6 +36,17 @@ namespace EventSourced.Tests.Configuration
 
         private class TestProjection
         {
+            private void Apply(IDomainEvent eventObject)
+            {
+            }
+        }
+
+        private class TestAggregateProjection : AggregateProjection<TestAggregateRoot>
+        {
+            public TestAggregateProjection(Guid id) : base(id)
+            {
+            }
+            
             private void Apply(IDomainEvent eventObject)
             {
             }
