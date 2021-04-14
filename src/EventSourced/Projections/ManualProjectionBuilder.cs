@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain;
@@ -18,8 +19,15 @@ namespace EventSourced.Projections
 
         public async Task<TProjection> BuildProjectionAsync<TProjection>(CancellationToken ct) where TProjection : new()
         {
-            var types = ReflectionHelpers.GetTypesOfDomainEventsApplicableToObject(typeof(TProjection));
-            var projection = new TProjection();
+            var projectionType = typeof(TProjection);
+            var buildProjection = await BuildProjectionAsync(projectionType, ct);
+            return (TProjection) buildProjection;
+        }
+
+        public async Task<object> BuildProjectionAsync(Type projectionType, CancellationToken ct)
+        {
+            var types = ReflectionHelpers.GetTypesOfDomainEventsApplicableToObject(projectionType);
+            var projection = Activator.CreateInstance(projectionType)!;
             foreach (var type in types)
             {
                 var events = await _eventStore.GetEventsOfTypeAsync(type, ct);

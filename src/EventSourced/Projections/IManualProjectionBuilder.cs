@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain;
 
@@ -8,6 +9,8 @@ namespace EventSourced.Projections
     {
         Task<TProjection> BuildProjectionAsync<TProjection>(CancellationToken ct)
             where TProjection : new();
+        
+        Task<object> BuildProjectionAsync(Type projectionType, CancellationToken ct);
 
         Task<TAggregateProjection> BuildAggregateProjection<TAggregateProjection, TAggregateRoot, TAggregateRootId>(
             TAggregateRootId id,
