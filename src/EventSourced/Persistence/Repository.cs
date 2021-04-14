@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain;
 using EventSourced.Domain.Events;
+using EventSourced.Exceptions;
 using EventSourced.Helpers;
 
 namespace EventSourced.Persistence
@@ -22,6 +23,7 @@ namespace EventSourced.Persistence
 
         public async Task SaveAsync(TAggregateRoot aggregateRoot, CancellationToken ct)
         {
+            await VerifyAggregateDidNotChangeAsync(aggregateRoot, ct);
             var newDomainEvents = aggregateRoot.DequeueDomainEvents();
             await _eventStore.StoreEventsAsync(aggregateRoot.Id, typeof(TAggregateRoot), newDomainEvents, ct);
             await InvokeDomainEventHandlersAsync(aggregateRoot.Id, newDomainEvents, ct);
@@ -49,6 +51,19 @@ namespace EventSourced.Persistence
             return aggregateCollection;
         }
 
+        private async Task VerifyAggregateDidNotChangeAsync(TAggregateRoot aggregateRoot, CancellationToken ct)
+        {
+            if (await _eventStore.StreamExistsAsync(aggregateRoot.Id, typeof(TAggregateRoot), ct))
+            {
+                var existingAggregateRoot = await GetByIdAsync(aggregateRoot.Id, ct);
+                if (existingAggregateRoot.Version != aggregateRoot.Version)
+                {
+                    throw new AggregateVersionConflictException(
+                        $"Conflict occured when trying to save aggregate of type {typeof(TAggregateRoot).Name} version {existingAggregateRoot.Version} already exists.");
+                }
+            }
+        }
+        
         private async Task InvokeDomainEventHandlersAsync(Guid aggregateRootId, IList<IDomainEvent> domainEvents, CancellationToken ct)
         {
             foreach (var domainEventHandler in _domainEventHandlers)

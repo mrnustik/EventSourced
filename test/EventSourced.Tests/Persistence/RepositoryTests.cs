@@ -5,7 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain;
 using EventSourced.Domain.Events;
+using EventSourced.Exceptions;
 using EventSourced.Persistence;
+using EventSourced.Tests.TestDoubles.Extensions;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -61,7 +63,7 @@ namespace EventSourced.Tests.Persistence
                 new TestEvent(),
                 new TestEvent()
             };
-            SetupEventsInEventStore(aggregateId, existingEvents);
+            eventStoreMock.WithGetByStreamIdAsync(aggregateId, existingEvents);
             var repository = CreateSut();
 
             //Act
@@ -69,8 +71,8 @@ namespace EventSourced.Tests.Persistence
 
             //Assert
             aggregate.EventsCount
-                .Should()
-                .Be(4);
+                     .Should()
+                     .Be(4);
         }
 
 
@@ -87,7 +89,7 @@ namespace EventSourced.Tests.Persistence
                 new TestEvent(),
                 new TestEvent()
             };
-            SetupMultipleAggregateEventsInEventStore(new Dictionary<Guid, IDomainEvent[]>
+            eventStoreMock.WithGetAllStreamsOfType(new Dictionary<Guid, IDomainEvent[]>
             {
                 {aggregateId, existingEvents.ToArray()},
                 {aggregateId2, existingEvents.ToArray()}
@@ -106,7 +108,7 @@ namespace EventSourced.Tests.Persistence
                 .Should()
                 .OnlyContain(x => x.EventsCount == 4);
         }
-        
+
         [Fact]
         public async Task SaveAsync_WithDomainEventHandlers_HandlersAreCalled()
         {
@@ -121,31 +123,41 @@ namespace EventSourced.Tests.Persistence
 
             //Assert
             mockDomainEventListener.Verify(
-                s => s.HandleDomainEventAsync(It.IsAny<Type>(), It.IsAny<Guid>(), It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()), 
+                s => s.HandleDomainEventAsync(It.IsAny<Type>(),
+                                              It.IsAny<Guid>(),
+                                              It.IsAny<IDomainEvent>(),
+                                              It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
-        private void SetupEventsInEventStore(Guid streamId, IEnumerable<IDomainEvent> domainEvents)
+        [Fact]
+        public async Task SaveAsync_WithVersionConflict_ThrowsException()
         {
-            eventStoreMock
-                .Setup(s => s.GetByStreamIdAsync(streamId, It.IsAny<Type>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(domainEvents.ToArray());
-        }
+            //Arrange
+            var updatedAggregate = new TestAggregate();
+            updatedAggregate.SetVersion(1);
+            updatedAggregate.EnqueueTestEvent();
 
-        private void SetupMultipleAggregateEventsInEventStore(IDictionary<Guid, IDomainEvent[]> aggregateToEventsMap)
-        {
             eventStoreMock
-                .Setup(s => s.GetAllStreamsOfType(It.IsAny<Type>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(aggregateToEventsMap);
+                .WithStreamExistsAsync(true)
+                .WithGetByStreamIdAsync(updatedAggregate.Id, new[] {new TestEvent {Version = 2}});
+            var repository = CreateSut();
+
+            //Act
+            Func<Task> action = () => repository.SaveAsync(updatedAggregate, CancellationToken.None);
+
+            //Assert
+            await action.Should()
+                        .ThrowAsync<AggregateVersionConflictException>();
         }
 
         private void VerifyEventStoreSaveMethodCalled()
         {
             eventStoreMock.Verify(
                 s => s.StoreEventsAsync(It.IsAny<Guid>(),
-                    It.IsAny<Type>(),
-                    It.IsAny<IList<IDomainEvent>>(),
-                    It.IsAny<CancellationToken>()),
+                                        It.IsAny<Type>(),
+                                        It.IsAny<IList<IDomainEvent>>(),
+                                        It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
@@ -165,7 +177,8 @@ namespace EventSourced.Tests.Persistence
             {
             }
 
-            public TestAggregate(Guid id) : base(id)
+            public TestAggregate(Guid id)
+                : base(id)
             {
             }
 
@@ -174,6 +187,11 @@ namespace EventSourced.Tests.Persistence
             public void EnqueueTestEvent()
             {
                 EnqueueAndApplyEvent(new TestEvent());
+            }
+
+            public void SetVersion(int version)
+            {
+                Version = version;
             }
 
             public void Apply(TestEvent testEvent)

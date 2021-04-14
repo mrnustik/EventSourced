@@ -44,6 +44,12 @@ namespace EventSourced.Persistence.InMemory
             throw new NotImplementedException();
         }
 
+        public Task<bool> StreamExistsAsync(Guid streamId, Type aggregateRootType, CancellationToken ct)
+        {
+            var streamExists = StreamsDictionary.ContainsKey(new StreamIdentification(streamId, aggregateRootType));
+            return Task.FromResult(streamExists);
+        }
+
         public Task<IDictionary<Guid, IDomainEvent[]>> GetAllStreamsOfType(Type aggregateRootType, CancellationToken ct)
         {
             IDictionary<Guid, IDomainEvent[]> allStreams =
@@ -53,11 +59,11 @@ namespace EventSourced.Persistence.InMemory
             return Task.FromResult(allStreams);
         }
 
-        public Task<IDomainEvent[]> GetEventsOfTypeAsync(Type type, CancellationToken ct)
+        public Task<IDomainEvent[]> GetEventsOfTypeAsync(Type eventType, CancellationToken ct)
         {
             var events = StreamsDictionary.Values
                 .SelectMany(v => v)
-                .Where(v => v.GetType() == type)
+                .Where(v => v.GetType() == eventType)
                 .ToArray();
             return Task.FromResult(events);
         }

@@ -10,7 +10,8 @@ namespace EventSourced.Persistence
     {
         Task StoreEventsAsync(Guid streamId, Type aggregateRootType, IList<IDomainEvent> domainEvents, CancellationToken ct);
         Task<IDomainEvent[]> GetByStreamIdAsync(Guid streamId, Type aggregateRootType, CancellationToken ct);
+        Task<bool> StreamExistsAsync(Guid streamId, Type aggregateRootType, CancellationToken ct);
         Task<IDictionary<Guid, IDomainEvent[]>> GetAllStreamsOfType(Type aggregateRootType, CancellationToken ct);
-        Task<IDomainEvent[]> GetEventsOfTypeAsync(Type type, CancellationToken ct);
+        Task<IDomainEvent[]> GetEventsOfTypeAsync(Type eventType, CancellationToken ct);
     }
 }
