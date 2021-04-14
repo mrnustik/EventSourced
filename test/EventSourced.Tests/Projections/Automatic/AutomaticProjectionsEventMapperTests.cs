@@ -12,40 +12,40 @@ namespace EventSourced.Tests.Projections.Automatic
     public class AutomaticProjectionsEventMapperTests
     {
         private static readonly AutomaticProjectionOptions EmptyOptions = new();
-        
+
         [Fact]
         public void Initialize_WhenCalledTwice_Throws()
         {
             //Arrange
             var sut = CreateSut(EmptyOptions);
-            
+
             //Act
             Action act = () =>
             {
                 sut.Initialize();
                 sut.Initialize();
             };
-            
+
             //Assert
             act.Should()
                .Throw<InvalidOperationException>();
         }
-        
+
         [Fact]
         public void Initialize_WhenCalledWithEmptyProjection_Throws()
         {
             //Arrange
             var sut = CreateSut(CreateOptionsWithEmptyProjection());
-            
+
             //Act
             Action act = () =>
             {
                 sut.Initialize();
             };
-            
+
             //Assert
             act.Should()
-                .Throw<ArgumentException>();
+               .Throw<ArgumentException>();
         }
 
         [Fact]
@@ -54,55 +54,52 @@ namespace EventSourced.Tests.Projections.Automatic
             //Arrange
             var sut = CreateSut(EmptyOptions);
             sut.Initialize();
-            
+
             //Act
             var projectionTypes = sut.GetProjectionsAffectedByEvent(new EmptyEvent());
 
             //Assert
-            projectionTypes
-                .Should()
-                .BeEmpty();
+            projectionTypes.Should()
+                           .BeEmpty();
         }
-        
+
         [Fact]
         public void GetProjectionsAffectedByEvent_WithInitializedEvent_ReturnsIt()
         {
             //Arrange
             var sut = CreateSut(CreateOptionsWithValidProjection());
             sut.Initialize();
-            
+
             //Act
             var projectionTypes = sut.GetProjectionsAffectedByEvent(new EmptyEvent());
 
             //Assert
-            projectionTypes
-                .Should()
-                .Contain(typeof(ProjectionReactingToEmptyEvent));
+            projectionTypes.Should()
+                           .Contain(typeof(ProjectionReactingToEmptyEvent));
         }
-        
+
         [Fact]
         public void GetProjectionsAffectedByAggregateChange_WithInitializedAggregateProjection_ReturnsEmpty()
         {
             //Arrange
             var sut = CreateSut(CreateOptionsWithValidProjection());
             sut.Initialize();
-            
+
             //Act
             var projectionTypes = sut.GetProjectionsAffectedByAggregateChange(typeof(TestAggregateRoot));
 
             //Assert
-            projectionTypes
-                .Should()
-                .Contain(typeof(TestAggregateProjection));
+            projectionTypes.Should()
+                           .Contain(typeof(TestAggregateProjection));
         }
-        
+
         private AutomaticProjectionOptions CreateOptionsWithEmptyProjection()
         {
             var options = new AutomaticProjectionOptions();
             options.RegisteredAutomaticProjections.Add(typeof(EmptyProjection));
             return options;
         }
-        
+
         private AutomaticProjectionOptions CreateOptionsWithValidProjection()
         {
             var options = new AutomaticProjectionOptions();
@@ -111,7 +108,6 @@ namespace EventSourced.Tests.Projections.Automatic
             return options;
         }
 
-        
         private IAutomaticProjectionsEventMapper CreateSut(AutomaticProjectionOptions options)
         {
             return new AutomaticProjectionsEventMapper(options);
@@ -131,13 +127,14 @@ namespace EventSourced.Tests.Projections.Automatic
             {
             }
         }
-        
+
         private class TestAggregateProjection : AggregateProjection<TestAggregateRoot>
         {
-            public TestAggregateProjection(Guid id) : base(id)
+            public TestAggregateProjection(Guid id)
+                : base(id)
             {
             }
-            
+
             private void Apply(EmptyEvent emptyEvent)
             {
             }
@@ -145,7 +142,8 @@ namespace EventSourced.Tests.Projections.Automatic
 
         private class TestAggregateRoot : AggregateRoot
         {
-            public TestAggregateRoot(Guid id) : base(id)
+            public TestAggregateRoot(Guid id)
+                : base(id)
             {
             }
         }

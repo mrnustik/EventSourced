@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Persistence;
 using EventSourced.Sample.Warehouse.Domain.WarehouseItem;

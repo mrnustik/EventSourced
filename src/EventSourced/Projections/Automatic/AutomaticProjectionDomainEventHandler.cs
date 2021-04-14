@@ -10,18 +10,20 @@ namespace EventSourced.Projections.Automatic
     internal class AutomaticProjectionDomainEventHandler : IDomainEventHandler
     {
         private readonly IAutomaticProjectionsEventMapper _automaticProjectionsEventMapper;
+
         private readonly IProjectionStore _projectionStore;
 
-        public AutomaticProjectionDomainEventHandler(IAutomaticProjectionsEventMapper automaticProjectionsEventMapper, IProjectionStore projectionStore)
+        public AutomaticProjectionDomainEventHandler(IAutomaticProjectionsEventMapper automaticProjectionsEventMapper,
+                                                     IProjectionStore projectionStore)
         {
             _automaticProjectionsEventMapper = automaticProjectionsEventMapper;
             _projectionStore = projectionStore;
         }
 
         public async Task HandleDomainEventAsync(Type aggregateRootType,
-            Guid aggregateRootId,
-            IDomainEvent domainEvent,
-            CancellationToken ct)
+                                                 Guid aggregateRootId,
+                                                 IDomainEvent domainEvent,
+                                                 CancellationToken ct)
         {
             var affectedProjections = _automaticProjectionsEventMapper.GetProjectionsAffectedByEvent(domainEvent);
             foreach (var projectionType in affectedProjections)

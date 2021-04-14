@@ -9,15 +9,16 @@ namespace EventSourced.Domain
     public abstract class AggregateRoot
     {
         private readonly Queue<IDomainEvent> uncommittedDomainEvents;
+
         public int Version { get; internal set; }
+
+        public Guid Id { get; }
 
         protected AggregateRoot(Guid id)
         {
             Id = id;
             uncommittedDomainEvents = new Queue<IDomainEvent>();
         }
-
-        public Guid Id { get; }
 
         public IList<IDomainEvent> DequeueDomainEvents()
         {
@@ -26,14 +27,15 @@ namespace EventSourced.Domain
 
         protected void EnqueueAndApplyEvent(IDomainEvent domainEvent)
         {
-            domainEvent.Version = GetNextEventVersion(); 
+            domainEvent.Version = GetNextEventVersion();
             uncommittedDomainEvents.Enqueue(domainEvent);
             ApplyEvent(domainEvent);
         }
 
         private int GetNextEventVersion()
         {
-            var lastAppliedEventVersion = uncommittedDomainEvents.LastOrDefault()?.Version ?? Version;
+            var lastAppliedEventVersion = uncommittedDomainEvents.LastOrDefault()
+                                                                 ?.Version ?? Version;
             return lastAppliedEventVersion + 1;
         }
 

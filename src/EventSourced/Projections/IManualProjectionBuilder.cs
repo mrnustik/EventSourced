@@ -7,15 +7,13 @@ namespace EventSourced.Projections
 {
     public interface IManualProjectionBuilder
     {
-        Task<TProjection> BuildProjectionAsync<TProjection>(CancellationToken ct)
-            where TProjection : new();
-        
+        Task<TProjection> BuildProjectionAsync<TProjection>(CancellationToken ct) where TProjection : new();
+
         Task<object> BuildProjectionAsync(Type projectionType, CancellationToken ct);
 
         Task<TAggregateProjection> BuildAggregateProjection<TAggregateProjection, TAggregateRoot>(
             Guid aggregateRootId,
             CancellationToken ct)
-            where TAggregateProjection : AggregateProjection<TAggregateRoot>
-            where TAggregateRoot : AggregateRoot;
+            where TAggregateProjection : AggregateProjection<TAggregateRoot> where TAggregateRoot : AggregateRoot;
     }
 }

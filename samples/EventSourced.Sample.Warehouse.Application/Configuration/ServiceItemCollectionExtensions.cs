@@ -8,9 +8,9 @@ namespace EventSourced.Sample.Warehouse.Application.Configuration
         public static void AddApplicationServices(this IServiceCollection serviceCollection)
         {
             serviceCollection.Scan(s => s.FromCallingAssembly()
-                .AddClasses(c => c.AssignableTo<ApplicationServiceBase>())
-                .AsSelfWithInterfaces()
-                .WithTransientLifetime());
+                                         .AddClasses(c => c.AssignableTo<ApplicationServiceBase>())
+                                         .AsSelfWithInterfaces()
+                                         .WithTransientLifetime());
         }
     }
 }

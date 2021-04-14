@@ -38,9 +38,7 @@ namespace EventSourced.Projections
 
         public async Task<TAggregateProjection> BuildAggregateProjection<TAggregateProjection, TAggregateRoot>(
             Guid aggregateRootId,
-            CancellationToken ct)
-            where TAggregateProjection : AggregateProjection<TAggregateRoot>
-            where TAggregateRoot : AggregateRoot
+            CancellationToken ct) where TAggregateProjection : AggregateProjection<TAggregateRoot> where TAggregateRoot : AggregateRoot
         {
             var types = ReflectionHelpers.GetTypesOfDomainEventsApplicableToObject(typeof(TAggregateProjection));
             var allEvents = await _eventStore.GetByStreamIdAsync(aggregateRootId, typeof(TAggregateRoot), ct);

@@ -6,16 +6,18 @@ namespace EventSourced.Sample.Warehouse.Domain.WarehouseItem
 {
     public class WarehouseItemAggregateRoot : AggregateRoot
     {
-        public WarehouseItemAggregateRoot(string title) : base(Guid.NewGuid())
+        public string Title { get; private set; } = string.Empty;
+
+        public WarehouseItemAggregateRoot(string title)
+            : base(Guid.NewGuid())
         {
             EnqueueAndApplyEvent(new WarehouseItemCreatedDomainEvent(Id, title));
         }
 
-        public WarehouseItemAggregateRoot(Guid id) : base(id)
+        public WarehouseItemAggregateRoot(Guid id)
+            : base(id)
         {
         }
-
-        public string Title { get; private set; } = string.Empty;
 
         public void Apply(WarehouseItemCreatedDomainEvent @event)
         {

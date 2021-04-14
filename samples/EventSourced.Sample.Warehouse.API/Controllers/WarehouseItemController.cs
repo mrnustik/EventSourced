@@ -13,13 +13,12 @@ namespace EventSourced.Sample.Warehouse.API.Controllers
     public class WarehouseItemController : ControllerBase
     {
         private readonly ICreateWarehouseItemApplicationService _createWarehouseItemApplicationService;
-
-        private readonly IWarehouseItemDetailApplicationService _warehouseItemDetailApplicationService;
         private readonly IGetAllWarehouseItemsApplicationService _getAllWarehouseItemsApplicationService;
+        private readonly IWarehouseItemDetailApplicationService _warehouseItemDetailApplicationService;
 
         public WarehouseItemController(ICreateWarehouseItemApplicationService createWarehouseItemApplicationService,
-            IGetAllWarehouseItemsApplicationService getAllWarehouseItemsApplicationService,
-            IWarehouseItemDetailApplicationService warehouseItemDetailApplicationService)
+                                       IGetAllWarehouseItemsApplicationService getAllWarehouseItemsApplicationService,
+                                       IWarehouseItemDetailApplicationService warehouseItemDetailApplicationService)
         {
             _createWarehouseItemApplicationService = createWarehouseItemApplicationService;
             _getAllWarehouseItemsApplicationService = getAllWarehouseItemsApplicationService;
@@ -27,9 +26,7 @@ namespace EventSourced.Sample.Warehouse.API.Controllers
         }
 
         [HttpPost("create")]
-        public Task Create([FromBody]
-            CreateWarehouseItemRequest request,
-            CancellationToken ct)
+        public Task Create([FromBody] CreateWarehouseItemRequest request, CancellationToken ct)
         {
             return _createWarehouseItemApplicationService.CreateWarehouseItemAsync(request.Title, ct);
         }
@@ -39,13 +36,13 @@ namespace EventSourced.Sample.Warehouse.API.Controllers
         {
             return _getAllWarehouseItemsApplicationService.GetAllAsync(ct);
         }
-        
+
         [HttpGet("count")]
         public Task<int> GetCount(CancellationToken ct)
         {
             return _getAllWarehouseItemsApplicationService.GetCountAsync(ct);
         }
-        
+
         [HttpGet("detail/{id:guid}")]
         public Task<WarehouseItemDetailModel> GetDetail(Guid id, CancellationToken ct)
         {

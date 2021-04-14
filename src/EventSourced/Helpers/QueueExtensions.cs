@@ -7,7 +7,10 @@ namespace EventSourced.Helpers
         public static IList<TItem> DequeueAll<TItem>(this Queue<TItem> queue)
         {
             var list = new List<TItem>();
-            while (queue.TryDequeue(out var result)) list.Add(result);
+            while (queue.TryDequeue(out var result))
+            {
+                list.Add(result);
+            }
             return list;
         }
     }

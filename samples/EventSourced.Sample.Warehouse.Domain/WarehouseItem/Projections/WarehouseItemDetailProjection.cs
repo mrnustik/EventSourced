@@ -7,8 +7,9 @@ namespace EventSourced.Sample.Warehouse.Domain.WarehouseItem.Projections
     public class WarehouseItemDetailProjection : AggregateProjection<WarehouseItemAggregateRoot>
     {
         public string Title { get; private set; } = string.Empty;
-        
-        public WarehouseItemDetailProjection(Guid id) : base(id)
+
+        public WarehouseItemDetailProjection(Guid id)
+            : base(id)
         {
         }
 

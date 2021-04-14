@@ -31,9 +31,8 @@ namespace EventSourced.Tests.Persistence
 
             //Assert
             var domainEventsInQueue = testAggregate.DequeueDomainEvents();
-            domainEventsInQueue
-                .Should()
-                .BeEmpty();
+            domainEventsInQueue.Should()
+                               .BeEmpty();
         }
 
         [Fact]
@@ -70,11 +69,10 @@ namespace EventSourced.Tests.Persistence
             var aggregate = await repository.GetByIdAsync(aggregateId, CancellationToken.None);
 
             //Assert
-            aggregate.EventsCount
-                     .Should()
+            aggregate.EventsCount.Should()
                      .Be(4);
         }
-        
+
         [Fact]
         public async Task GetByIdAsync_WithExistingAggregate_VersionIsSetCorrectly()
         {
@@ -86,7 +84,7 @@ namespace EventSourced.Tests.Persistence
                 new TestEvent(2),
                 new TestEvent(3),
                 new TestEvent(4),
-                new TestEvent(5),
+                new TestEvent(5)
             };
             eventStoreMock.WithGetByStreamIdAsync(aggregateId, existingEvents);
             var repository = CreateSut();
@@ -95,11 +93,9 @@ namespace EventSourced.Tests.Persistence
             var aggregate = await repository.GetByIdAsync(aggregateId, CancellationToken.None);
 
             //Assert
-            aggregate.Version
-                     .Should()
+            aggregate.Version.Should()
                      .Be(5);
         }
-
 
         [Fact]
         public async Task GetAllAsync_WithExistingAggregates_RebuildsAllFromEvents()
@@ -125,13 +121,11 @@ namespace EventSourced.Tests.Persistence
             var aggregates = await repository.GetAllAsync(CancellationToken.None);
 
             //Assert
-            aggregates
-                .Should()
-                .HaveCount(2);
+            aggregates.Should()
+                      .HaveCount(2);
 
-            aggregates
-                .Should()
-                .OnlyContain(x => x.EventsCount == 4);
+            aggregates.Should()
+                      .OnlyContain(x => x.EventsCount == 4);
         }
 
         [Fact]
@@ -163,9 +157,8 @@ namespace EventSourced.Tests.Persistence
             updatedAggregate.SetVersion(1);
             updatedAggregate.EnqueueTestEvent();
 
-            eventStoreMock
-                .WithStreamExistsAsync(true)
-                .WithGetByStreamIdAsync(updatedAggregate.Id, new[] {new TestEvent {Version = 2}});
+            eventStoreMock.WithStreamExistsAsync(true)
+                          .WithGetByStreamIdAsync(updatedAggregate.Id, new[] {new TestEvent {Version = 2}});
             var repository = CreateSut();
 
             //Act
@@ -175,7 +168,7 @@ namespace EventSourced.Tests.Persistence
             await action.Should()
                         .ThrowAsync<AggregateVersionConflictException>();
         }
-        
+
         [Fact]
         public async Task SaveAsync_WithExistingValueWithoutVersionConflict_ThrowsException()
         {
@@ -184,9 +177,8 @@ namespace EventSourced.Tests.Persistence
             updatedAggregate.SetVersion(1);
             updatedAggregate.EnqueueTestEvent();
 
-            eventStoreMock
-                .WithStreamExistsAsync(true)
-                .WithGetByStreamIdAsync(updatedAggregate.Id, new[] {new TestEvent {Version = 1}});
+            eventStoreMock.WithStreamExistsAsync(true)
+                          .WithGetByStreamIdAsync(updatedAggregate.Id, new[] {new TestEvent {Version = 1}});
             var repository = CreateSut();
 
             //Act
@@ -198,12 +190,11 @@ namespace EventSourced.Tests.Persistence
 
         private void VerifyEventStoreSaveMethodCalled()
         {
-            eventStoreMock.Verify(
-                s => s.StoreEventsAsync(It.IsAny<Guid>(),
-                                        It.IsAny<Type>(),
-                                        It.IsAny<IList<IDomainEvent>>(),
-                                        It.IsAny<CancellationToken>()),
-                Times.Once);
+            eventStoreMock.Verify(s => s.StoreEventsAsync(It.IsAny<Guid>(),
+                                                          It.IsAny<Type>(),
+                                                          It.IsAny<IList<IDomainEvent>>(),
+                                                          It.IsAny<CancellationToken>()),
+                                  Times.Once);
         }
 
         private IRepository<TestAggregate> CreateSut(params IDomainEventHandler[] domainEventHandlers)
@@ -225,6 +216,8 @@ namespace EventSourced.Tests.Persistence
 
         private class TestAggregate : AggregateRoot
         {
+            public int EventsCount { get; private set; }
+
             public TestAggregate()
                 : this(Guid.NewGuid())
             {
@@ -234,8 +227,6 @@ namespace EventSourced.Tests.Persistence
                 : base(id)
             {
             }
-
-            public int EventsCount { get; private set; }
 
             public void EnqueueTestEvent()
             {

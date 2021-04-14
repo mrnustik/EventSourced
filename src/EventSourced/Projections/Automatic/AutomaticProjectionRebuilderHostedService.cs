@@ -18,6 +18,9 @@ namespace EventSourced.Projections.Automatic
             return _automaticProjectionRebuilder.RebuildAllRegisteredAutomaticProjections(ct);
         }
 
-        public Task StopAsync(CancellationToken ct) => Task.CompletedTask;
+        public Task StopAsync(CancellationToken ct)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

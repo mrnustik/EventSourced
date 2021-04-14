@@ -20,11 +20,9 @@ namespace EventSourced.Tests.Helpers
             var applicableEvents = ReflectionHelpers.GetTypesOfDomainEventsApplicableToObject(type);
 
             //Assert
-            applicableEvents
-                .Should()
-                .HaveCount(1)
-                .And
-                .ContainSingle(t => t == typeof(TestEvent));
+            applicableEvents.Should()
+                            .HaveCount(1)
+                            .And.ContainSingle(t => t == typeof(TestEvent));
         }
 
         [Fact]
@@ -34,9 +32,8 @@ namespace EventSourced.Tests.Helpers
             var aggregateRootType = ReflectionHelpers.GetAggregateRootTypeFromProjection(typeof(TestAggregateProjection));
 
             //Assert
-            aggregateRootType
-                .Should()
-                .Be(typeof(TestAggregateRoot));
+            aggregateRootType.Should()
+                             .Be(typeof(TestAggregateRoot));
         }
 
         [Fact]
@@ -44,21 +41,20 @@ namespace EventSourced.Tests.Helpers
         {
             //Act
             Action action = () => ReflectionHelpers.GetAggregateRootTypeFromProjection(typeof(object));
-            
+
             //Assert
-            action
-                .Should()
-                .Throw<ArgumentException>();
+            action.Should()
+                  .Throw<ArgumentException>();
         }
 
         private class TestEvent : DomainEvent
         {
+            public int Number { get; }
+
             protected TestEvent(int number)
             {
                 Number = number;
             }
-
-            public int Number { get; }
         }
 
         private class ObjectWithPublicApplyEvent
@@ -90,17 +86,19 @@ namespace EventSourced.Tests.Helpers
                 Number = testEvent.Number;
             }
         }
-        
+
         private class TestAggregateRoot : AggregateRoot
         {
-            public TestAggregateRoot(Guid id) : base(id)
+            public TestAggregateRoot(Guid id)
+                : base(id)
             {
             }
         }
 
         private class TestAggregateProjection : AggregateProjection<TestAggregateRoot>
         {
-            public TestAggregateProjection(Guid id) : base(id)
+            public TestAggregateProjection(Guid id)
+                : base(id)
             {
             }
         }

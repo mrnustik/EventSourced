@@ -21,11 +21,10 @@ namespace EventSourced.Tests.Domain
 
             //Assert
             var uncommittedDomainEvents = sut.DequeueDomainEvents();
-            uncommittedDomainEvents
-                .Should()
-                .HaveCount(1)
-                .And
-                .ContainSingle(e => e.As<TestDomainEvent>().Parameter == testParameterValue);
+            uncommittedDomainEvents.Should()
+                                   .HaveCount(1)
+                                   .And.ContainSingle(e => e.As<TestDomainEvent>()
+                                                            .Parameter == testParameterValue);
         }
 
         [Fact]
@@ -39,11 +38,10 @@ namespace EventSourced.Tests.Domain
             sut.EnqueueTestDomainEvent(testParameterValue);
 
             //Assert
-            sut.ParameterValue
-                .Should()
-                .Be(testParameterValue);
+            sut.ParameterValue.Should()
+               .Be(testParameterValue);
         }
-        
+
         [Fact]
         public void EnqueuedDomainEvent_SetsVersionsOfTheEvent()
         {
@@ -57,19 +55,13 @@ namespace EventSourced.Tests.Domain
             var dequeueDomainEvents = sut.DequeueDomainEvents();
 
             //Assert
-            dequeueDomainEvents
-                .First()
-                .Version
-                .Should()
-                .Be(1);
-            dequeueDomainEvents
-                .Last()
-                .Version
-                .Should()
-                .Be(2);
+            dequeueDomainEvents.First()
+                               .Version.Should()
+                               .Be(1);
+            dequeueDomainEvents.Last()
+                               .Version.Should()
+                               .Be(2);
         }
-
-        
 
         [Fact]
         public void EnqueuedDomainEvent_DequeuedForSecondTimeShouldBeEmpty()
@@ -84,26 +76,25 @@ namespace EventSourced.Tests.Domain
             var secondDequeuedEvents = sut.DequeueDomainEvents();
 
             //Assert
-            firstDequeuedEvents
-                .Should()
-                .HaveCount(1);
-            secondDequeuedEvents
-                .Should()
-                .BeEmpty();
+            firstDequeuedEvents.Should()
+                               .HaveCount(1);
+            secondDequeuedEvents.Should()
+                                .BeEmpty();
         }
 
         private TestAggregateRootWithApplyForTestEvent CreateTestAggregateRootWithApplyForTestEvent()
         {
             return new(Guid.NewGuid());
         }
-        
+
         private class TestAggregateRootWithApplyForTestEvent : AggregateRoot
         {
-            public TestAggregateRootWithApplyForTestEvent(Guid id) : base(id)
+            public string ParameterValue { get; private set; } = string.Empty;
+
+            public TestAggregateRootWithApplyForTestEvent(Guid id)
+                : base(id)
             {
             }
-
-            public string ParameterValue { get; private set; } = string.Empty;
 
             public void EnqueueTestDomainEvent(string parameter)
             {
@@ -116,15 +107,15 @@ namespace EventSourced.Tests.Domain
                 ParameterValue = domainEvent.Parameter;
             }
         }
-        
+
         private class TestDomainEvent : DomainEvent
         {
+            public string Parameter { get; }
+
             public TestDomainEvent(string parameter)
             {
                 Parameter = parameter;
             }
-
-            public string Parameter { get; }
         }
     }
 }

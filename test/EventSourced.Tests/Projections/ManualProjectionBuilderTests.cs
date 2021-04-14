@@ -33,11 +33,9 @@ namespace EventSourced.Tests.Projections
             //Act
             var projection = await sut.BuildProjectionAsync<EventCountProjection>(CancellationToken.None);
 
-
             //Assert
-            projection.AppliedEventsCount
-                .Should()
-                .Be(3);
+            projection.AppliedEventsCount.Should()
+                      .Be(3);
         }
 
         [Fact]
@@ -57,29 +55,28 @@ namespace EventSourced.Tests.Projections
 
             //Act
             var projection =
-                await sut.BuildAggregateProjection<EventCountAggregateProjection, TestAggregateRoot>(aggregateId, CancellationToken.None);
+                await sut.BuildAggregateProjection<EventCountAggregateProjection, TestAggregateRoot>(
+                    aggregateId,
+                    CancellationToken.None);
 
             //Assert
-            projection.Id
-                .Should()
-                .Be(aggregateId);
-            
-            projection.AppliedEventsCount
-                .Should()
-                .Be(4);
+            projection.Id.Should()
+                      .Be(aggregateId);
+
+            projection.AppliedEventsCount.Should()
+                      .Be(4);
         }
 
         private void SetupEventsInEventStore(Guid streamId, IEnumerable<IDomainEvent> domainEvents)
         {
-            _eventStoreMock
-                .Setup(s => s.GetByStreamIdAsync(streamId, It.IsAny<Type>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(domainEvents.ToArray());
+            _eventStoreMock.Setup(s => s.GetByStreamIdAsync(streamId, It.IsAny<Type>(), It.IsAny<CancellationToken>()))
+                           .ReturnsAsync(domainEvents.ToArray());
         }
 
         private void SetupExistingEventsInEventStore(IDomainEvent[] existingEvents)
         {
             _eventStoreMock.Setup(s => s.GetEventsOfTypeAsync(It.IsAny<Type>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(existingEvents);
+                           .ReturnsAsync(existingEvents);
         }
 
         private IManualProjectionBuilder CreateSut()
@@ -89,7 +86,8 @@ namespace EventSourced.Tests.Projections
 
         private class TestAggregateRoot : AggregateRoot
         {
-            public TestAggregateRoot(Guid id) : base(id)
+            public TestAggregateRoot(Guid id)
+                : base(id)
             {
             }
         }
@@ -101,21 +99,22 @@ namespace EventSourced.Tests.Projections
         private class EventCountProjection
         {
             public int AppliedEventsCount { get; private set; }
-            
+
             private void Apply(TestEvent @event)
             {
                 AppliedEventsCount++;
             }
         }
-        
+
         private class EventCountAggregateProjection : AggregateProjection<TestAggregateRoot>
         {
             public int AppliedEventsCount { get; private set; }
-            
-            public EventCountAggregateProjection(Guid id) : base(id)
+
+            public EventCountAggregateProjection(Guid id)
+                : base(id)
             {
             }
-            
+
             private void Apply(TestEvent @event)
             {
                 AppliedEventsCount++;

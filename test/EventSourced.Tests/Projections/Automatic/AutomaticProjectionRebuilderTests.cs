@@ -12,9 +12,11 @@ namespace EventSourced.Tests.Projections.Automatic
 {
     public class AutomaticProjectionRebuilderTests
     {
-        private readonly Mock<IManualProjectionBuilder> _manualProjectionBuilderMock = new();
-        private readonly Mock<IProjectionStore> _projectionStoreMock = new();
         private readonly Mock<IEventStore> _eventStoreMock = new();
+
+        private readonly Mock<IManualProjectionBuilder> _manualProjectionBuilderMock = new();
+
+        private readonly Mock<IProjectionStore> _projectionStoreMock = new();
 
         [Fact]
         public async Task RebuildAllProjectionsAsync_WithRegisteredProjection_RebuildsThem()
@@ -24,22 +26,18 @@ namespace EventSourced.Tests.Projections.Automatic
             options.RegisteredAutomaticProjections.Add(typeof(TestProjection));
             var sut = CreateSut(options);
             _manualProjectionBuilderMock.Setup(s => s.BuildProjectionAsync(It.IsAny<Type>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new TestProjection {Number = 42});
-            
+                                        .ReturnsAsync(new TestProjection {Number = 42});
+
             //Act
             await sut.RebuildAllRegisteredAutomaticProjections(CancellationToken.None);
 
             //Assert
             _projectionStoreMock.Verify(s => s.StoreProjectionAsync(It.IsAny<object>(), It.IsAny<CancellationToken>()), Times.Once);
         }
-        
+
         private AutomaticProjectionRebuilder CreateSut(AutomaticProjectionOptions options)
         {
-            return new AutomaticProjectionRebuilder(
-                options,
-                _manualProjectionBuilderMock.Object,
-                _projectionStoreMock.Object,
-                _eventStoreMock.Object);
+            return new(options, _manualProjectionBuilderMock.Object, _projectionStoreMock.Object, _eventStoreMock.Object);
         }
 
         private class TestProjection

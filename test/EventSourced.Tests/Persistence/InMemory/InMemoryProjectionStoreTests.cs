@@ -18,18 +18,16 @@ namespace EventSourced.Tests.Persistence.InMemory
         public async Task StoreProjectionAsync_WithValidValue_CanBeThenLoaded()
         {
             //Arrange
-            var projection = new TestProjection(42); 
+            var projection = new TestProjection(42);
             var sut = CreateSut();
-            
+
             //Act
             await sut.StoreProjectionAsync(projection, CancellationToken.None);
 
             //Assert
             var loadedProjection = await sut.LoadProjectionAsync<TestProjection>(CancellationToken.None);
-            loadedProjection!
-                .Number
-                .Should()
-                .Be(42);
+            loadedProjection!.Number.Should()
+                             .Be(42);
         }
 
         [Fact]
@@ -37,53 +35,51 @@ namespace EventSourced.Tests.Persistence.InMemory
         {
             //Arrange
             var sut = CreateSut();
-            
+
             //Act
             var loadedProjection = await sut.LoadProjectionAsync<TestProjection>(CancellationToken.None);
 
             //Assert
-            loadedProjection
-                .Should()
-                .BeNull();
+            loadedProjection.Should()
+                            .BeNull();
         }
-        
+
         [Fact]
         public async Task LoadProjectionAsync_WithExistingType_ReturnsIt()
         {
             //Arrange
-            var projection = new TestProjection(42); 
+            var projection = new TestProjection(42);
             var sut = CreateSut(new Dictionary<Type, object>
             {
                 {typeof(TestProjection), projection}
             });
-            
+
             //Act
             var loadedProjection = await sut.LoadProjectionAsync<TestProjection>(CancellationToken.None);
 
             //Assert
-            loadedProjection
-                .Number
-                .Should()
-                .Be(42);
+            loadedProjection.Number.Should()
+                            .Be(42);
         }
-        
-        
+
         [Fact]
         public async Task LoadAggregateProjectionAsync_WithNonExistingType_ReturnsNull()
         {
             //Arrange
             var aggregateRootId = Guid.NewGuid();
             var sut = CreateSut();
-            
+
             //Act
-            var loadedProjection = await sut.LoadAggregateProjectionAsync<TestAggregateProjection, TestAggregateRoot>(aggregateRootId, CancellationToken.None);
+            var loadedProjection =
+                await sut.LoadAggregateProjectionAsync<TestAggregateProjection, TestAggregateRoot>(
+                    aggregateRootId,
+                    CancellationToken.None);
 
             //Assert
-            loadedProjection
-                .Should()
-                .BeNull();
+            loadedProjection.Should()
+                            .BeNull();
         }
-                
+
         [Fact]
         public async Task LoadAggregateProjectionAsync_WithExistingType_ReturnsIt()
         {
@@ -94,24 +90,26 @@ namespace EventSourced.Tests.Persistence.InMemory
             await sut.StoreAggregateProjectionAsync(aggregateRootId, storedProjection, CancellationToken.None);
 
             //Act
-            var loadedProjection = await sut.LoadAggregateProjectionAsync<TestAggregateProjection, TestAggregateRoot>(aggregateRootId, CancellationToken.None);
+            var loadedProjection =
+                await sut.LoadAggregateProjectionAsync<TestAggregateProjection, TestAggregateRoot>(
+                    aggregateRootId,
+                    CancellationToken.None);
 
             //Assert
-            loadedProjection
-                .Should()
-                .NotBeNull();
+            loadedProjection.Should()
+                            .NotBeNull();
         }
 
         private IProjectionStore CreateSut()
         {
             return new InMemoryProjectionStore();
         }
-        
-        private IProjectionStore CreateSut(Dictionary<Type,object> originalState)
+
+        private IProjectionStore CreateSut(Dictionary<Type, object> originalState)
         {
             return new InMemoryProjectionStore(new ConcurrentDictionary<Type, object>(originalState));
         }
-        
+
         private class TestProjection
         {
             public int Number { get; }
@@ -121,17 +119,19 @@ namespace EventSourced.Tests.Persistence.InMemory
                 Number = number;
             }
         }
-        
+
         private class TestAggregateProjection : AggregateProjection<TestAggregateRoot>
         {
-            public TestAggregateProjection(Guid id) : base(id)
+            public TestAggregateProjection(Guid id)
+                : base(id)
             {
             }
         }
 
         private class TestAggregateRoot : AggregateRoot
         {
-            public TestAggregateRoot(Guid id) : base(id)
+            public TestAggregateRoot(Guid id)
+                : base(id)
             {
             }
         }
