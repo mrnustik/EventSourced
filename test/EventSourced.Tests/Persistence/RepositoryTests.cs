@@ -175,6 +175,26 @@ namespace EventSourced.Tests.Persistence
             await action.Should()
                         .ThrowAsync<AggregateVersionConflictException>();
         }
+        
+        [Fact]
+        public async Task SaveAsync_WithExistingValueWithoutVersionConflict_ThrowsException()
+        {
+            //Arrange
+            var updatedAggregate = new TestAggregate();
+            updatedAggregate.SetVersion(1);
+            updatedAggregate.EnqueueTestEvent();
+
+            eventStoreMock
+                .WithStreamExistsAsync(true)
+                .WithGetByStreamIdAsync(updatedAggregate.Id, new[] {new TestEvent {Version = 1}});
+            var repository = CreateSut();
+
+            //Act
+            await repository.SaveAsync(updatedAggregate, CancellationToken.None);
+
+            //Assert
+            VerifyEventStoreSaveMethodCalled();
+        }
 
         private void VerifyEventStoreSaveMethodCalled()
         {
