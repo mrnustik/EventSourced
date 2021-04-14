@@ -10,14 +10,17 @@ namespace EventSourced.Persistence
 {
     public class Repository<TAggregateRoot> : IRepository<TAggregateRoot> where TAggregateRoot : AggregateRoot
     {
-        private readonly IEnumerable<IDomainEventHandler> _domainEventHandlers;
-
         private readonly IEventStore _eventStore;
+        private readonly IEnumerable<IDomainEventHandler> _domainEventHandlers;
+        private readonly ISnapshotStore<TAggregateRoot> _snapshotStore;
 
-        public Repository(IEventStore eventStore, IEnumerable<IDomainEventHandler> domainEventHandlers)
+        public Repository(IEventStore eventStore,
+                          IEnumerable<IDomainEventHandler> domainEventHandlers,
+                          ISnapshotStore<TAggregateRoot> snapshotStore)
         {
             _eventStore = eventStore;
             _domainEventHandlers = domainEventHandlers;
+            _snapshotStore = snapshotStore;
         }
 
         public async Task SaveAsync(TAggregateRoot aggregateRoot, CancellationToken ct)
@@ -30,8 +33,8 @@ namespace EventSourced.Persistence
 
         public async Task<TAggregateRoot> GetByIdAsync(Guid id, CancellationToken ct)
         {
-            var domainEvents = await _eventStore.GetByStreamIdAsync(id, typeof(TAggregateRoot), ct);
-            var aggregateRoot = ConstructAggregateRoot(id);
+            var aggregateRoot = await LoadFromSnapshotOrCreateAsync(id, ct);
+            var domainEvents = await _eventStore.GetByStreamIdAsync(id, typeof(TAggregateRoot), aggregateRoot.Version, ct);
             aggregateRoot.RebuildFromEvents(domainEvents);
             return aggregateRoot;
         }
@@ -62,7 +65,7 @@ namespace EventSourced.Persistence
                 }
             }
         }
-
+        
         private async Task InvokeDomainEventHandlersAsync(Guid aggregateRootId, IList<IDomainEvent> domainEvents, CancellationToken ct)
         {
             foreach (var domainEventHandler in _domainEventHandlers)
@@ -72,6 +75,12 @@ namespace EventSourced.Persistence
             }
         }
 
+        private async Task<TAggregateRoot> LoadFromSnapshotOrCreateAsync(Guid id, CancellationToken ct)
+        {
+            var aggregateFromSnapshot = await _snapshotStore.LoadSnapshotAsync(id, ct);
+            return aggregateFromSnapshot ?? ConstructAggregateRoot(id);
+        }
+        
         private static TAggregateRoot ConstructAggregateRoot(Guid id)
         {
             var aggregateRoot = (TAggregateRoot) Activator.CreateInstance(typeof(TAggregateRoot), id)!;

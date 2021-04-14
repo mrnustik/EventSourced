@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain;
@@ -12,11 +13,14 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
+
 namespace EventSourced.Tests.Persistence
 {
     public class RepositoryTests
     {
         private readonly Mock<IEventStore> eventStoreMock = new();
+        private readonly Mock<ISnapshotStore<TestAggregate>> _snapshotStoreMock = new();
 
         [Fact]
         public async Task SaveAsync_WithExistingChanges_DequeuesAllEventsFromAggregate()
@@ -199,22 +203,26 @@ namespace EventSourced.Tests.Persistence
 
         private IRepository<TestAggregate> CreateSut(params IDomainEventHandler[] domainEventHandlers)
         {
-            return new Repository<TestAggregate>(eventStoreMock.Object, domainEventHandlers.ToList());
+            return new Repository<TestAggregate>(eventStoreMock.Object, domainEventHandlers.ToList(), _snapshotStoreMock.Object);
         }
 
-        private class TestEvent : DomainEvent
+        internal class TestEvent : DomainEvent
         {
+            private static int EventsCount = 0;
+            
             public TestEvent()
             {
+                Version = EventsCount++;
             }
 
             public TestEvent(int version)
             {
                 Version = version;
+                EventsCount++;
             }
         }
 
-        private class TestAggregate : AggregateRoot
+        internal class TestAggregate : AggregateRoot
         {
             public int EventsCount { get; private set; }
 

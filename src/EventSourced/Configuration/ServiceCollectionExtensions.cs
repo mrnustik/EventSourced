@@ -1,6 +1,7 @@
 ﻿using System;
 using EventSourced.Domain.Events;
 using EventSourced.Persistence;
+using EventSourced.Persistence.Null;
 using EventSourced.Projections;
 using EventSourced.Projections.Automatic;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,7 @@ namespace EventSourced.Configuration
             serviceCollection.AddTransient<IDomainEventHandler, AutomaticProjectionDomainEventHandler>();
             serviceCollection.AddTransient<IDomainEventHandler, AutomaticAggregateProjectionDomainEventHandler>();
             serviceCollection.AddTransient<IAutomaticProjectionRebuilder, AutomaticProjectionRebuilder>();
+            serviceCollection.AddTransient(typeof(ISnapshotStore<>), typeof(NullSnapshotStore<>));
 
             var options = new EventSourcedOptions(serviceCollection);
             optionsConfiguration(options);
