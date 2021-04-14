@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using EventSourced.Configuration;
 using EventSourced.Domain.Events;
 using EventSourced.Helpers;
@@ -11,8 +10,9 @@ namespace EventSourced.Projections.Automatic
     internal class AutomaticProjectionsEventMapper : IAutomaticProjectionsEventMapper
     {
         private readonly AutomaticProjectionOptions _options;
+
         private bool _isInitialized;
-        
+
         private Dictionary<Type, ICollection<Type>> EventsToProjectionMap { get; } = new();
         private Dictionary<Type, ICollection<Type>> AggregateToAggregateProjectionMap { get; } = new();
 
@@ -34,26 +34,22 @@ namespace EventSourced.Projections.Automatic
             var eventType = domainEvent.GetType();
             if (EventsToProjectionMap.TryGetValue(eventType, out var eventsCollection))
             {
-                return eventsCollection.ToList().AsReadOnly();
+                return eventsCollection.ToList()
+                                       .AsReadOnly();
             }
-            else
-            {
-                return Enumerable.Empty<Type>();
-            }
+            return Enumerable.Empty<Type>();
         }
-        
+
         public IEnumerable<Type> GetProjectionsAffectedByAggregateChange(Type aggregateType)
         {
             if (AggregateToAggregateProjectionMap.TryGetValue(aggregateType, out var eventsCollection))
             {
-                return eventsCollection.ToList().AsReadOnly();
+                return eventsCollection.ToList()
+                                       .AsReadOnly();
             }
-            else
-            {
-                return Enumerable.Empty<Type>();
-            }
+            return Enumerable.Empty<Type>();
         }
-        
+
         private void InitializeAutomaticAggregateProjectionMap()
         {
             foreach (var aggregateProjectionType in _options.RegisteredAutomaticAggregateProjections)
@@ -68,7 +64,7 @@ namespace EventSourced.Projections.Automatic
             foreach (var projectionType in _options.RegisteredAutomaticProjections)
             {
                 var applicableEvents = ReflectionHelpers.GetTypesOfDomainEventsApplicableToObject(projectionType)
-                    .ToList();
+                                                        .ToList();
                 if (!applicableEvents.Any())
                 {
                     throw new ArgumentException($"Projection of type {projectionType.Name} has no applicable event.");
@@ -80,7 +76,7 @@ namespace EventSourced.Projections.Automatic
                 }
             }
         }
-        
+
         private void EnsureNotAlreadyInitialized()
         {
             if (_isInitialized)
@@ -88,12 +84,13 @@ namespace EventSourced.Projections.Automatic
                 throw new InvalidOperationException("AutomaticProjectionEventMapper is already initialized");
             }
         }
-        
+
         private void AddOrUpdateProjectionInEventMap(Type eventType, Type projectionType)
         {
             if (EventsToProjectionMap.ContainsKey(eventType))
             {
-                EventsToProjectionMap[eventType].Add(projectionType);
+                EventsToProjectionMap[eventType]
+                    .Add(projectionType);
             }
             else
             {
@@ -105,7 +102,8 @@ namespace EventSourced.Projections.Automatic
         {
             if (AggregateToAggregateProjectionMap.ContainsKey(aggregateType))
             {
-                AggregateToAggregateProjectionMap[aggregateType].Add(projectionType);
+                AggregateToAggregateProjectionMap[aggregateType]
+                    .Add(projectionType);
             }
             else
             {

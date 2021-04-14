@@ -11,7 +11,8 @@ namespace EventSourced.Persistence.InMemory
         private ConcurrentDictionary<Type, object> ProjectionsMap { get; }
         private ConcurrentDictionary<Type, ConcurrentDictionary<Guid, object>> AggregateProjectionsMap { get; }
 
-        public InMemoryProjectionStore() : this(new ConcurrentDictionary<Type, object>())
+        public InMemoryProjectionStore()
+            : this(new ConcurrentDictionary<Type, object>())
         {
         }
 
@@ -20,7 +21,7 @@ namespace EventSourced.Persistence.InMemory
             ProjectionsMap = projectionsMap;
             AggregateProjectionsMap = new ConcurrentDictionary<Type, ConcurrentDictionary<Guid, object>>();
         }
-        
+
         public Task<object?> LoadProjectionAsync(Type projectionType, CancellationToken ct)
         {
             var projection = ProjectionsMap.GetValueOrDefault(projectionType);

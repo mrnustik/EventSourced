@@ -20,18 +20,17 @@ namespace EventSourced.Tests.Configuration
             var serviceCollection = new ServiceCollection();
 
             //Act
-            serviceCollection.AddEventSourced(options => options
-                .UseInMemoryEventStore()
-                .UseInMemoryProjectionStore()
-                .RegisterAutomaticProjection<TestProjection>()
-                .RegisterAutomaticAggregateProjection<TestAggregateProjection, TestAggregateRoot>());
+            serviceCollection.AddEventSourced(options => options.UseInMemoryEventStore()
+                                                                .UseInMemoryProjectionStore()
+                                                                .RegisterAutomaticProjection<TestProjection>()
+                                                                .RegisterAutomaticAggregateProjection<TestAggregateProjection,
+                                                                    TestAggregateRoot>());
 
             //Assert
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var repository = serviceProvider.GetRequiredService<IRepository<TestAggregateRoot>>();
-            repository
-                .Should()
-                .NotBeNull();
+            repository.Should()
+                      .NotBeNull();
         }
 
         private class TestProjection
@@ -43,10 +42,11 @@ namespace EventSourced.Tests.Configuration
 
         private class TestAggregateProjection : AggregateProjection<TestAggregateRoot>
         {
-            public TestAggregateProjection(Guid id) : base(id)
+            public TestAggregateProjection(Guid id)
+                : base(id)
             {
             }
-            
+
             private void Apply(IDomainEvent eventObject)
             {
             }
@@ -54,11 +54,13 @@ namespace EventSourced.Tests.Configuration
 
         private class TestAggregateRoot : AggregateRoot
         {
-            public TestAggregateRoot() : base(Guid.NewGuid())
+            public TestAggregateRoot()
+                : base(Guid.NewGuid())
             {
             }
 
-            public TestAggregateRoot(Guid id) : base(id)
+            public TestAggregateRoot(Guid id)
+                : base(id)
             {
             }
         }

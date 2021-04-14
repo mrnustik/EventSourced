@@ -3,8 +3,7 @@ using EventSourced.Domain;
 
 namespace EventSourced.Projections
 {
-    public abstract class AggregateProjection<TAggregateRoot>
-        where TAggregateRoot : AggregateRoot
+    public abstract class AggregateProjection<TAggregateRoot> where TAggregateRoot : AggregateRoot
     {
         public Guid Id { get; }
 

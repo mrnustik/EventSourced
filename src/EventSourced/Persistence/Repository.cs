@@ -5,15 +5,14 @@ using System.Threading.Tasks;
 using EventSourced.Domain;
 using EventSourced.Domain.Events;
 using EventSourced.Exceptions;
-using EventSourced.Helpers;
 
 namespace EventSourced.Persistence
 {
-    public class Repository<TAggregateRoot> : IRepository<TAggregateRoot>
-        where TAggregateRoot : AggregateRoot
+    public class Repository<TAggregateRoot> : IRepository<TAggregateRoot> where TAggregateRoot : AggregateRoot
     {
-        private readonly IEventStore _eventStore;
         private readonly IEnumerable<IDomainEventHandler> _domainEventHandlers;
+
+        private readonly IEventStore _eventStore;
 
         public Repository(IEventStore eventStore, IEnumerable<IDomainEventHandler> domainEventHandlers)
         {
@@ -63,15 +62,13 @@ namespace EventSourced.Persistence
                 }
             }
         }
-        
+
         private async Task InvokeDomainEventHandlersAsync(Guid aggregateRootId, IList<IDomainEvent> domainEvents, CancellationToken ct)
         {
             foreach (var domainEventHandler in _domainEventHandlers)
+            foreach (var domainEvent in domainEvents)
             {
-                foreach (var domainEvent in domainEvents)
-                {
-                    await domainEventHandler.HandleDomainEventAsync(typeof(TAggregateRoot), aggregateRootId, domainEvent, ct);
-                }
+                await domainEventHandler.HandleDomainEventAsync(typeof(TAggregateRoot), aggregateRootId, domainEvent, ct);
             }
         }
 

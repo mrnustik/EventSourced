@@ -22,9 +22,8 @@ namespace EventSourced.Tests.Helpers
             testObject!.ApplyEventsToObject(testEvent);
 
             //Assert
-            testObject.Number
-                .Should()
-                .Be(42);
+            testObject.Number.Should()
+                      .Be(42);
         }
 
         [Theory]
@@ -42,35 +41,36 @@ namespace EventSourced.Tests.Helpers
 
             //Assert
             act.Should()
-                .Throw<ArgumentException>();
+               .Throw<ArgumentException>();
         }
 
         private class TestEvent : IDomainEvent
         {
+            public int Number { get; }
+
             public TestEvent(Guid id, int number)
             {
                 Id = id;
                 Number = number;
             }
 
-            public int Number { get; }
             public Guid Id { get; }
             public int Version { get; set; }
         }
 
         private class OtherTestEvent : IDomainEvent
         {
+            public int Number { get; }
+
             public OtherTestEvent(Guid id, int number)
             {
                 Id = id;
                 Number = number;
             }
 
-            public int Number { get; }
             public Guid Id { get; }
             public int Version { get; set; }
         }
-
 
         private interface IObjectWithNumber
         {

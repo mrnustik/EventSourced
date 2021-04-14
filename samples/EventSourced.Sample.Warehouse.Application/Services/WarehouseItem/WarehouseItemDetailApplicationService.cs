@@ -24,9 +24,10 @@ namespace EventSourced.Sample.Warehouse.Application.Services.WarehouseItem
 
         public async Task<WarehouseItemDetailModel> GetWarehouseItemDetailAsync(Guid warehouseItemId, CancellationToken ct)
         {
-            var warehouseItemDetailProjection = await _projectionStore.LoadAggregateProjectionAsync<WarehouseItemDetailProjection, WarehouseItemAggregateRoot>(
-                warehouseItemId,
-                ct);
+            var warehouseItemDetailProjection =
+                await _projectionStore.LoadAggregateProjectionAsync<WarehouseItemDetailProjection, WarehouseItemAggregateRoot>(
+                    warehouseItemId,
+                    ct);
             if (warehouseItemDetailProjection == null)
             {
                 throw new ArgumentException();

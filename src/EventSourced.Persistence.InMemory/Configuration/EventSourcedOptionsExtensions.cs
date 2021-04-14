@@ -10,7 +10,7 @@ namespace EventSourced.Persistence.InMemory.Configuration
             options.ServiceCollection.AddSingleton<IEventStore, InMemoryEventStore>();
             return options;
         }
-        
+
         public static EventSourcedOptions UseInMemoryProjectionStore(this EventSourcedOptions options)
         {
             options.ServiceCollection.AddSingleton<IProjectionStore, InMemoryProjectionStore>();

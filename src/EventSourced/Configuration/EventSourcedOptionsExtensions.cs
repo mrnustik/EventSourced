@@ -12,9 +12,9 @@ namespace EventSourced.Configuration
             options.AutomaticProjectionOptions.RegisteredAutomaticProjections.Add(typeof(TProjection));
             return options;
         }
-        
-        public static EventSourcedOptions RegisterAutomaticAggregateProjection<TProjection, TAggregateRoot>(this EventSourcedOptions options)
-            where TProjection : AggregateProjection<TAggregateRoot>
+
+        public static EventSourcedOptions RegisterAutomaticAggregateProjection<TProjection, TAggregateRoot>(
+            this EventSourcedOptions options) where TProjection : AggregateProjection<TAggregateRoot>
             where TAggregateRoot : AggregateRoot
         {
             options.AutomaticProjectionOptions.RebuildAutomaticProjectionsOnStart = true;

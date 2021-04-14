@@ -10,14 +10,17 @@ namespace EventSourced.Projections.Automatic
     public class AutomaticProjectionRebuilder : IAutomaticProjectionRebuilder
     {
         private readonly AutomaticProjectionOptions _automaticProjectionOptions;
-        private readonly IManualProjectionBuilder _manualProjectionBuilder;
-        private readonly IProjectionStore _projectionStore;
+
         private readonly IEventStore _eventStore;
 
+        private readonly IManualProjectionBuilder _manualProjectionBuilder;
+
+        private readonly IProjectionStore _projectionStore;
+
         public AutomaticProjectionRebuilder(AutomaticProjectionOptions automaticProjectionOptions,
-            IManualProjectionBuilder manualProjectionBuilder,
-            IProjectionStore projectionStore,
-            IEventStore eventStore)
+                                            IManualProjectionBuilder manualProjectionBuilder,
+                                            IProjectionStore projectionStore,
+                                            IEventStore eventStore)
         {
             _automaticProjectionOptions = automaticProjectionOptions;
             _manualProjectionBuilder = manualProjectionBuilder;

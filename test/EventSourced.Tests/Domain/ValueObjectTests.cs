@@ -14,8 +14,10 @@ namespace EventSourced.Tests.Domain
             var right = new TestingValueObject(42, "42", true, 42.0M);
 
             //Act & Assert
-            left.Should().Be(right);
-            right.Should().Be(left);
+            left.Should()
+                .Be(right);
+            right.Should()
+                 .Be(left);
         }
 
         [Fact]
@@ -30,8 +32,10 @@ namespace EventSourced.Tests.Domain
             var rightIsLeft = right == left;
 
             //Assert
-            leftIsRight.Should().BeTrue();
-            rightIsLeft.Should().BeTrue();
+            leftIsRight.Should()
+                       .BeTrue();
+            rightIsLeft.Should()
+                       .BeTrue();
         }
 
         [Fact]
@@ -42,8 +46,10 @@ namespace EventSourced.Tests.Domain
             var right = new TestingValueObject(42, "420", true, 420.0M);
 
             //Act & Assert
-            left.Should().NotBe(right);
-            right.Should().NotBe(left);
+            left.Should()
+                .NotBe(right);
+            right.Should()
+                 .NotBe(left);
         }
 
         [Fact]
@@ -58,8 +64,10 @@ namespace EventSourced.Tests.Domain
             var rightIsLeft = right == left;
 
             //Assert
-            leftIsRight.Should().BeFalse();
-            rightIsLeft.Should().BeFalse();
+            leftIsRight.Should()
+                       .BeFalse();
+            rightIsLeft.Should()
+                       .BeFalse();
         }
 
         [Fact]
@@ -74,7 +82,8 @@ namespace EventSourced.Tests.Domain
             var rightHashCode = right.GetHashCode();
 
             //Assert
-            leftHashCode.Should().Be(rightHashCode);
+            leftHashCode.Should()
+                        .Be(rightHashCode);
         }
 
         [Fact]
@@ -89,11 +98,17 @@ namespace EventSourced.Tests.Domain
             var rightHashCode = right.GetHashCode();
 
             //Assert
-            leftHashCode.Should().NotBe(rightHashCode);
+            leftHashCode.Should()
+                        .NotBe(rightHashCode);
         }
 
         private class TestingValueObject : ValueObject
         {
+            public int IntegerValue { get; }
+            public string StringValue { get; }
+            public bool BooleanValue { get; }
+            public decimal DecimalValue { get; }
+
             public TestingValueObject(int integerValue, string stringValue, bool booleanValue, decimal decimalValue)
             {
                 IntegerValue = integerValue;
@@ -101,11 +116,6 @@ namespace EventSourced.Tests.Domain
                 BooleanValue = booleanValue;
                 DecimalValue = decimalValue;
             }
-
-            public int IntegerValue { get; }
-            public string StringValue { get; }
-            public bool BooleanValue { get; }
-            public decimal DecimalValue { get; }
         }
     }
 }

@@ -12,9 +12,11 @@ namespace EventSourced.Sample.Warehouse.Application.Services.WarehouseItem
     internal class GetAllWarehouseItemsApplicationService : ApplicationServiceBase, IGetAllWarehouseItemsApplicationService
     {
         private readonly IManualProjectionBuilder _manualProjectionBuilder;
+
         private readonly IProjectionStore _projectionStore;
 
-        public GetAllWarehouseItemsApplicationService(IManualProjectionBuilder manualProjectionBuilder, IProjectionStore projectionStore)
+        public GetAllWarehouseItemsApplicationService(IManualProjectionBuilder manualProjectionBuilder,
+                                                      IProjectionStore projectionStore)
         {
             _manualProjectionBuilder = manualProjectionBuilder;
             _projectionStore = projectionStore;
@@ -25,9 +27,8 @@ namespace EventSourced.Sample.Warehouse.Application.Services.WarehouseItem
             var allWarehouseItemsListProjection =
                 await _manualProjectionBuilder.BuildProjectionAsync<AllWarehouseItemsListProjection>(ct);
             var warehouseItems = allWarehouseItemsListProjection.Items;
-            return warehouseItems
-                .Select(i => new WarehouseLisItemModel(i.Id, i.Title))
-                .ToList();
+            return warehouseItems.Select(i => new WarehouseLisItemModel(i.Id, i.Title))
+                                 .ToList();
         }
 
         public async Task<int> GetCountAsync(CancellationToken ct)

@@ -13,78 +13,73 @@ namespace EventSourced.Tests.Projections.Automatic
 {
     public class AutomaticProjectionDomainEventHandlerTests
     {
-        private readonly Mock<IAutomaticProjectionsEventMapper> _automaticProjectionEventMapperMock = new();
-        private readonly Mock<IProjectionStore> _projectionStoreMock = new();
         private static readonly Type AnyAggregateType = typeof(object);
+
         private static readonly Guid AnyAggregateId = Guid.NewGuid();
-        
+
+        private readonly Mock<IAutomaticProjectionsEventMapper> _automaticProjectionEventMapperMock = new();
+
+        private readonly Mock<IProjectionStore> _projectionStoreMock = new();
+
         [Fact]
         public async Task HandleDomainEventAsync_WithNonExistingProjection_CreatesIt()
         {
             //Arrange
             var domainEvent = new TestEvent(42);
             _automaticProjectionEventMapperMock.Setup(s => s.GetProjectionsAffectedByEvent(It.IsAny<IDomainEvent>()))
-                .Returns(new[] {typeof(TestProjection)});
+                                               .Returns(new[] {typeof(TestProjection)});
             var sut = CreateSut();
-            
+
             //Act
             await sut.HandleDomainEventAsync(AnyAggregateType, AnyAggregateId, domainEvent, CancellationToken.None);
 
             //Assert
             var storedProjection = GetProjectionStoredInProjectionStore();
-            storedProjection
-                .Number
-                .Should()
-                .Be(42);
+            storedProjection.Number.Should()
+                            .Be(42);
         }
-        
+
         [Fact]
         public async Task HandleDomainEventAsync_WithExistingProjection_UpdatesIt()
         {
             //Arrange
             var domainEvent = new TestEvent(42);
             _automaticProjectionEventMapperMock.Setup(s => s.GetProjectionsAffectedByEvent(It.IsAny<IDomainEvent>()))
-                .Returns(new[] {typeof(TestProjection)});
+                                               .Returns(new[] {typeof(TestProjection)});
             var originalProjection = new TestProjection
             {
                 Number = 1
             };
             SetupProjectionInProjectionStore(originalProjection);
             var sut = CreateSut();
-            
+
             //Act
             await sut.HandleDomainEventAsync(AnyAggregateType, AnyAggregateId, domainEvent, CancellationToken.None);
 
             //Assert
             var updatedProjection = GetProjectionStoredInProjectionStore();
-            updatedProjection
-                .Number
-                .Should()
-                .Be(42);
+            updatedProjection.Number.Should()
+                             .Be(42);
         }
 
         private AutomaticProjectionDomainEventHandler CreateSut()
         {
-            return new AutomaticProjectionDomainEventHandler(
-                _automaticProjectionEventMapperMock.Object,
-                _projectionStoreMock.Object);
+            return new(_automaticProjectionEventMapperMock.Object, _projectionStoreMock.Object);
         }
 
         private void SetupProjectionInProjectionStore(TestProjection projection)
         {
             _projectionStoreMock.Setup(s => s.LoadProjectionAsync(typeof(TestProjection), CancellationToken.None))
-                .ReturnsAsync(projection);
+                                .ReturnsAsync(projection);
         }
 
         private TestProjection GetProjectionStoredInProjectionStore()
         {
-            return _projectionStoreMock.Invocations
-                .Single(i => i.Method.Name == nameof(IProjectionStore.StoreProjectionAsync))
-                .Arguments
-                .OfType<TestProjection>()
-                .Single();
+            return _projectionStoreMock.Invocations.Single(i => i.Method.Name == nameof(IProjectionStore.StoreProjectionAsync))
+                                       .Arguments.OfType<TestProjection>()
+                                       .Single();
         }
-        
+
         private class TestEvent : DomainEvent
         {
             public int Number { get; }
@@ -94,11 +89,11 @@ namespace EventSourced.Tests.Projections.Automatic
                 Number = number;
             }
         }
-        
+
         private class TestProjection
         {
             public int Number { get; set; }
-            
+
             private void Apply(TestEvent @event)
             {
                 Number = @event.Number;
