@@ -8,10 +8,10 @@ namespace EventSourced.Domain.Snapshosts
         public int Version { get; }
         public TAggregateRoot AggregateState { get; set; }
 
-        public AggregateSnapshot(Guid id, int version, TAggregateRoot aggregateState)
+        public AggregateSnapshot(TAggregateRoot aggregateState)
         {
-            Id = id;
-            Version = version;
+            Id = aggregateState.Id;
+            Version = aggregateState.Version;
             AggregateState = aggregateState;
         }
     }
