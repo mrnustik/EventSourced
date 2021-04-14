@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain;
 using EventSourced.Domain.Snapshosts;
+using EventSourced.Persistence.InMemory.Helpers;
 
 namespace EventSourced.Persistence.InMemory
 {
@@ -25,8 +26,7 @@ namespace EventSourced.Persistence.InMemory
 
         public Task StoreSnapshotAsync(TAggregateRoot aggregateRoot, CancellationToken ct)
         {
-            //TODO: Clone aggregate before storing it!!!
-            var aggregateSnapshot = new AggregateSnapshot<TAggregateRoot>(aggregateRoot.Id, aggregateRoot.Version, aggregateRoot);
+            var aggregateSnapshot = new AggregateSnapshot<TAggregateRoot>(aggregateRoot.Id, aggregateRoot.Version, aggregateRoot.DeepClone());
             Snapshots[aggregateRoot.Id] = aggregateSnapshot;
             return Task.CompletedTask;
         }
