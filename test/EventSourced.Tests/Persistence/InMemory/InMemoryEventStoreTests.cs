@@ -211,7 +211,7 @@ namespace EventSourced.Tests.Persistence.InMemory
         }
         
         [Fact]
-        public async Task StreamExistsAsync_WithNonExistingStream_ReturnsTrue()
+        public async Task StreamExistsAsync_WithNonExistingStream_ReturnsFalse()
         {
             //Arrange
             var sut = CreateSut();
@@ -222,7 +222,7 @@ namespace EventSourced.Tests.Persistence.InMemory
             //Assert
             streamExists
                 .Should()
-                .BeTrue();
+                .BeFalse();
         }
 
         private InMemoryEventStore CreateSut()
