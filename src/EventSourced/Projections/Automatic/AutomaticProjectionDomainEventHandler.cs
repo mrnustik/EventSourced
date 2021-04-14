@@ -18,7 +18,10 @@ namespace EventSourced.Projections.Automatic
             _projectionStore = projectionStore;
         }
 
-        public async Task HandleDomainEventAsync(IDomainEvent domainEvent, CancellationToken ct)
+        public async Task HandleDomainEventAsync(Type aggregateRootType,
+            Guid aggregateRootId,
+            IDomainEvent domainEvent,
+            CancellationToken ct)
         {
             var affectedProjections = _automaticProjectionsEventMapper.GetProjectionsAffectedByEvent(domainEvent);
             foreach (var projectionType in affectedProjections)

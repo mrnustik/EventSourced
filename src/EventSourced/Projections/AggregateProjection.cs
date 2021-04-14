@@ -1,14 +1,14 @@
-﻿using EventSourced.Domain;
+﻿using System;
+using EventSourced.Domain;
 
 namespace EventSourced.Projections
 {
-    public abstract class AggregateProjection<TAggregateRoot, TAggregateRootId>
-        where TAggregateRootId : notnull
-        where TAggregateRoot : AggregateRoot<TAggregateRootId>
+    public abstract class AggregateProjection<TAggregateRoot>
+        where TAggregateRoot : AggregateRoot
     {
-        public TAggregateRootId Id { get; }
+        public Guid Id { get; }
 
-        protected AggregateProjection(TAggregateRootId id)
+        protected AggregateProjection(Guid id)
         {
             Id = id;
         }

@@ -28,27 +28,22 @@ namespace EventSourced.Tests.Helpers
         }
 
         [Fact]
-        public void GetAggregateInformationFromProjection_WithValidProjection_ReturnsAggregateInformation()
+        public void GetAggregateRootTypeFromProjection_WithValidProjection_ReturnsAggregateInformation()
         {
             //Act
-            var aggregateInformation = ReflectionHelpers.GetAggregateInformationFromProjection(typeof(TestAggregateProjection));
+            var aggregateRootType = ReflectionHelpers.GetAggregateRootTypeFromProjection(typeof(TestAggregateProjection));
 
             //Assert
-            aggregateInformation
-                .aggregateRootType
+            aggregateRootType
                 .Should()
                 .Be(typeof(TestAggregateRoot));
-            aggregateInformation
-                .aggregateIdType
-                .Should()
-                .Be(typeof(Guid));
         }
 
         [Fact]
         public void GetAggregateInformationFromProjection_WithoutValidProjection_Throws()
         {
             //Act
-            Action action = () => ReflectionHelpers.GetAggregateInformationFromProjection(typeof(object));
+            Action action = () => ReflectionHelpers.GetAggregateRootTypeFromProjection(typeof(object));
             
             //Assert
             action
@@ -96,14 +91,14 @@ namespace EventSourced.Tests.Helpers
             }
         }
         
-        private class TestAggregateRoot : AggregateRoot<Guid>
+        private class TestAggregateRoot : AggregateRoot
         {
             public TestAggregateRoot(Guid id) : base(id)
             {
             }
         }
 
-        private class TestAggregateProjection : AggregateProjection<TestAggregateRoot, Guid>
+        private class TestAggregateProjection : AggregateProjection<TestAggregateRoot>
         {
             public TestAggregateProjection(Guid id) : base(id)
             {

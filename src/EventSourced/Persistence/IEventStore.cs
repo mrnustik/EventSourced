@@ -8,9 +8,9 @@ namespace EventSourced.Persistence
 {
     public interface IEventStore
     {
-        Task StoreEventsAsync(string streamId, Type aggregateRootType, IList<IDomainEvent> domainEvents, CancellationToken ct);
-        Task<IDomainEvent[]> GetByStreamIdAsync(string streamId, Type aggregateRootType, CancellationToken ct);
-        Task<IDictionary<string, IDomainEvent[]>> GetAllStreamsOfType(Type aggregateRootType, CancellationToken ct);
+        Task StoreEventsAsync(Guid streamId, Type aggregateRootType, IList<IDomainEvent> domainEvents, CancellationToken ct);
+        Task<IDomainEvent[]> GetByStreamIdAsync(Guid streamId, Type aggregateRootType, CancellationToken ct);
+        Task<IDictionary<Guid, IDomainEvent[]>> GetAllStreamsOfType(Type aggregateRootType, CancellationToken ct);
         Task<IDomainEvent[]> GetEventsOfTypeAsync(Type type, CancellationToken ct);
     }
 }

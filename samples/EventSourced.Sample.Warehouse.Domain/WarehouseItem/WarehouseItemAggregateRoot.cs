@@ -4,12 +4,8 @@ using EventSourced.Sample.Warehouse.Domain.WarehouseItem.Events;
 
 namespace EventSourced.Sample.Warehouse.Domain.WarehouseItem
 {
-    public class WarehouseItemAggregateRoot : AggregateRoot<Guid>
+    public class WarehouseItemAggregateRoot : AggregateRoot
     {
-        public WarehouseItemAggregateRoot() : base(Guid.NewGuid())
-        {
-        }
-
         public WarehouseItemAggregateRoot(string title) : base(Guid.NewGuid())
         {
             EnqueueAndApplyEvent(new WarehouseItemCreatedDomainEvent(Id, title));
@@ -19,7 +15,7 @@ namespace EventSourced.Sample.Warehouse.Domain.WarehouseItem
         {
         }
 
-        public string Title { get; private set; }
+        public string Title { get; private set; } = string.Empty;
 
         public void Apply(WarehouseItemCreatedDomainEvent @event)
         {
