@@ -26,8 +26,8 @@ namespace EventSourced.Domain
 
         protected void EnqueueAndApplyEvent(IDomainEvent domainEvent)
         {
-            uncommittedDomainEvents.Enqueue(domainEvent);
             domainEvent.Version = GetNextEventVersion(); 
+            uncommittedDomainEvents.Enqueue(domainEvent);
             ApplyEvent(domainEvent);
         }
 

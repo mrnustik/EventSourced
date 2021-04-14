@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using EventSourced.Domain;
 using EventSourced.Domain.Events;
 using FluentAssertions;
@@ -42,6 +43,33 @@ namespace EventSourced.Tests.Domain
                 .Should()
                 .Be(testParameterValue);
         }
+        
+        [Fact]
+        public void EnqueuedDomainEvent_SetsVersionsOfTheEvent()
+        {
+            //Arrange
+            var sut = CreateTestAggregateRootWithApplyForTestEvent();
+            const string testParameterValue = "Test value";
+
+            //Act
+            sut.EnqueueTestDomainEvent(testParameterValue);
+            sut.EnqueueTestDomainEvent(testParameterValue);
+            var dequeueDomainEvents = sut.DequeueDomainEvents();
+
+            //Assert
+            dequeueDomainEvents
+                .First()
+                .Version
+                .Should()
+                .Be(1);
+            dequeueDomainEvents
+                .Last()
+                .Version
+                .Should()
+                .Be(2);
+        }
+
+        
 
         [Fact]
         public void EnqueuedDomainEvent_DequeuedForSecondTimeShouldBeEmpty()
