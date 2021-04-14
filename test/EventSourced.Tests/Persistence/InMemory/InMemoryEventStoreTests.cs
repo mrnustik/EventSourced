@@ -187,6 +187,43 @@ namespace EventSourced.Tests.Persistence.InMemory
                 .Should()
                 .HaveCount(3);
         }
+        
+        [Fact]
+        public async Task StreamExistsAsync_WithExistingStream_ReturnsTrue()
+        {
+            //Arrange
+            var sut = CreateSut(
+                new Dictionary<StreamIdentification, List<IDomainEvent>>
+                {
+                    {
+                        new StreamIdentification(AnyStreamId, AnyAggregateType),
+                        new List<IDomainEvent> {new TestEvent(1), new TestEvent(1)}
+                    }
+                });
+
+            //Act
+            var streamExists = await sut.StreamExistsAsync(AnyStreamId, AnyAggregateType, CancellationToken.None);
+
+            //Assert
+            streamExists
+                .Should()
+                .BeTrue();
+        }
+        
+        [Fact]
+        public async Task StreamExistsAsync_WithNonExistingStream_ReturnsTrue()
+        {
+            //Arrange
+            var sut = CreateSut();
+
+            //Act
+            var streamExists = await sut.StreamExistsAsync(AnyStreamId, AnyAggregateType, CancellationToken.None);
+
+            //Assert
+            streamExists
+                .Should()
+                .BeTrue();
+        }
 
         private InMemoryEventStore CreateSut()
         {
