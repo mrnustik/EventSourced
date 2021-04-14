@@ -74,6 +74,31 @@ namespace EventSourced.Tests.Persistence
                      .Should()
                      .Be(4);
         }
+        
+        [Fact]
+        public async Task GetByIdAsync_WithExistingAggregate_VersionIsSetCorrectly()
+        {
+            //Arrange
+            var aggregateId = Guid.NewGuid();
+            var existingEvents = new[]
+            {
+                new TestEvent(1),
+                new TestEvent(2),
+                new TestEvent(3),
+                new TestEvent(4),
+                new TestEvent(5),
+            };
+            eventStoreMock.WithGetByStreamIdAsync(aggregateId, existingEvents);
+            var repository = CreateSut();
+
+            //Act
+            var aggregate = await repository.GetByIdAsync(aggregateId, CancellationToken.None);
+
+            //Assert
+            aggregate.Version
+                     .Should()
+                     .Be(5);
+        }
 
 
         [Fact]
@@ -168,6 +193,14 @@ namespace EventSourced.Tests.Persistence
 
         private class TestEvent : DomainEvent
         {
+            public TestEvent()
+            {
+            }
+
+            public TestEvent(int version)
+            {
+                Version = version;
+            }
         }
 
         private class TestAggregate : AggregateRoot
