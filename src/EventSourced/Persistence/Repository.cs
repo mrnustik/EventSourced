@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EventSourced.Domain;
 using EventSourced.Domain.Events;
 using EventSourced.Exceptions;
+using EventSourced.Snapshots;
 
 namespace EventSourced.Persistence
 {
@@ -13,14 +14,17 @@ namespace EventSourced.Persistence
         private readonly IEventStore _eventStore;
         private readonly IEnumerable<IDomainEventHandler> _domainEventHandlers;
         private readonly ISnapshotStore<TAggregateRoot> _snapshotStore;
+        private readonly ISnapshotCreationStrategy _snapshotCreationStrategy;
 
         public Repository(IEventStore eventStore,
                           IEnumerable<IDomainEventHandler> domainEventHandlers,
-                          ISnapshotStore<TAggregateRoot> snapshotStore)
+                          ISnapshotStore<TAggregateRoot> snapshotStore,
+                          ISnapshotCreationStrategy snapshotCreationStrategy)
         {
             _eventStore = eventStore;
             _domainEventHandlers = domainEventHandlers;
             _snapshotStore = snapshotStore;
+            _snapshotCreationStrategy = snapshotCreationStrategy;
         }
 
         public async Task SaveAsync(TAggregateRoot aggregateRoot, CancellationToken ct)
@@ -29,6 +33,7 @@ namespace EventSourced.Persistence
             var newDomainEvents = aggregateRoot.DequeueDomainEvents();
             await _eventStore.StoreEventsAsync(aggregateRoot.Id, typeof(TAggregateRoot), newDomainEvents, ct);
             await InvokeDomainEventHandlersAsync(aggregateRoot.Id, newDomainEvents, ct);
+            await CreateSnapshotIfNeededAsync(aggregateRoot, ct);
         }
 
         public async Task<TAggregateRoot> GetByIdAsync(Guid id, CancellationToken ct)
@@ -85,6 +90,14 @@ namespace EventSourced.Persistence
         {
             var aggregateRoot = (TAggregateRoot) Activator.CreateInstance(typeof(TAggregateRoot), id)!;
             return aggregateRoot;
+        }
+
+        private async Task CreateSnapshotIfNeededAsync(TAggregateRoot aggregateRoot, CancellationToken ct)
+        {
+            if (_snapshotCreationStrategy.ShouldCreateSnapshot(aggregateRoot))
+            {
+                await _snapshotStore.StoreSnapshotAsync(aggregateRoot, ct);
+            }
         }
     }
 }

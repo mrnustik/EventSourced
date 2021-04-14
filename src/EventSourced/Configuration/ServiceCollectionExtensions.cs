@@ -4,6 +4,8 @@ using EventSourced.Persistence;
 using EventSourced.Persistence.Null;
 using EventSourced.Projections;
 using EventSourced.Projections.Automatic;
+using EventSourced.Snapshots;
+using EventSourced.Snapshots.Strategies;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EventSourced.Configuration
@@ -18,7 +20,8 @@ namespace EventSourced.Configuration
             serviceCollection.AddTransient<IDomainEventHandler, AutomaticAggregateProjectionDomainEventHandler>();
             serviceCollection.AddTransient<IAutomaticProjectionRebuilder, AutomaticProjectionRebuilder>();
             serviceCollection.AddTransient(typeof(ISnapshotStore<>), typeof(NullSnapshotStore<>));
-
+            serviceCollection.AddTransient<ISnapshotCreationStrategy, NullSnapshotCreationStrategy>();
+            
             var options = new EventSourcedOptions(serviceCollection);
             optionsConfiguration(options);
             serviceCollection.AddSingleton(options.AutomaticProjectionOptions);
