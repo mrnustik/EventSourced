@@ -42,7 +42,7 @@ namespace EventSourced.Persistence
             var aggregateCollection = new List<TAggregateRoot>();
             foreach (var (streamId, events) in aggregateToEventsMap)
             {
-                var aggregateRootId = MapStringStreamIdToAggregateRootId(streamId);
+                var aggregateRootId = streamId.ToAggregateRootId<TAggregateRootId>();
                 var aggregateRoot = ConstructAggregateRoot(aggregateRootId);
                 aggregateRoot.ApplyEventsToObject(events);
                 aggregateCollection.Add(aggregateRoot);
@@ -59,13 +59,6 @@ namespace EventSourced.Persistence
                     await domainEventHandler.HandleDomainEventAsync(domainEvent, ct);
                 }
             }
-        }
-        
-        private TAggregateRootId MapStringStreamIdToAggregateRootId(string streamId)
-        {
-            var idType = typeof(TAggregateRootId);
-            if (idType.IsPrimitive) return (TAggregateRootId) Convert.ChangeType(streamId, idType);
-            return (TAggregateRootId) Activator.CreateInstance(typeof(TAggregateRootId), streamId)!;
         }
 
         private static TAggregateRoot ConstructAggregateRoot(TAggregateRootId id)
