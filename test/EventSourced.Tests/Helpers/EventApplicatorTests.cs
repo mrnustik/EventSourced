@@ -55,6 +55,7 @@ namespace EventSourced.Tests.Helpers
 
             public int Number { get; }
             public Guid Id { get; }
+            public int Version { get; set; }
         }
 
         private class OtherTestEvent : IDomainEvent
@@ -67,6 +68,7 @@ namespace EventSourced.Tests.Helpers
 
             public int Number { get; }
             public Guid Id { get; }
+            public int Version { get; set; }
         }
 
 
