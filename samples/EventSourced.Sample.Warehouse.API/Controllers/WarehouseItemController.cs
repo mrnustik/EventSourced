@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Sample.Warehouse.API.Requests.WarehouseItem;
@@ -13,13 +14,16 @@ namespace EventSourced.Sample.Warehouse.API.Controllers
     {
         private readonly ICreateWarehouseItemApplicationService _createWarehouseItemApplicationService;
 
+        private readonly IWarehouseItemDetailApplicationService _warehouseItemDetailApplicationService;
         private readonly IGetAllWarehouseItemsApplicationService _getAllWarehouseItemsApplicationService;
 
         public WarehouseItemController(ICreateWarehouseItemApplicationService createWarehouseItemApplicationService,
-            IGetAllWarehouseItemsApplicationService getAllWarehouseItemsApplicationService)
+            IGetAllWarehouseItemsApplicationService getAllWarehouseItemsApplicationService,
+            IWarehouseItemDetailApplicationService warehouseItemDetailApplicationService)
         {
             _createWarehouseItemApplicationService = createWarehouseItemApplicationService;
             _getAllWarehouseItemsApplicationService = getAllWarehouseItemsApplicationService;
+            _warehouseItemDetailApplicationService = warehouseItemDetailApplicationService;
         }
 
         [HttpPost("create")]
@@ -40,6 +44,12 @@ namespace EventSourced.Sample.Warehouse.API.Controllers
         public Task<int> GetCount(CancellationToken ct)
         {
             return _getAllWarehouseItemsApplicationService.GetCountAsync(ct);
+        }
+        
+        [HttpGet("detail/{id:guid}")]
+        public Task<WarehouseItemDetailModel> GetDetail(Guid id, CancellationToken ct)
+        {
+            return _warehouseItemDetailApplicationService.GetWarehouseItemDetailAsync(id, ct);
         }
     }
 }
