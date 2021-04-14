@@ -2,7 +2,7 @@
 
 namespace EventSourced.Domain.Events
 {
-    public class DomainEvent : IDomainEvent
+    public abstract class DomainEvent : IDomainEvent
     {
         protected DomainEvent()
         {
@@ -10,5 +10,6 @@ namespace EventSourced.Domain.Events
         }
 
         public Guid Id { get; }
+        public int Version { get; set; }
     }
 }
