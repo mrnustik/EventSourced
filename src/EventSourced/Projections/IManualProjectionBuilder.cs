@@ -11,8 +11,7 @@ namespace EventSourced.Projections
 
         Task<object> BuildProjectionAsync(Type projectionType, CancellationToken ct);
 
-        Task<TAggregateProjection> BuildAggregateProjection<TAggregateProjection, TAggregateRoot>(
-            Guid aggregateRootId,
+        Task<TAggregateProjection> BuildAggregateProjection<TAggregateProjection, TAggregateRoot>(Guid aggregateRootId,
             CancellationToken ct)
             where TAggregateProjection : AggregateProjection<TAggregateRoot> where TAggregateRoot : AggregateRoot;
     }

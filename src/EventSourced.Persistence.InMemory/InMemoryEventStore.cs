@@ -32,13 +32,18 @@ namespace EventSourced.Persistence.InMemory
             return Task.CompletedTask;
         }
 
-        public Task<IDomainEvent[]> GetByStreamIdAsync(Guid streamId, Type aggregateRootType, CancellationToken ct)
+        public Task<IDomainEvent[]> GetByStreamIdAsync(Guid streamId,
+                                                       Type aggregateRootType,
+                                                       int aggregateRootVersion,
+                                                       CancellationToken ct)
         {
             var streamIdentification = new StreamIdentification(streamId, aggregateRootType);
 
             if (StreamsDictionary.TryGetValue(streamIdentification, out var events))
             {
-                var eventsArray = events.ToArray();
+                var eventsArray = events
+                    .Where(e => e.Version > aggregateRootVersion)
+                    .ToArray();
                 return Task.FromResult(eventsArray);
             }
 

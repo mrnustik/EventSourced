@@ -13,10 +13,9 @@ namespace EventSourced.Tests.Persistence.InMemory
     public class InMemoryEventStoreTests
     {
         private static readonly Type AnyAggregateType = typeof(object);
-
         private static readonly Guid AnyStreamId = Guid.NewGuid();
-
         private static readonly Guid AnyStreamId2 = Guid.NewGuid();
+        private static readonly int AnyRequiredVersion = 0;
 
         [Fact]
         public async Task StoreEventsAsync_WithNonExistingAggregate_PreserversOrder()
@@ -38,7 +37,7 @@ namespace EventSourced.Tests.Persistence.InMemory
                                        CancellationToken.None);
 
             //Assert
-            var events = await sut.GetByStreamIdAsync(AnyStreamId, AnyAggregateType, CancellationToken.None);
+            var events = await sut.GetByStreamIdAsync(AnyStreamId, AnyAggregateType, AnyRequiredVersion, CancellationToken.None);
             events.Should()
                   .HaveCount(3)
                   .And.AllBeOfType<TestEvent>()
@@ -69,7 +68,7 @@ namespace EventSourced.Tests.Persistence.InMemory
                                        CancellationToken.None);
 
             //Assert
-            var events = await sut.GetByStreamIdAsync(AnyStreamId, AnyAggregateType, CancellationToken.None);
+            var events = await sut.GetByStreamIdAsync(AnyStreamId, AnyAggregateType, AnyRequiredVersion, CancellationToken.None);
             events.Should()
                   .HaveCount(3)
                   .And.AllBeOfType<TestEvent>()
@@ -88,7 +87,7 @@ namespace EventSourced.Tests.Persistence.InMemory
             });
 
             //Act
-            var events = await sut.GetByStreamIdAsync(AnyStreamId, AnyAggregateType, CancellationToken.None);
+            var events = await sut.GetByStreamIdAsync(AnyStreamId, AnyAggregateType, AnyRequiredVersion, CancellationToken.None);
 
             //Assert
             events.Should()
@@ -104,7 +103,7 @@ namespace EventSourced.Tests.Persistence.InMemory
             var sut = CreateSut();
 
             //Act
-            Func<Task> action = () => sut.GetByStreamIdAsync(AnyStreamId, AnyAggregateType, CancellationToken.None);
+            Func<Task> action = () => sut.GetByStreamIdAsync(AnyStreamId, AnyAggregateType, AnyRequiredVersion, CancellationToken.None);
 
             //Assert
             await action.Should()
@@ -226,6 +225,7 @@ namespace EventSourced.Tests.Persistence.InMemory
             public TestEvent(int number)
             {
                 Number = number;
+                Version = number;
             }
         }
     }

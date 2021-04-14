@@ -41,7 +41,7 @@ namespace EventSourced.Projections
             CancellationToken ct) where TAggregateProjection : AggregateProjection<TAggregateRoot> where TAggregateRoot : AggregateRoot
         {
             var types = ReflectionHelpers.GetTypesOfDomainEventsApplicableToObject(typeof(TAggregateProjection));
-            var allEvents = await _eventStore.GetByStreamIdAsync(aggregateRootId, typeof(TAggregateRoot), ct);
+            var allEvents = await _eventStore.GetByStreamIdAsync(aggregateRootId, typeof(TAggregateRoot), 0, ct);
             var applicableEvents = allEvents.Where(e => types.Contains(e.GetType()));
             var projection = (TAggregateProjection) Activator.CreateInstance(typeof(TAggregateProjection), aggregateRootId)!;
             projection.ApplyEventsToObject(applicableEvents.ToArray());

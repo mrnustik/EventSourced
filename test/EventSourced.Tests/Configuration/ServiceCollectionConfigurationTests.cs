@@ -22,6 +22,7 @@ namespace EventSourced.Tests.Configuration
             //Act
             serviceCollection.AddEventSourced(options => options.UseInMemoryEventStore()
                                                                 .UseInMemoryProjectionStore()
+                                                                .UseInMemorySnapshotStore()
                                                                 .RegisterAutomaticProjection<TestProjection>()
                                                                 .RegisterAutomaticAggregateProjection<TestAggregateProjection,
                                                                     TestAggregateRoot>());
