@@ -26,7 +26,7 @@ namespace EventSourced.Configuration
             return options;
         }
 
-        public static EventSourcedOptions WithEventCountBasedSnapshotStrategy(this EventSourcedOptions options,
+        public static EventSourcedOptions UseEventCountBasedSnapshotStrategy(this EventSourcedOptions options,
                                                                               int numberOfEventBetweenSnapshots)
         {
             options.ServiceCollection.Replace(new ServiceDescriptor(typeof(ISnapshotCreationStrategy),
