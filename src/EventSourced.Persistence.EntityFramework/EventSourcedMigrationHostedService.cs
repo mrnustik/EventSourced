@@ -17,7 +17,7 @@ namespace EventSourced.Persistence.EntityFramework
         protected override async Task StartAsync(IServiceScope serviceScope, CancellationToken cancellationToken)
         {
             var eventSourcedDbContext = serviceScope.ServiceProvider.GetRequiredService<EventSourcedDbContext>();
-            // await eventSourcedDbContext.Database.EnsureDeletedAsync(cancellationToken);
+            await eventSourcedDbContext.Database.EnsureDeletedAsync(cancellationToken);
             await eventSourcedDbContext.Database.EnsureCreatedAsync(cancellationToken);
         }
     }
