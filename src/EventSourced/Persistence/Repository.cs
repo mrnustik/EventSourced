@@ -31,7 +31,7 @@ namespace EventSourced.Persistence
         {
             var domainEvents = await _eventStore.GetByStreamIdAsync(id, typeof(TAggregateRoot), ct);
             var aggregateRoot = ConstructAggregateRoot(id);
-            aggregateRoot.ApplyEventsToObject(domainEvents);
+            aggregateRoot.RebuildFromEvents(domainEvents);
             return aggregateRoot;
         }
 
@@ -43,7 +43,7 @@ namespace EventSourced.Persistence
             {
                 var aggregateRootId = streamId;
                 var aggregateRoot = ConstructAggregateRoot(aggregateRootId);
-                aggregateRoot.ApplyEventsToObject(events);
+                aggregateRoot.RebuildFromEvents(events);
                 aggregateCollection.Add(aggregateRoot);
             }
             return aggregateCollection;
