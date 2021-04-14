@@ -16,7 +16,7 @@ namespace EventSourced.Tests.Helpers
         {
             //Arrange
             var testObject = (IObjectWithNumber) Activator.CreateInstance(type);
-            var testEvent = new TestEvent(Guid.NewGuid(), 42);
+            var testEvent = new TestEvent(42);
 
             //Act
             testObject!.ApplyEventsToObject(testEvent);
@@ -34,7 +34,7 @@ namespace EventSourced.Tests.Helpers
         {
             //Arrange
             var testObject = (IObjectWithNumber) Activator.CreateInstance(type);
-            var testEvent = new OtherTestEvent(Guid.NewGuid(), 42);
+            var testEvent = new OtherTestEvent(42);
 
             //Act
             Action act = () => testObject!.ApplyEventsToObject(testEvent);
@@ -48,13 +48,11 @@ namespace EventSourced.Tests.Helpers
         {
             public int Number { get; }
 
-            public TestEvent(Guid id, int number)
+            public TestEvent(int number)
             {
-                Id = id;
                 Number = number;
             }
 
-            public Guid Id { get; }
             public int Version { get; set; }
         }
 
@@ -62,13 +60,11 @@ namespace EventSourced.Tests.Helpers
         {
             public int Number { get; }
 
-            public OtherTestEvent(Guid id, int number)
+            public OtherTestEvent(int number)
             {
-                Id = id;
                 Number = number;
             }
 
-            public Guid Id { get; }
             public int Version { get; set; }
         }
 
