@@ -8,6 +8,7 @@ using EventSourced.Domain;
 using EventSourced.Domain.Events;
 using EventSourced.Exceptions;
 using EventSourced.Persistence;
+using EventSourced.Snapshots;
 using EventSourced.Tests.TestDoubles.Extensions;
 using FluentAssertions;
 using Moq;
@@ -21,6 +22,7 @@ namespace EventSourced.Tests.Persistence
     {
         private readonly Mock<IEventStore> _eventStoreMock = new();
         private readonly Mock<ISnapshotStore<TestAggregate>> _snapshotStoreMock = new();
+        private readonly Mock<ISnapshotCreationStrategy> _snapshotCreationStrategyMock = new();
 
         #region SaveAsync()
 
@@ -86,7 +88,7 @@ namespace EventSourced.Tests.Persistence
             updatedAggregate.EnqueueTestEvent();
 
             _eventStoreMock.WithStreamExistsAsync(true)
-                          .WithGetByStreamIdAsync(updatedAggregate.Id, new[] {new TestEvent {Version = 2}});
+                           .WithGetByStreamIdAsync(updatedAggregate.Id, new[] {new TestEvent {Version = 2}});
             var repository = CreateSut();
 
             //Act
@@ -106,7 +108,7 @@ namespace EventSourced.Tests.Persistence
             updatedAggregate.EnqueueTestEvent();
 
             _eventStoreMock.WithStreamExistsAsync(true)
-                          .WithGetByStreamIdAsync(updatedAggregate.Id, new[] {new TestEvent {Version = 1}});
+                           .WithGetByStreamIdAsync(updatedAggregate.Id, new[] {new TestEvent {Version = 1}});
             var repository = CreateSut();
 
             //Act
@@ -114,6 +116,23 @@ namespace EventSourced.Tests.Persistence
 
             //Assert
             VerifyEventStoreSaveMethodCalled();
+        }
+
+        [Fact]
+        public async Task SaveAsync_WithSnapshotStrategyTriggered_StoresTheSnapshot()
+        {
+            //Arrange
+            var updatedAggregate = new TestAggregate();
+            updatedAggregate.EnqueueTestEvent();
+
+            _snapshotCreationStrategyMock.WithShouldCreateSnapshot<TestAggregate>(true);
+            var repository = CreateSut();
+
+            //Act
+            await repository.SaveAsync(updatedAggregate, CancellationToken.None);
+
+            //Assert
+            VerifySnapshotCreated();
         }
 
         #endregion
@@ -166,7 +185,7 @@ namespace EventSourced.Tests.Persistence
             aggregate.Version.Should()
                      .Be(5);
         }
-        
+
         [Fact]
         public async Task GetByIdAsync_WithExistingSnapshot_UsesTheSnapshotVersion()
         {
@@ -183,11 +202,10 @@ namespace EventSourced.Tests.Persistence
             var aggregate = await repository.GetByIdAsync(aggregateId, CancellationToken.None);
 
             //Assert
-            aggregate.Version
-                     .Should()
+            aggregate.Version.Should()
                      .Be(5);
         }
-        
+
         #endregion
 
         #region GetAllAsync()
@@ -228,15 +246,23 @@ namespace EventSourced.Tests.Persistence
         private void VerifyEventStoreSaveMethodCalled()
         {
             _eventStoreMock.Verify(s => s.StoreEventsAsync(It.IsAny<Guid>(),
-                                                          It.IsAny<Type>(),
-                                                          It.IsAny<IList<IDomainEvent>>(),
-                                                          It.IsAny<CancellationToken>()),
-                                  Times.Once);
+                                                           It.IsAny<Type>(),
+                                                           It.IsAny<IList<IDomainEvent>>(),
+                                                           It.IsAny<CancellationToken>()),
+                                   Times.Once);
+        }
+
+        private void VerifySnapshotCreated()
+        {
+            _snapshotStoreMock.Verify(s => s.StoreSnapshotAsync(It.IsAny<TestAggregate>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         private IRepository<TestAggregate> CreateSut(params IDomainEventHandler[] domainEventHandlers)
         {
-            return new Repository<TestAggregate>(_eventStoreMock.Object, domainEventHandlers.ToList(), _snapshotStoreMock.Object);
+            return new Repository<TestAggregate>(_eventStoreMock.Object,
+                                                 domainEventHandlers.ToList(),
+                                                 _snapshotStoreMock.Object,
+                                                 _snapshotCreationStrategyMock.Object);
         }
 
         internal class TestEvent : DomainEvent
