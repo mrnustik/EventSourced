@@ -3,8 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using EventSourced.Domain;
 using EventSourced.Persistence;
 using EventSourced.Persistence.InMemory;
+using EventSourced.Projections;
 using FluentAssertions;
 using Xunit;
 
@@ -64,6 +66,41 @@ namespace EventSourced.Tests.Persistence.InMemory
                 .Should()
                 .Be(42);
         }
+        
+        
+        [Fact]
+        public async Task LoadAggregateProjectionAsync_WithNonExistingType_ReturnsNull()
+        {
+            //Arrange
+            var aggregateRootId = Guid.NewGuid();
+            var sut = CreateSut();
+            
+            //Act
+            var loadedProjection = await sut.LoadAggregateProjectionAsync<TestAggregateProjection, TestAggregateRoot>(aggregateRootId, CancellationToken.None);
+
+            //Assert
+            loadedProjection
+                .Should()
+                .BeNull();
+        }
+                
+        [Fact]
+        public async Task LoadAggregateProjectionAsync_WithExistingType_ReturnsIt()
+        {
+            //Arrange
+            var aggregateRootId = Guid.NewGuid();
+            var sut = CreateSut();
+            var storedProjection = new TestAggregateProjection(aggregateRootId);
+            await sut.StoreAggregateProjectionAsync(aggregateRootId, storedProjection, CancellationToken.None);
+
+            //Act
+            var loadedProjection = await sut.LoadAggregateProjectionAsync<TestAggregateProjection, TestAggregateRoot>(aggregateRootId, CancellationToken.None);
+
+            //Assert
+            loadedProjection
+                .Should()
+                .NotBeNull();
+        }
 
         private IProjectionStore CreateSut()
         {
@@ -82,6 +119,20 @@ namespace EventSourced.Tests.Persistence.InMemory
             public TestProjection(int number)
             {
                 Number = number;
+            }
+        }
+        
+        private class TestAggregateProjection : AggregateProjection<TestAggregateRoot>
+        {
+            public TestAggregateProjection(Guid id) : base(id)
+            {
+            }
+        }
+
+        private class TestAggregateRoot : AggregateRoot
+        {
+            public TestAggregateRoot(Guid id) : base(id)
+            {
             }
         }
     }
