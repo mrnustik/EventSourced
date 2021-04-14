@@ -1,5 +1,9 @@
 ﻿using EventSourced.Domain;
 using EventSourced.Projections;
+using EventSourced.Snapshots;
+using EventSourced.Snapshots.Strategies;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace EventSourced.Configuration
 {
@@ -19,6 +23,15 @@ namespace EventSourced.Configuration
         {
             options.AutomaticProjectionOptions.RebuildAutomaticProjectionsOnStart = true;
             options.AutomaticProjectionOptions.RegisteredAutomaticAggregateProjections.Add(typeof(TProjection));
+            return options;
+        }
+
+        public static EventSourcedOptions WithEventCountBasedSnapshotStrategy(this EventSourcedOptions options,
+                                                                              int numberOfEventBetweenSnapshots)
+        {
+            options.ServiceCollection.Replace(new ServiceDescriptor(typeof(ISnapshotCreationStrategy),
+                                                                    new EventCountBasedSnapshotCreationStrategy(
+                                                                        numberOfEventBetweenSnapshots)));
             return options;
         }
     }
