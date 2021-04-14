@@ -33,6 +33,8 @@ namespace EventSourced.Sample.Warehouse.API
             services.AddApplicationServices();
             services.AddEventSourced(options => options.UseInMemoryEventStore()
                                                        .UseInMemoryProjectionStore()
+                                                       .UseInMemorySnapshotStore()
+                                                       .UseEventCountBasedSnapshotStrategy(1)
                                                        .RegisterAutomaticProjection<WarehouseItemsCountProjection>()
                                                        .RegisterAutomaticAggregateProjection<WarehouseItemDetailProjection,
                                                            WarehouseItemAggregateRoot>());
