@@ -41,7 +41,7 @@ namespace EventSourced.Persistence.EntityFramework.Configuration
             options.ServiceCollection.AddTransient<IEventSerializer, EventSerializer>();
             options.ServiceCollection.AddTransient<ITypeSerializer, TypeSerializer>();
             options.ServiceCollection.AddTransient<IAggregateSnapshotEntityMapper, AggregateSnapshotEntityMapper>();
-            options.ServiceCollection.AddTransient<ITypeBaseProjectionEntityMapper, TypeBaseProjectionEntityMapper>();
+            options.ServiceCollection.AddTransient<ITypeBasedProjectionEntityMapper, TypeBasedProjectionEntityMapper>();
             options.ServiceCollection.AddTransient<IAggregateBasedProjectionEntityMapper, AggregateBasedProjectionEntityMapper>();
             return options;
         }

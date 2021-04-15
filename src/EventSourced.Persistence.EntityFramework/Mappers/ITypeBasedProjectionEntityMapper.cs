@@ -2,7 +2,7 @@
 
 namespace EventSourced.Persistence.EntityFramework.Mappers
 {
-    public interface ITypeBaseProjectionEntityMapper
+    public interface ITypeBasedProjectionEntityMapper
     {
         TypeBasedProjectionEntity MapToEntity(object projection);
         object MapToProjection(TypeBasedProjectionEntity entity);

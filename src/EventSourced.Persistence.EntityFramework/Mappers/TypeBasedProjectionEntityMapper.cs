@@ -4,11 +4,11 @@ using Newtonsoft.Json;
 
 namespace EventSourced.Persistence.EntityFramework.Mappers
 {
-    public class TypeBaseProjectionEntityMapper : ITypeBaseProjectionEntityMapper
+    public class TypeBasedProjectionEntityMapper : ITypeBasedProjectionEntityMapper
     {
         private readonly ITypeSerializer _typeSerializer;
 
-        public TypeBaseProjectionEntityMapper(ITypeSerializer typeSerializer)
+        public TypeBasedProjectionEntityMapper(ITypeSerializer typeSerializer)
         {
             _typeSerializer = typeSerializer;
         }
