@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="DotVVM.AspNetCore" Version="3.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\EventSourced\EventSourced.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Pages\AggregateList\AggregateList.dothtml" />
+      <EmbeddedResource Include="Pages\AggregateTypes\AggregateTypesList.dothtml" />
+      <None Remove="Pages\AggregatesList\AggregatesList.dothtml" />
+      <EmbeddedResource Include="Pages\AggregatesList\AggregatesList.dothtml" />
+    </ItemGroup>
+
+</Project>

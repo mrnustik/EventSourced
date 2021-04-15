@@ -34,6 +34,8 @@ EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourced.Persistence.EntityFramework", "src\EventSourced.Persistence.EntityFramework\EventSourced.Persistence.EntityFramework.csproj", "{B6847270-9A56-481A-B308-B2D785FDFA3B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourced.Diagnostics.Web", "src\EventSourced.Diagnostics.Web\EventSourced.Diagnostics.Web.csproj", "{1C2A8D9E-526E-435E-BBBD-930EDCE76AF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,7 @@ Global
 		{0C48C963-CD01-4A37-91E2-E5198FC06CBD} = {889D7E98-D3B6-4F5B-801D-4FC64321A51B}
 		{B9124449-B017-4816-A74C-3FFA28CAA60D} = {04337F3E-69FD-47EE-873B-ED6A8638C312}
 		{B6847270-9A56-481A-B308-B2D785FDFA3B} = {F16379EB-0509-4128-88D1-48205D491C2C}
+		{1C2A8D9E-526E-435E-BBBD-930EDCE76AF0} = {F16379EB-0509-4128-88D1-48205D491C2C}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{82FBEAEC-A9D0-4261-874B-41DDE0F1F0C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -78,5 +81,9 @@ Global
 		{B6847270-9A56-481A-B308-B2D785FDFA3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6847270-9A56-481A-B308-B2D785FDFA3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6847270-9A56-481A-B308-B2D785FDFA3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C2A8D9E-526E-435E-BBBD-930EDCE76AF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C2A8D9E-526E-435E-BBBD-930EDCE76AF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C2A8D9E-526E-435E-BBBD-930EDCE76AF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C2A8D9E-526E-435E-BBBD-930EDCE76AF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

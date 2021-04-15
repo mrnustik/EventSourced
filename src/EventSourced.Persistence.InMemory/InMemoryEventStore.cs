@@ -74,6 +74,15 @@ namespace EventSourced.Persistence.InMemory
                                           .ToArray();
             return Task.FromResult(events);
         }
+
+        public Task<ICollection<Type>> GetAllAggregateTypes(CancellationToken ct)
+        {
+            var types = StreamsDictionary.Keys.Select(v => v.AggregateRootType)
+                                    .Distinct()
+                                    .ToList();
+            return Task.FromResult<ICollection<Type>>(types);
+        }
+        
     }
 
     public record StreamIdentification(Guid StreamId, Type AggregateRootType);

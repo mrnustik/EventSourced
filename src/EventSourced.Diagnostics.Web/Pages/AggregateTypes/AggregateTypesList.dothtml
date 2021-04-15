@@ -1,0 +1,16 @@
+@viewModel EventSourced.Diagnostics.Web.Pages.AggregateTypes.AggregateTypesListViewModel, EventSourced.Diagnostics.Web
+
+<!DOCTYPE html>
+<html lang="cs" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Event Sourced Diagnostics</title>
+</head>
+<body Visible="{value: true}" style="display: none;">
+<dot:Repeater DataSource="{value: AggregateTypes}">
+    <dot:RouteLink RouteName="Diagnostics_AggregatesList" Param-AggregateType="{value: EncodedTypeId}">
+        {{value: DisplayName}} <br/>
+    </dot:RouteLink>
+</dot:Repeater>
+</body>
+</html>
