@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain;
 using EventSourced.Domain.Events;
+using EventSourced.EventBus;
 using EventSourced.Exceptions;
 using EventSourced.Persistence;
 using EventSourced.Snapshots;
@@ -23,6 +24,7 @@ namespace EventSourced.Tests.Persistence
         private readonly Mock<IEventStore> _eventStoreMock = new();
         private readonly Mock<ISnapshotStore<TestAggregate>> _snapshotStoreMock = new();
         private readonly Mock<ISnapshotCreationStrategy> _snapshotCreationStrategyMock = new();
+        private readonly Mock<IDomainEventBus> _domainEventBus = new();
 
         #region SaveAsync()
 
@@ -135,6 +137,23 @@ namespace EventSourced.Tests.Persistence
             VerifySnapshotCreated();
         }
 
+        [Fact]
+        public async Task SaveAsync_WithNewEvents_EventsArePublishedToEventBus()
+        {
+            //Arrange
+            var updatedAggregate = new TestAggregate();
+            updatedAggregate.EnqueueTestEvent();
+
+            _snapshotCreationStrategyMock.WithShouldCreateSnapshot<TestAggregate>(true);
+            var repository = CreateSut();
+
+            //Act
+            await repository.SaveAsync(updatedAggregate, CancellationToken.None);
+
+            //Assert
+            VerifyDomainEventsPublished();
+        }
+        
         #endregion
 
         #region GetByIdAsync
@@ -257,12 +276,18 @@ namespace EventSourced.Tests.Persistence
             _snapshotStoreMock.Verify(s => s.StoreSnapshotAsync(It.IsAny<TestAggregate>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
+        private void VerifyDomainEventsPublished()
+        {
+            _domainEventBus.Verify(s =>s.PublishDomainEventsAsync(It.IsAny<IEnumerable<IDomainEvent>>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
         private IRepository<TestAggregate> CreateSut(params IEventStreamUpdatedEventHandler[] domainEventHandlers)
         {
             return new Repository<TestAggregate>(_eventStoreMock.Object,
                                                  domainEventHandlers.ToList(),
                                                  _snapshotStoreMock.Object,
-                                                 _snapshotCreationStrategyMock.Object);
+                                                 _snapshotCreationStrategyMock.Object,
+                                                 _domainEventBus.Object);
         }
 
         internal class TestEvent : DomainEvent
