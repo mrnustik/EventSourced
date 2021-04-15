@@ -34,7 +34,7 @@ namespace EventSourced.Persistence.InMemory
 
         public Task<IDomainEvent[]> GetByStreamIdAsync(Guid streamId,
                                                        Type aggregateRootType,
-                                                       int aggregateRootVersion,
+                                                       int fromEventVersion,
                                                        CancellationToken ct)
         {
             var streamIdentification = new StreamIdentification(streamId, aggregateRootType);
@@ -42,7 +42,7 @@ namespace EventSourced.Persistence.InMemory
             if (StreamsDictionary.TryGetValue(streamIdentification, out var events))
             {
                 var eventsArray = events
-                    .Where(e => e.Version > aggregateRootVersion)
+                    .Where(e => e.Version > fromEventVersion)
                     .ToArray();
                 return Task.FromResult(eventsArray);
             }
