@@ -10,17 +10,17 @@ namespace EventSourced.Persistence.EntityFramework
 {
     public class EntityFrameworkProjectionStore : IProjectionStore
     {
-        private readonly ITypeBaseProjectionEntityMapper _typeBaseProjectionEntityMapper;
+        private readonly ITypeBasedProjectionEntityMapper _typeBasedProjectionEntityMapper;
         private readonly EventSourcedDbContext _eventSourcedDbContext;
         private readonly ITypeSerializer _typeSerializer;
         private readonly IAggregateBasedProjectionEntityMapper _aggregateBasedProjectionEntityMapper;
 
-        public EntityFrameworkProjectionStore(ITypeBaseProjectionEntityMapper typeBaseProjectionEntityMapper,
+        public EntityFrameworkProjectionStore(ITypeBasedProjectionEntityMapper typeBasedProjectionEntityMapper,
                                               EventSourcedDbContext eventSourcedDbContext,
                                               ITypeSerializer typeSerializer,
                                               IAggregateBasedProjectionEntityMapper aggregateBasedProjectionEntityMapper)
         {
-            _typeBaseProjectionEntityMapper = typeBaseProjectionEntityMapper;
+            _typeBasedProjectionEntityMapper = typeBasedProjectionEntityMapper;
             _eventSourcedDbContext = eventSourcedDbContext;
             _typeSerializer = typeSerializer;
             _aggregateBasedProjectionEntityMapper = aggregateBasedProjectionEntityMapper;
@@ -33,7 +33,7 @@ namespace EventSourced.Persistence.EntityFramework
                 await _eventSourcedDbContext.TypeBasedProjections.SingleOrDefaultAsync(
                     p => p.SerializedProjectionType == serializedProjectionType,
                     ct);
-            return projectionEntity != null ? _typeBaseProjectionEntityMapper.MapToProjection(projectionEntity) : null;
+            return projectionEntity != null ? _typeBasedProjectionEntityMapper.MapToProjection(projectionEntity) : null;
         }
 
         public async Task<object?> LoadAggregateProjectionAsync(Type projectionType, Guid aggregateRootId, CancellationToken ct)
@@ -48,7 +48,7 @@ namespace EventSourced.Persistence.EntityFramework
 
         public async Task StoreProjectionAsync(object projection, CancellationToken ct)
         {
-            var projectionEntity = _typeBaseProjectionEntityMapper.MapToEntity(projection);
+            var projectionEntity = _typeBasedProjectionEntityMapper.MapToEntity(projection);
             if (await _eventSourcedDbContext.TypeBasedProjections.AnyAsync(p => p.SerializedProjectionType == projectionEntity.SerializedProjectionType,
                                                                            ct))
             {

@@ -5,7 +5,7 @@ using Xunit;
 
 namespace EventSourced.Tests.Persistence.EntityFramework.Mappers
 {
-    public class TypeBasedProjectionStoreMapperTests
+    public class TypeBasedProjectionEntityMapperTests
     {
         [Fact]
         public void MapToEntity_WhenUnmapped_KeepsEverythingSet()
@@ -34,9 +34,9 @@ namespace EventSourced.Tests.Persistence.EntityFramework.Mappers
                               .Be(42);
         }
         
-        private ITypeBaseProjectionEntityMapper CreateSut()
+        private ITypeBasedProjectionEntityMapper CreateSut()
         {
-            return new TypeBaseProjectionEntityMapper(new TypeSerializer());
+            return new TypeBasedProjectionEntityMapper(new TypeSerializer());
         }
 
         private class TestProjection
