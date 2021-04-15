@@ -24,14 +24,6 @@ namespace EventSourced.Tests.Persistence.EntityFramework.Mappers
 
             unmappedProjection.NumberWithPrivateSet.Should()
                               .Be(42);
-
-            unmappedProjection.GetProtectedNumber()
-                              .Should()
-                              .Be(42);
-
-            unmappedProjection.GetPrivateNumber()
-                              .Should()
-                              .Be(42);
         }
         
         private ITypeBasedProjectionEntityMapper CreateSut()
@@ -43,19 +35,15 @@ namespace EventSourced.Tests.Persistence.EntityFramework.Mappers
         {
             public int Number { get; }
             public int NumberWithPrivateSet { get; private set; }
-            protected int ProtectedNumber { get; }
-            private int PrivateNumber { get; }
-
+            public TestProjection()
+            {
+            }
+            
             public TestProjection(int number)
             {
                 Number = number;
                 NumberWithPrivateSet = number;
-                ProtectedNumber = number;
-                PrivateNumber = number;
             }
-
-            public int GetProtectedNumber() => ProtectedNumber;
-            public int GetPrivateNumber() => PrivateNumber;
         }
     }
 }
