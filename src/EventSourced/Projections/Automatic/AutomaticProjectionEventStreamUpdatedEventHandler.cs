@@ -7,13 +7,13 @@ using EventSourced.Persistence;
 
 namespace EventSourced.Projections.Automatic
 {
-    internal class AutomaticProjectionDomainEventHandler : IDomainEventHandler
+    internal class AutomaticProjectionEventStreamUpdatedEventHandler : IEventStreamUpdatedEventHandler
     {
         private readonly IAutomaticProjectionsEventMapper _automaticProjectionsEventMapper;
 
         private readonly IProjectionStore _projectionStore;
 
-        public AutomaticProjectionDomainEventHandler(IAutomaticProjectionsEventMapper automaticProjectionsEventMapper,
+        public AutomaticProjectionEventStreamUpdatedEventHandler(IAutomaticProjectionsEventMapper automaticProjectionsEventMapper,
                                                      IProjectionStore projectionStore)
         {
             _automaticProjectionsEventMapper = automaticProjectionsEventMapper;

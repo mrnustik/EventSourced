@@ -12,12 +12,12 @@ namespace EventSourced.Persistence
     public class Repository<TAggregateRoot> : IRepository<TAggregateRoot> where TAggregateRoot : AggregateRoot
     {
         private readonly IEventStore _eventStore;
-        private readonly IEnumerable<IDomainEventHandler> _domainEventHandlers;
+        private readonly IEnumerable<IEventStreamUpdatedEventHandler> _domainEventHandlers;
         private readonly ISnapshotStore<TAggregateRoot> _snapshotStore;
         private readonly ISnapshotCreationStrategy _snapshotCreationStrategy;
 
         public Repository(IEventStore eventStore,
-                          IEnumerable<IDomainEventHandler> domainEventHandlers,
+                          IEnumerable<IEventStreamUpdatedEventHandler> domainEventHandlers,
                           ISnapshotStore<TAggregateRoot> snapshotStore,
                           ISnapshotCreationStrategy snapshotCreationStrategy)
         {
