@@ -80,5 +80,14 @@ namespace EventSourced.Persistence.EntityFramework
             return eventEntities.Select(_domainEventEntityMapper.MapToDomainEvent)
                                 .ToArray();
         }
+
+        public async Task<ICollection<Type>> GetAllAggregateTypes(CancellationToken ct)
+        {
+            var serializedTypes = await _dbContext.Events.Select(e => e.AggregateRootType)
+                      .Distinct()
+                      .ToListAsync(ct);
+            return serializedTypes.Select(_typeSerializer.DeserializeType)
+                                  .ToList();
+        }
     }
 }

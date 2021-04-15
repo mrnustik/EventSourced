@@ -13,5 +13,6 @@ namespace EventSourced.Persistence
         Task<bool> StreamExistsAsync(Guid streamId, Type aggregateRootType, CancellationToken ct);
         Task<IDictionary<Guid, IDomainEvent[]>> GetAllStreamsOfType(Type aggregateRootType, CancellationToken ct);
         Task<IDomainEvent[]> GetEventsOfTypeAsync(Type eventType, CancellationToken ct);
+        Task<ICollection<Type>> GetAllAggregateTypes(CancellationToken ct);
     }
 }

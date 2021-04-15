@@ -1,4 +1,5 @@
 using EventSourced.Configuration;
+using EventSourced.Diagnostics.Web.Configuration;
 using EventSourced.Persistence.EntityFramework.Configuration;
 using EventSourced.Persistence.InMemory.Configuration;
 using EventSourced.Sample.Warehouse.Application.Configuration;
@@ -34,14 +35,16 @@ namespace EventSourced.Sample.Warehouse.API
 
             services.AddApplicationServices();
             services.AddEventSourced(options => options
-                                                .AddEntityFrameworkSupport(o => o.UseSqlServer(Configuration.GetConnectionString("EventStore")))
+                                                .AddEntityFrameworkSupport(
+                                                    o => o.UseSqlServer(Configuration.GetConnectionString("EventStore")))
                                                 .UseEntityFrameworkEventStore()
-                                                .UseEntityFrameworkProjectionStore()
+                                                .UseInMemoryProjectionStore()
                                                 .UseEntityFrameworkSnapshotStore()
                                                 .UseEventCountBasedSnapshotStrategy(1)
                                                 .RegisterAutomaticProjection<WarehouseItemsCountProjection>()
                                                 .RegisterAutomaticAggregateProjection<WarehouseItemDetailProjection,
-                                                    WarehouseItemAggregateRoot>());
+                                                    WarehouseItemAggregateRoot>())
+                    .AddEventSourcedDiagnostics();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +53,7 @@ namespace EventSourced.Sample.Warehouse.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseEventSourcedDiagnostics();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EventSourced.Sample.Warehouse.API v1"));
             }
