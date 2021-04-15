@@ -19,9 +19,6 @@ namespace EventSourced.Tests.Persistence.EntityFramework.Mappers
             var unmappedProjection = (TestProjection) sut.MapToProjection(projectionEntity);
 
             //Assert
-            unmappedProjection.Number.Should()
-                              .Be(42);
-
             unmappedProjection.NumberWithPrivateSet.Should()
                               .Be(42);
         }
@@ -33,7 +30,6 @@ namespace EventSourced.Tests.Persistence.EntityFramework.Mappers
 
         private class TestProjection
         {
-            public int Number { get; }
             public int NumberWithPrivateSet { get; private set; }
             public TestProjection()
             {
@@ -41,7 +37,6 @@ namespace EventSourced.Tests.Persistence.EntityFramework.Mappers
             
             public TestProjection(int number)
             {
-                Number = number;
                 NumberWithPrivateSet = number;
             }
         }
