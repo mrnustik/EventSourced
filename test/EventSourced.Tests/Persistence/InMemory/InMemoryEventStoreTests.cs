@@ -32,7 +32,7 @@ namespace EventSourced.Tests.Persistence.InMemory
             //Act
             await sut.StoreEventsAsync(AnyStreamId,
                                        AnyAggregateType,
-                                       testEvents.Cast<IDomainEvent>()
+                                       testEvents.Cast<DomainEvent>()
                                                  .ToList(),
                                        CancellationToken.None);
 
@@ -50,9 +50,9 @@ namespace EventSourced.Tests.Persistence.InMemory
         public async Task StoreEventsAsync_WithExistingAggregate_PreserversOrder()
         {
             //Arrange
-            var sut = CreateSut(new Dictionary<StreamIdentification, List<IDomainEvent>>
+            var sut = CreateSut(new Dictionary<StreamIdentification, List<DomainEvent>>
             {
-                {new StreamIdentification(AnyStreamId, AnyAggregateType), new List<IDomainEvent> {new TestEvent(1)}}
+                {new StreamIdentification(AnyStreamId, AnyAggregateType), new List<DomainEvent> {new TestEvent(1)}}
             });
             var testEvents = new[]
             {
@@ -63,7 +63,7 @@ namespace EventSourced.Tests.Persistence.InMemory
             //Act
             await sut.StoreEventsAsync(AnyStreamId,
                                        AnyAggregateType,
-                                       testEvents.Cast<IDomainEvent>()
+                                       testEvents.Cast<DomainEvent>()
                                                  .ToList(),
                                        CancellationToken.None);
 
@@ -81,9 +81,9 @@ namespace EventSourced.Tests.Persistence.InMemory
         public async Task GetByStreamIdAsync_WithExistingAggregate_ReturnsEvents()
         {
             //Arrange
-            var sut = CreateSut(new Dictionary<StreamIdentification, List<IDomainEvent>>
+            var sut = CreateSut(new Dictionary<StreamIdentification, List<DomainEvent>>
             {
-                {new StreamIdentification(AnyStreamId, AnyAggregateType), new List<IDomainEvent> {new TestEvent(1)}}
+                {new StreamIdentification(AnyStreamId, AnyAggregateType), new List<DomainEvent> {new TestEvent(1)}}
             });
 
             //Act
@@ -128,13 +128,13 @@ namespace EventSourced.Tests.Persistence.InMemory
         public async Task GetAllByStreamType_WithExistingValues_ReturnsEventsOfAggregateType()
         {
             //Arrange
-            var sut = CreateSut(new Dictionary<StreamIdentification, List<IDomainEvent>>
+            var sut = CreateSut(new Dictionary<StreamIdentification, List<DomainEvent>>
             {
                 {
                     new StreamIdentification(AnyStreamId, AnyAggregateType),
-                    new List<IDomainEvent> {new TestEvent(1), new TestEvent(1)}
+                    new List<DomainEvent> {new TestEvent(1), new TestEvent(1)}
                 },
-                {new StreamIdentification(AnyStreamId2, AnyAggregateType), new List<IDomainEvent> {new TestEvent(1)}}
+                {new StreamIdentification(AnyStreamId2, AnyAggregateType), new List<DomainEvent> {new TestEvent(1)}}
             });
 
             //Act
@@ -157,13 +157,13 @@ namespace EventSourced.Tests.Persistence.InMemory
         public async Task GetEventsOfTypeAsync_WithExistingValues_ReturnsEventsOfType()
         {
             //Arrange
-            var sut = CreateSut(new Dictionary<StreamIdentification, List<IDomainEvent>>
+            var sut = CreateSut(new Dictionary<StreamIdentification, List<DomainEvent>>
             {
                 {
                     new StreamIdentification(AnyStreamId, AnyAggregateType),
-                    new List<IDomainEvent> {new TestEvent(1), new TestEvent(1)}
+                    new List<DomainEvent> {new TestEvent(1), new TestEvent(1)}
                 },
-                {new StreamIdentification(AnyStreamId2, AnyAggregateType), new List<IDomainEvent> {new TestEvent(1)}}
+                {new StreamIdentification(AnyStreamId2, AnyAggregateType), new List<DomainEvent> {new TestEvent(1)}}
             });
 
             //Act
@@ -178,11 +178,11 @@ namespace EventSourced.Tests.Persistence.InMemory
         public async Task StreamExistsAsync_WithExistingStream_ReturnsTrue()
         {
             //Arrange
-            var sut = CreateSut(new Dictionary<StreamIdentification, List<IDomainEvent>>
+            var sut = CreateSut(new Dictionary<StreamIdentification, List<DomainEvent>>
             {
                 {
                     new StreamIdentification(AnyStreamId, AnyAggregateType),
-                    new List<IDomainEvent> {new TestEvent(1), new TestEvent(1)}
+                    new List<DomainEvent> {new TestEvent(1), new TestEvent(1)}
                 }
             });
 
@@ -213,7 +213,7 @@ namespace EventSourced.Tests.Persistence.InMemory
             return new();
         }
 
-        private InMemoryEventStore CreateSut(Dictionary<StreamIdentification, List<IDomainEvent>> dictionary)
+        private InMemoryEventStore CreateSut(Dictionary<StreamIdentification, List<DomainEvent>> dictionary)
         {
             return new(dictionary);
         }

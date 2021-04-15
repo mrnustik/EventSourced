@@ -8,11 +8,11 @@ namespace EventSourced.Persistence
 {
     public interface IEventStore
     {
-        Task StoreEventsAsync(Guid streamId, Type aggregateRootType, IList<IDomainEvent> domainEvents, CancellationToken ct);
-        Task<IDomainEvent[]> GetByStreamIdAsync(Guid streamId, Type aggregateRootType, int fromEventVersion, CancellationToken ct);
+        Task StoreEventsAsync(Guid streamId, Type aggregateRootType, IList<DomainEvent> domainEvents, CancellationToken ct);
+        Task<DomainEvent[]> GetByStreamIdAsync(Guid streamId, Type aggregateRootType, int fromEventVersion, CancellationToken ct);
         Task<bool> StreamExistsAsync(Guid streamId, Type aggregateRootType, CancellationToken ct);
-        Task<IDictionary<Guid, IDomainEvent[]>> GetAllStreamsOfType(Type aggregateRootType, CancellationToken ct);
-        Task<IDomainEvent[]> GetEventsOfTypeAsync(Type eventType, CancellationToken ct);
+        Task<IDictionary<Guid, DomainEvent[]>> GetAllStreamsOfType(Type aggregateRootType, CancellationToken ct);
+        Task<DomainEvent[]> GetEventsOfTypeAsync(Type eventType, CancellationToken ct);
         Task<ICollection<Type>> GetAllAggregateTypes(CancellationToken ct);
     }
 }

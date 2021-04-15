@@ -72,12 +72,12 @@ namespace EventSourced.Tests.EventBus
             VerifyDomainHandlerCalled(otherTestEventHandlerMock);
         }
 
-        private void VerifyDomainHandlerCalled<TDomainEvent>(Mock<IDomainEventHandler<TDomainEvent>> mock) where TDomainEvent : IDomainEvent
+        private void VerifyDomainHandlerCalled<TDomainEvent>(Mock<IDomainEventHandler<TDomainEvent>> mock) where TDomainEvent : DomainEvent
         {
             mock.Verify(t => t.HandleDomainEventAsync(It.IsAny<TDomainEvent>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        private void VerifyDomainHandlerNotCalled<TDomainEvent>(Mock<IDomainEventHandler<TDomainEvent>> mock) where TDomainEvent : IDomainEvent
+        private void VerifyDomainHandlerNotCalled<TDomainEvent>(Mock<IDomainEventHandler<TDomainEvent>> mock) where TDomainEvent : DomainEvent
         {
             mock.Verify(t => t.HandleDomainEventAsync(It.IsAny<TDomainEvent>(), It.IsAny<CancellationToken>()), Times.Never);
         }

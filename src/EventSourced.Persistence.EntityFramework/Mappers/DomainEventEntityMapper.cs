@@ -16,7 +16,7 @@ namespace EventSourced.Persistence.EntityFramework.Mappers
             _eventSerializer = eventSerializer;
         }
 
-        public DomainEventEntity MapToEntity(IDomainEvent domainEvent, Guid streamId, Type aggregateRootType)
+        public DomainEventEntity MapToEntity(DomainEvent domainEvent, Guid streamId, Type aggregateRootType)
         {
             return new()
             {
@@ -28,7 +28,7 @@ namespace EventSourced.Persistence.EntityFramework.Mappers
             };
         }
 
-        public IDomainEvent MapToDomainEvent(DomainEventEntity domainEventEntity)
+        public DomainEvent MapToDomainEvent(DomainEventEntity domainEventEntity)
         {
             var eventType = _typeSerializer.DeserializeType(domainEventEntity.EventType);
             return _eventSerializer.DeserializeEvent(domainEventEntity.SerializedEvent, eventType);

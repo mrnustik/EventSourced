@@ -23,7 +23,7 @@ namespace EventSourced.Projections.Automatic
 
         public async Task HandleDomainEventAsync(Type aggregateRootType,
                                                  Guid aggregateRootId,
-                                                 IDomainEvent domainEvent,
+                                                 DomainEvent domainEvent,
                                                  CancellationToken ct)
         {
             var projectionsAffectedByAggregateChange =

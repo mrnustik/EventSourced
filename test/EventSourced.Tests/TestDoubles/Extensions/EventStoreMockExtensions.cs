@@ -19,7 +19,7 @@ namespace EventSourced.Tests.TestDoubles.Extensions
 
         public static Mock<IEventStore> WithGetByStreamIdAsync(this Mock<IEventStore> mock,
                                                                Guid streamId,
-                                                               IEnumerable<IDomainEvent> domainEvents)
+                                                               IEnumerable<DomainEvent> domainEvents)
         {
             mock.Setup(s => s.GetByStreamIdAsync(streamId, It.IsAny<Type>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(domainEvents.ToArray());
@@ -27,14 +27,14 @@ namespace EventSourced.Tests.TestDoubles.Extensions
         }
 
         public static Mock<IEventStore> WithGetAllStreamsOfType(this Mock<IEventStore> mock,
-                                                                IDictionary<Guid, IDomainEvent[]> aggregateToEventsMap)
+                                                                IDictionary<Guid, DomainEvent[]> aggregateToEventsMap)
         {
             mock.Setup(s => s.GetAllStreamsOfType(It.IsAny<Type>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(aggregateToEventsMap);
             return mock;
         }
 
-        public static Mock<IEventStore> WithGetEventsOfTypeAsync(this Mock<IEventStore> mock, IDomainEvent[] existingEvents)
+        public static Mock<IEventStore> WithGetEventsOfTypeAsync(this Mock<IEventStore> mock, DomainEvent[] existingEvents)
         {
             mock.Setup(s => s.GetEventsOfTypeAsync(It.IsAny<Type>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(existingEvents);

@@ -7,7 +7,7 @@ namespace EventSourced.Helpers
 {
     internal static class EventApplicator
     {
-        public static void ApplyEventsToObject(this object @object, params IDomainEvent[] domainEvents)
+        public static void ApplyEventsToObject(this object @object, params DomainEvent[] domainEvents)
         {
             foreach (var domainEvent in domainEvents)
             {

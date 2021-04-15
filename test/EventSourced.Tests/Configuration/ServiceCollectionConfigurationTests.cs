@@ -59,7 +59,7 @@ namespace EventSourced.Tests.Configuration
 
         private class TestProjection
         {
-            private void Apply(IDomainEvent eventObject)
+            private void Apply(DomainEvent eventObject)
             {
             }
         }
@@ -71,7 +71,7 @@ namespace EventSourced.Tests.Configuration
             {
             }
 
-            private void Apply(IDomainEvent eventObject)
+            private void Apply(DomainEvent eventObject)
             {
             }
         }

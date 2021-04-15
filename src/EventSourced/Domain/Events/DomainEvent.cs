@@ -1,7 +1,7 @@
 ﻿namespace EventSourced.Domain.Events
 {
-    public abstract class DomainEvent : IDomainEvent
+    public abstract class DomainEvent
     {
-        public int Version { get; set; }
+        public abstract int Version { get; internal set; }
     }
 }

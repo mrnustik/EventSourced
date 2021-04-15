@@ -20,7 +20,7 @@ namespace EventSourced.Tests.Projections
         public async Task BuildProjectionAsync_WithExistingApplicableEvents_BuildsTheProjection()
         {
             //Arrange
-            IDomainEvent[] existingEvents =
+            DomainEvent[] existingEvents =
             {
                 new TestEvent(),
                 new TestEvent(),

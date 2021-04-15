@@ -12,7 +12,7 @@ namespace EventSourced.Helpers
         private const BindingFlags DefaultApplyMethodBindingFlags =
             BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-        public static MethodInfo? GetApplyMethodForEventInObject(object @object, IDomainEvent domainEvent)
+        public static MethodInfo? GetApplyMethodForEventInObject(object @object, DomainEvent domainEvent)
         {
             var aggregateType = @object.GetType();
             var methods = aggregateType.GetMethods(DefaultApplyMethodBindingFlags);
@@ -29,7 +29,7 @@ namespace EventSourced.Helpers
                              .Where(m => m.GetParameters()
                                           .Length == 1)
                              .SelectMany(m => m.GetParameters())
-                             .Where(p => p.ParameterType.IsAssignableTo(typeof(IDomainEvent)))
+                             .Where(p => p.ParameterType.IsAssignableTo(typeof(DomainEvent)))
                              .Select(p => p.ParameterType);
         }
 

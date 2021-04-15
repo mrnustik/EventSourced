@@ -7,7 +7,7 @@ namespace EventSourced.Projections.Automatic
     public interface IAutomaticProjectionsEventMapper
     {
         void Initialize();
-        IEnumerable<Type> GetProjectionsAffectedByEvent(IDomainEvent domainEvent);
+        IEnumerable<Type> GetProjectionsAffectedByEvent(DomainEvent domainEvent);
         IEnumerable<Type> GetProjectionsAffectedByAggregateChange(Type aggregateType);
     }
 }

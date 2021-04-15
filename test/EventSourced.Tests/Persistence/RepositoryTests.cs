@@ -76,7 +76,7 @@ namespace EventSourced.Tests.Persistence
             mockDomainEventListener.Verify(
                 s => s.HandleDomainEventAsync(It.IsAny<Type>(),
                                               It.IsAny<Guid>(),
-                                              It.IsAny<IDomainEvent>(),
+                                              It.IsAny<DomainEvent>(),
                                               It.IsAny<CancellationToken>()),
                 Times.Once);
         }
@@ -210,7 +210,7 @@ namespace EventSourced.Tests.Persistence
         {
             //Arrange
             var aggregateId = Guid.NewGuid();
-            var existingEvents = Array.Empty<IDomainEvent>();
+            var existingEvents = Array.Empty<DomainEvent>();
             _eventStoreMock.WithGetByStreamIdAsync(aggregateId, existingEvents);
             var aggregateRootFromSnapshot = new TestAggregate(aggregateId);
             aggregateRootFromSnapshot.SetVersion(5);
@@ -242,7 +242,7 @@ namespace EventSourced.Tests.Persistence
                 new TestEvent(),
                 new TestEvent()
             };
-            _eventStoreMock.WithGetAllStreamsOfType(new Dictionary<Guid, IDomainEvent[]>
+            _eventStoreMock.WithGetAllStreamsOfType(new Dictionary<Guid, DomainEvent[]>
             {
                 {aggregateId, existingEvents.ToArray()},
                 {aggregateId2, existingEvents.ToArray()}
@@ -266,7 +266,7 @@ namespace EventSourced.Tests.Persistence
         {
             _eventStoreMock.Verify(s => s.StoreEventsAsync(It.IsAny<Guid>(),
                                                            It.IsAny<Type>(),
-                                                           It.IsAny<IList<IDomainEvent>>(),
+                                                           It.IsAny<IList<DomainEvent>>(),
                                                            It.IsAny<CancellationToken>()),
                                    Times.Once);
         }
@@ -278,7 +278,7 @@ namespace EventSourced.Tests.Persistence
 
         private void VerifyDomainEventsPublished()
         {
-            _domainEventBus.Verify(s =>s.PublishDomainEventsAsync(It.IsAny<IEnumerable<IDomainEvent>>(), It.IsAny<CancellationToken>()), Times.Once);
+            _domainEventBus.Verify(s =>s.PublishDomainEventsAsync(It.IsAny<IEnumerable<DomainEvent>>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         private IRepository<TestAggregate> CreateSut(params IEventStreamUpdatedEventHandler[] domainEventHandlers)

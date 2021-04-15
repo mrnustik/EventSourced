@@ -26,7 +26,7 @@ namespace EventSourced.Tests.Projections.Automatic
         {
             //Arrange
             var domainEvent = new TestEvent(42);
-            _automaticProjectionEventMapperMock.Setup(s => s.GetProjectionsAffectedByEvent(It.IsAny<IDomainEvent>()))
+            _automaticProjectionEventMapperMock.Setup(s => s.GetProjectionsAffectedByEvent(It.IsAny<DomainEvent>()))
                                                .Returns(new[] {typeof(TestProjection)});
             var sut = CreateSut();
 
@@ -44,7 +44,7 @@ namespace EventSourced.Tests.Projections.Automatic
         {
             //Arrange
             var domainEvent = new TestEvent(42);
-            _automaticProjectionEventMapperMock.Setup(s => s.GetProjectionsAffectedByEvent(It.IsAny<IDomainEvent>()))
+            _automaticProjectionEventMapperMock.Setup(s => s.GetProjectionsAffectedByEvent(It.IsAny<DomainEvent>()))
                                                .Returns(new[] {typeof(TestProjection)});
             var originalProjection = new TestProjection
             {

@@ -29,7 +29,7 @@ namespace EventSourced.Projections.Automatic
             _isInitialized = true;
         }
 
-        public IEnumerable<Type> GetProjectionsAffectedByEvent(IDomainEvent domainEvent)
+        public IEnumerable<Type> GetProjectionsAffectedByEvent(DomainEvent domainEvent)
         {
             var eventType = domainEvent.GetType();
             if (EventsToProjectionMap.TryGetValue(eventType, out var eventsCollection))

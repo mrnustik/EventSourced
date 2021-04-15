@@ -12,14 +12,14 @@ namespace EventSourced.Persistence.EntityFramework.Helpers
             ContractResolver = new PrivateSetterAndCtorContractResolver()
         };
 
-        public string SerializeEvent(IDomainEvent domainEvent)
+        public string SerializeEvent(DomainEvent domainEvent)
         {
             return JsonConvert.SerializeObject(domainEvent, SerializerSettings);
         }
 
-        public IDomainEvent DeserializeEvent(string serializedEvent, Type eventType)
+        public DomainEvent DeserializeEvent(string serializedEvent, Type eventType)
         {
-            return (IDomainEvent) JsonConvert.DeserializeObject(serializedEvent, eventType, SerializerSettings)!;
+            return (DomainEvent) JsonConvert.DeserializeObject(serializedEvent, eventType, SerializerSettings)!;
         }
     }
 }
