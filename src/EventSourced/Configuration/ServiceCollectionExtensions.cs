@@ -1,5 +1,6 @@
 ﻿using System;
 using EventSourced.Domain.Events;
+using EventSourced.EventBus;
 using EventSourced.Persistence;
 using EventSourced.Persistence.Null;
 using EventSourced.Projections;
@@ -21,6 +22,7 @@ namespace EventSourced.Configuration
             serviceCollection.AddTransient<IAutomaticProjectionRebuilder, AutomaticProjectionRebuilder>();
             serviceCollection.AddTransient(typeof(ISnapshotStore<>), typeof(NullSnapshotStore<>));
             serviceCollection.AddTransient<ISnapshotCreationStrategy, NullSnapshotCreationStrategy>();
+            serviceCollection.AddTransient<IDomainEventBus, InProcessDomainEventBus>();
             
             var options = new EventSourcedOptions(serviceCollection);
             optionsConfiguration(options);
