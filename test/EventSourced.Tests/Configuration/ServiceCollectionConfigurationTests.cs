@@ -3,6 +3,7 @@ using EventSourced.Configuration;
 using EventSourced.Domain;
 using EventSourced.Domain.Events;
 using EventSourced.Persistence;
+using EventSourced.Persistence.EntityFramework.Configuration;
 using EventSourced.Persistence.InMemory.Configuration;
 using EventSourced.Projections;
 using FluentAssertions;
@@ -23,6 +24,28 @@ namespace EventSourced.Tests.Configuration
             serviceCollection.AddEventSourced(options => options.UseInMemoryEventStore()
                                                                 .UseInMemoryProjectionStore()
                                                                 .UseInMemorySnapshotStore()
+                                                                .RegisterAutomaticProjection<TestProjection>()
+                                                                .RegisterAutomaticAggregateProjection<TestAggregateProjection,
+                                                                    TestAggregateRoot>());
+
+            //Assert
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var repository = serviceProvider.GetRequiredService<IRepository<TestAggregateRoot>>();
+            repository.Should()
+                      .NotBeNull();
+        }
+        
+        [Fact]
+        public void AddEventSourced_WithEntityFrameworkDatabase_AllowsResolvingOfRepository()
+        {
+            //Arrange
+            var serviceCollection = new ServiceCollection();
+
+            //Act
+            serviceCollection.AddEventSourced(options => options.AddEntityFrameworkSupport(o => { })
+                                                                .UseEntityFrameworkEventStore()
+                                                                .UseEntityFrameworkProjectionStore()
+                                                                .UseEntityFrameworkSnapshotStore()
                                                                 .RegisterAutomaticProjection<TestProjection>()
                                                                 .RegisterAutomaticAggregateProjection<TestAggregateProjection,
                                                                     TestAggregateRoot>());
