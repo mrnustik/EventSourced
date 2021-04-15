@@ -37,3 +37,10 @@ jobs:
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
           NUGET_SOURCE: https://api.nuget.org
           VERSION_STATIC: 0.1-alpha
+    - name: Publish EventSourced.Persistence.EntityFramework
+      uses: brandedoutcast/publish-nuget@v2.5.2
+      with:
+        PROJECT_FILE_PATH: src/EventSourced.Persistence.EntityFramework/EventSourced.Persistence.EntityFramework.csproj
+        NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+        NUGET_SOURCE: https://api.nuget.org
+        VERSION_STATIC: 0.1-alpha
