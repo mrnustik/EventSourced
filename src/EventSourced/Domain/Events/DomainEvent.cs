@@ -2,6 +2,6 @@
 {
     public abstract class DomainEvent
     {
-        public abstract int Version { get; internal set; }
+        public int Version { get; internal set; }
     }
 }
