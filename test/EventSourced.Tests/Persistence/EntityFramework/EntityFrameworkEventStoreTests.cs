@@ -20,7 +20,7 @@ namespace EventSourced.Tests.Persistence.EntityFramework
         {
             //Arrange
             var streamId = Guid.NewGuid();
-            var testEvents = new List<IDomainEvent>
+            var testEvents = new List<DomainEvent>
             {
                 new TestEvent(1),
                 new TestEvent(2),
@@ -45,7 +45,7 @@ namespace EventSourced.Tests.Persistence.EntityFramework
         {
             //Arrange
             var streamId = Guid.NewGuid();
-            var testEvents = new List<IDomainEvent>
+            var testEvents = new List<DomainEvent>
             {
                 new TestEvent(1),
                 new TestEvent(2),
@@ -70,7 +70,7 @@ namespace EventSourced.Tests.Persistence.EntityFramework
         {
             //Arrange
             var streamId = Guid.NewGuid();
-            var testEvents = new List<IDomainEvent>
+            var testEvents = new List<DomainEvent>
             {
                 new TestEvent(1),
                 new TestEvent(2),
@@ -98,7 +98,7 @@ namespace EventSourced.Tests.Persistence.EntityFramework
         {
             //Arrange
             var streamId = Guid.NewGuid();
-            var testEvents = new List<IDomainEvent>
+            var testEvents = new List<DomainEvent>
             {
                 new TestEvent(1),
                 new TestEvent(2),
@@ -121,7 +121,7 @@ namespace EventSourced.Tests.Persistence.EntityFramework
         {
             //Arrange
             var streamId = Guid.NewGuid();
-            var testEvents = new List<IDomainEvent>
+            var testEvents = new List<DomainEvent>
             {
                 new TestEvent(1),
                 new TestEvent(2),

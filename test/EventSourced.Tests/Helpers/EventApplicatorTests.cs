@@ -44,7 +44,7 @@ namespace EventSourced.Tests.Helpers
                .Throw<ArgumentException>();
         }
 
-        private class TestEvent : IDomainEvent
+        private class TestEvent : DomainEvent
         {
             public int Number { get; }
 
@@ -53,10 +53,10 @@ namespace EventSourced.Tests.Helpers
                 Number = number;
             }
 
-            public int Version { get; set; }
+            public override int Version { get; set; }
         }
 
-        private class OtherTestEvent : IDomainEvent
+        private class OtherTestEvent : DomainEvent
         {
             public int Number { get; }
 
@@ -65,7 +65,7 @@ namespace EventSourced.Tests.Helpers
                 Number = number;
             }
 
-            public int Version { get; set; }
+            public override int Version { get; set; }
         }
 
         private interface IObjectWithNumber

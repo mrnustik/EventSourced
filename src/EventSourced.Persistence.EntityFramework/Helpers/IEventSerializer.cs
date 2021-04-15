@@ -5,7 +5,7 @@ namespace EventSourced.Persistence.EntityFramework.Helpers
 {
     public interface IEventSerializer
     {
-        string SerializeEvent(IDomainEvent domainEvent);
-        IDomainEvent DeserializeEvent(string serializedEvent, Type eventType);
+        string SerializeEvent(DomainEvent domainEvent);
+        DomainEvent DeserializeEvent(string serializedEvent, Type eventType);
     }
 }

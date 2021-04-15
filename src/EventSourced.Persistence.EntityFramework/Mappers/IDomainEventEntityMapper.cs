@@ -6,7 +6,7 @@ namespace EventSourced.Persistence.EntityFramework.Mappers
 {
     public interface IDomainEventEntityMapper
     {
-        DomainEventEntity MapToEntity(IDomainEvent domainEvent, Guid streamId, Type aggregateRootType);
-        IDomainEvent MapToDomainEvent(DomainEventEntity domainEventEntity);
+        DomainEventEntity MapToEntity(DomainEvent domainEvent, Guid streamId, Type aggregateRootType);
+        DomainEvent MapToDomainEvent(DomainEventEntity domainEventEntity);
     }
 }

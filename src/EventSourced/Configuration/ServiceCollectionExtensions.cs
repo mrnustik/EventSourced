@@ -42,7 +42,7 @@ namespace EventSourced.Configuration
         public static IServiceCollection RegisterDomainEventHandler<TDomainEventHandler, TDomainEvent>(
             this IServiceCollection serviceCollection) 
             where TDomainEventHandler : class, IDomainEventHandler<TDomainEvent>
-            where TDomainEvent : IDomainEvent
+            where TDomainEvent : DomainEvent
         {
             serviceCollection.AddTransient<IDomainEventHandler<TDomainEvent>, TDomainEventHandler>();
             return serviceCollection;

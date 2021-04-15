@@ -7,7 +7,7 @@ namespace EventSourced.EventBus
 {
     public interface IDomainEventBus
     {
-        Task PublishDomainEventAsync(IDomainEvent domainEvent, CancellationToken ct);
-        Task PublishDomainEventsAsync(IEnumerable<IDomainEvent> domainEvent, CancellationToken ct);
+        Task PublishDomainEventAsync(DomainEvent domainEvent, CancellationToken ct);
+        Task PublishDomainEventsAsync(IEnumerable<DomainEvent> domainEvent, CancellationToken ct);
     }
 }

@@ -8,7 +8,7 @@ namespace EventSourced.Domain
 {
     public abstract class AggregateRoot
     {
-        private readonly Queue<IDomainEvent> uncommittedDomainEvents;
+        private readonly Queue<DomainEvent> uncommittedDomainEvents;
 
         public int Version { get; internal set; }
 
@@ -17,15 +17,15 @@ namespace EventSourced.Domain
         protected AggregateRoot(Guid id)
         {
             Id = id;
-            uncommittedDomainEvents = new Queue<IDomainEvent>();
+            uncommittedDomainEvents = new Queue<DomainEvent>();
         }
 
-        public IList<IDomainEvent> DequeueDomainEvents()
+        public IList<DomainEvent> DequeueDomainEvents()
         {
             return uncommittedDomainEvents.DequeueAll();
         }
 
-        protected void EnqueueAndApplyEvent(IDomainEvent domainEvent)
+        protected void EnqueueAndApplyEvent(DomainEvent domainEvent)
         {
             domainEvent.Version = GetNextEventVersion();
             uncommittedDomainEvents.Enqueue(domainEvent);
@@ -39,7 +39,7 @@ namespace EventSourced.Domain
             return lastAppliedEventVersion + 1;
         }
 
-        internal void RebuildFromEvents(IEnumerable<IDomainEvent> domainEvents)
+        internal void RebuildFromEvents(IEnumerable<DomainEvent> domainEvents)
         {
             foreach (var domainEvent in domainEvents)
             {
@@ -48,7 +48,7 @@ namespace EventSourced.Domain
             }
         }
 
-        private void ApplyEvent(IDomainEvent domainEvent)
+        private void ApplyEvent(DomainEvent domainEvent)
         {
             this.ApplyEventsToObject(domainEvent);
         }

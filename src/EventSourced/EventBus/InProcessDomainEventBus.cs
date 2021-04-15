@@ -16,7 +16,7 @@ namespace EventSourced.EventBus
             _serviceProvider = serviceProvider;
         }
 
-        public async Task PublishDomainEventAsync(IDomainEvent domainEvent, CancellationToken ct)
+        public async Task PublishDomainEventAsync(DomainEvent domainEvent, CancellationToken ct)
         {
             var domainEventType = domainEvent.GetType();
             var domainEventHandlerType = typeof(IDomainEventHandler<>)
@@ -24,7 +24,7 @@ namespace EventSourced.EventBus
             var domainEventHandlers = _serviceProvider.GetServices(domainEventHandlerType);
             foreach (var domainEventHandler in domainEventHandlers)
             {
-                var methodInfo = domainEventHandlerType.GetMethod(nameof(IDomainEventHandler<IDomainEvent>.HandleDomainEventAsync));
+                var methodInfo = domainEventHandlerType.GetMethod(nameof(IDomainEventHandler<DomainEvent>.HandleDomainEventAsync));
                 var handleTask = (Task)methodInfo!.Invoke(domainEventHandler,
                                                          new object?[]
                                                          {
@@ -35,7 +35,7 @@ namespace EventSourced.EventBus
             }
         }
 
-        public async Task PublishDomainEventsAsync(IEnumerable<IDomainEvent> domainEvent, CancellationToken ct)
+        public async Task PublishDomainEventsAsync(IEnumerable<DomainEvent> domainEvent, CancellationToken ct)
         {
             foreach (var @event in domainEvent)
             {

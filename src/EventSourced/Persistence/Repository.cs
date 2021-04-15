@@ -76,7 +76,7 @@ namespace EventSourced.Persistence
             }
         }
         
-        private async Task InvokeDomainEventHandlersAsync(Guid aggregateRootId, IList<IDomainEvent> domainEvents, CancellationToken ct)
+        private async Task InvokeDomainEventHandlersAsync(Guid aggregateRootId, IList<DomainEvent> domainEvents, CancellationToken ct)
         {
             foreach (var domainEventHandler in _domainEventHandlers)
             foreach (var domainEvent in domainEvents)

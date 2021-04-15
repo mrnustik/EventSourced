@@ -27,7 +27,7 @@ namespace EventSourced.Persistence.EntityFramework
 
         public async Task StoreEventsAsync(Guid streamId,
                                            Type aggregateRootType,
-                                           IList<IDomainEvent> domainEvents,
+                                           IList<DomainEvent> domainEvents,
                                            CancellationToken ct)
         {
             foreach (var domainEvent in domainEvents)
@@ -38,7 +38,7 @@ namespace EventSourced.Persistence.EntityFramework
             await _dbContext.SaveChangesAsync(ct);
         }
 
-        public async Task<IDomainEvent[]> GetByStreamIdAsync(Guid streamId,
+        public async Task<DomainEvent[]> GetByStreamIdAsync(Guid streamId,
                                                              Type aggregateRootType,
                                                              int fromEventVersion,
                                                              CancellationToken ct)
@@ -61,7 +61,7 @@ namespace EventSourced.Persistence.EntityFramework
                              .AnyAsync(ct);
         }
 
-        public async Task<IDictionary<Guid, IDomainEvent[]>> GetAllStreamsOfType(Type aggregateRootType, CancellationToken ct)
+        public async Task<IDictionary<Guid, DomainEvent[]>> GetAllStreamsOfType(Type aggregateRootType, CancellationToken ct)
         {
             var serializedAggregateType = _typeSerializer.SerializeType(aggregateRootType);
             var eventEntities = await _dbContext.Events.Where(e => e.AggregateRootType == serializedAggregateType)
@@ -72,7 +72,7 @@ namespace EventSourced.Persistence.EntityFramework
                                                     .ToArray());
         }
 
-        public async Task<IDomainEvent[]> GetEventsOfTypeAsync(Type eventType, CancellationToken ct)
+        public async Task<DomainEvent[]> GetEventsOfTypeAsync(Type eventType, CancellationToken ct)
         {
             var serializedEventType = _typeSerializer.SerializeType(eventType);
             var eventEntities = await _dbContext.Events.Where(e => e.EventType == serializedEventType)
