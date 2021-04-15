@@ -19,8 +19,8 @@ namespace EventSourced.Tests.Persistence.EntityFramework
         {
             //Arrange
             var typeBasedProjection = new TestTypeBasedProjection(42);
-            var sut = CreateSut();
-            
+            var sut = CreateSut(TestDbContextFactory.Create());
+
             //Act
             await sut.StoreProjectionAsync(typeBasedProjection, CancellationToken.None);
             var loadedProjection = await sut.LoadProjectionAsync<TestTypeBasedProjection>(CancellationToken.None);
@@ -28,39 +28,40 @@ namespace EventSourced.Tests.Persistence.EntityFramework
             //Assert
             loadedProjection.Should()
                             .NotBeNull();
-            
+
             loadedProjection!.Value.Should()
                              .Be(42);
         }
-        
+
         [Fact]
         public async Task LoadProjectionAsync_WithPreviouslyUpdatedProjection_ReturnsIt()
         {
             //Arrange
             var typeBasedProjection = new TestTypeBasedProjection(42);
-            var sut = CreateSut();
-            
+            var dbContext = TestDbContextFactory.Create();
+            var sut = CreateSut(dbContext);
+
             //Act
             await sut.StoreProjectionAsync(typeBasedProjection, CancellationToken.None);
-            var loadedProjection = await sut.LoadProjectionAsync<TestTypeBasedProjection>(CancellationToken.None);
-            loadedProjection.SetValue(420);
+            typeBasedProjection.SetValue(420);
+            dbContext.ChangeTracker.Clear();
             await sut.StoreProjectionAsync(typeBasedProjection, CancellationToken.None);
-            loadedProjection = await sut.LoadProjectionAsync<TestTypeBasedProjection>(CancellationToken.None);
+            var loadedProjection = await sut.LoadProjectionAsync<TestTypeBasedProjection>(CancellationToken.None);
 
             //Assert
             loadedProjection.Should()
                             .NotBeNull();
-            
+
             loadedProjection!.Value.Should()
                              .Be(420);
         }
-        
+
         [Fact]
         public async Task LoadProjectionAsync_WithoutExistingValue_ReturnsNull()
         {
             //Arrange
-            var sut = CreateSut();
-            
+            var sut = CreateSut(TestDbContextFactory.Create());
+
             //Act
             var loadedProjection = await sut.LoadProjectionAsync<TestTypeBasedProjection>(CancellationToken.None);
 
@@ -68,7 +69,7 @@ namespace EventSourced.Tests.Persistence.EntityFramework
             loadedProjection.Should()
                             .BeNull();
         }
-        
+
         [Fact]
         public async Task LoadAggregateProjectionAsync_WithPreviouslyStoredProjection_ReturnsIt()
         {
@@ -76,35 +77,42 @@ namespace EventSourced.Tests.Persistence.EntityFramework
             var aggregateId = Guid.NewGuid();
             var aggregateProjection = new TestAggregateBasedProjection(aggregateId);
             aggregateProjection.SetValue(42);
-            var sut = CreateSut();
-            
+            var dbContext = TestDbContextFactory.Create();
+            var sut = CreateSut(dbContext);
+
             //Act
             await sut.StoreAggregateProjectionAsync(aggregateId, aggregateProjection, CancellationToken.None);
-            var loadedProjection = await sut.LoadAggregateProjectionAsync<TestAggregateBasedProjection, TestAggregateRoot>(aggregateId, CancellationToken.None);
+            var loadedProjection =
+                await sut.LoadAggregateProjectionAsync<TestAggregateBasedProjection, TestAggregateRoot>(
+                    aggregateId,
+                    CancellationToken.None);
 
             //Assert
             loadedProjection.Should()
                             .NotBeNull();
-            
+
             loadedProjection!.Value.Should()
                              .Be(42);
         }
-                
+
         [Fact]
         public async Task LoadAggregateProjectionAsync_WithoutExistingValue_ReturnsNull()
         {
             //Arrange
             var aggregateId = Guid.NewGuid();
-            var sut = CreateSut();
-            
+            var sut = CreateSut(TestDbContextFactory.Create());
+
             //Act
-            var loadedProjection = await sut.LoadAggregateProjectionAsync<TestAggregateBasedProjection, TestAggregateRoot>(aggregateId, CancellationToken.None);
+            var loadedProjection =
+                await sut.LoadAggregateProjectionAsync<TestAggregateBasedProjection, TestAggregateRoot>(
+                    aggregateId,
+                    CancellationToken.None);
 
             //Assert
             loadedProjection.Should()
                             .BeNull();
         }
-        
+
         [Fact]
         public async Task LoadAggregateProjectionAsync_WithPreviouslyUpdatedProjection_ReturnsIt()
         {
@@ -112,29 +120,32 @@ namespace EventSourced.Tests.Persistence.EntityFramework
             var aggregateId = Guid.NewGuid();
             var aggregateProjection = new TestAggregateBasedProjection(aggregateId);
             aggregateProjection.SetValue(42);
-            var sut = CreateSut();
-            
+            var dbContext = TestDbContextFactory.Create();
+            var sut = CreateSut(dbContext);
+
             //Act
             await sut.StoreAggregateProjectionAsync(aggregateId, aggregateProjection, CancellationToken.None);
-            var loadedProjection = await sut.LoadAggregateProjectionAsync<TestAggregateBasedProjection, TestAggregateRoot>(aggregateId, CancellationToken.None);
-            loadedProjection!.SetValue(420);
+            aggregateProjection.SetValue(420);
+            dbContext.ChangeTracker.Clear();
             await sut.StoreAggregateProjectionAsync(aggregateId, aggregateProjection, CancellationToken.None);
-            loadedProjection = await sut.LoadAggregateProjectionAsync<TestAggregateBasedProjection, TestAggregateRoot>(aggregateId, CancellationToken.None);
-            
+            var loadedProjection =
+                await sut.LoadAggregateProjectionAsync<TestAggregateBasedProjection, TestAggregateRoot>(
+                    aggregateId,
+                    CancellationToken.None);
 
             //Assert
             loadedProjection.Should()
                             .NotBeNull();
-            
+
             loadedProjection!.Value.Should()
                              .Be(420);
         }
-        
-        private IProjectionStore CreateSut()
+
+        private IProjectionStore CreateSut(EventSourcedDbContext dbContext)
         {
             var typeSerializer = new TypeSerializer();
             return new EntityFrameworkProjectionStore(new TypeBasedProjectionEntityMapper(typeSerializer),
-                                                      TestDbContextFactory.Create(),
+                                                      dbContext,
                                                       typeSerializer,
                                                       new AggregateBasedProjectionEntityMapper(typeSerializer));
         }
