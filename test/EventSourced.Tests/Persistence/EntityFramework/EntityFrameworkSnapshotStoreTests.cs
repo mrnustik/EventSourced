@@ -15,7 +15,7 @@ namespace EventSourced.Tests.Persistence.EntityFramework
     public class EntityFrameworkSnapshotStoreTests
     {
         [Fact]
-        public async Task StoreSnapshotAsync_WithExistingValues_ReloadsItCorrectly()
+        public async Task LoadSnapshotAsync_WithExistingValues_ReloadsItCorrectly()
         {
             //Arrange
             var aggregateId = Guid.NewGuid();
@@ -35,9 +35,32 @@ namespace EventSourced.Tests.Persistence.EntityFramework
             loadedSnapshot!.Title.Should()
                            .Be("42");
         }
+        
+        [Fact]
+        public async Task LoadSnapshotAsync_WithUpdatedValue_ReloadsItCorrectly()
+        {
+            //Arrange
+            var aggregateId = Guid.NewGuid();
+            var testAggregate = new TestAggregate(aggregateId);
+            testAggregate.SetTitle("42");
+            var sut = CreateSut();
+
+            //Act
+            await sut.StoreSnapshotAsync(testAggregate, CancellationToken.None);
+            testAggregate.SetTitle("420");
+            await sut.StoreSnapshotAsync(testAggregate, CancellationToken.None);
+            var loadedSnapshot = await sut.LoadSnapshotAsync(aggregateId, CancellationToken.None);
+
+            //Assert
+            loadedSnapshot.Should()
+                          .NotBeNull();
+
+            loadedSnapshot!.Title.Should()
+                           .Be("420");
+        }
 
         [Fact]
-        public async Task StoreSnapshot_WithNonExistingValue_ReturnsNull()
+        public async Task LoadSnapshotAsync_WithNonExistingValue_ReturnsNull()
         {
             //Arrange
             var aggregateId = Guid.NewGuid();
