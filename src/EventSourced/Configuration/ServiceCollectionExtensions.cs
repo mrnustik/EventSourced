@@ -12,7 +12,7 @@ namespace EventSourced.Configuration
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddEventSourced(this IServiceCollection serviceCollection, Action<EventSourcedOptions> optionsConfiguration)
+        public static IServiceCollection AddEventSourced(this IServiceCollection serviceCollection, Action<EventSourcedOptions> optionsConfiguration)
         {
             serviceCollection.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             serviceCollection.AddTransient<IManualProjectionBuilder, ManualProjectionBuilder>();
@@ -34,6 +34,16 @@ namespace EventSourced.Configuration
             {
                 serviceCollection.AddHostedService<AutomaticProjectionRebuilderHostedService>();
             }
+            return serviceCollection;
+        }
+
+        public static IServiceCollection RegisterDomainEventHandler<TDomainEventHandler, TDomainEvent>(
+            this IServiceCollection serviceCollection) 
+            where TDomainEventHandler : class, IDomainEventHandler<TDomainEvent>
+            where TDomainEvent : IDomainEvent
+        {
+            serviceCollection.AddTransient<IDomainEventHandler<TDomainEvent>, TDomainEventHandler>();
+            return serviceCollection;
         }
     }
 }

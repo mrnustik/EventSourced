@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain;
 using EventSourced.Domain.Events;
+using EventSourced.EventBus;
 using EventSourced.Exceptions;
 using EventSourced.Snapshots;
 
@@ -15,16 +16,19 @@ namespace EventSourced.Persistence
         private readonly IEnumerable<IEventStreamUpdatedEventHandler> _domainEventHandlers;
         private readonly ISnapshotStore<TAggregateRoot> _snapshotStore;
         private readonly ISnapshotCreationStrategy _snapshotCreationStrategy;
+        private readonly IDomainEventBus _domainEventBus;
 
         public Repository(IEventStore eventStore,
                           IEnumerable<IEventStreamUpdatedEventHandler> domainEventHandlers,
                           ISnapshotStore<TAggregateRoot> snapshotStore,
-                          ISnapshotCreationStrategy snapshotCreationStrategy)
+                          ISnapshotCreationStrategy snapshotCreationStrategy,
+                          IDomainEventBus domainEventBus)
         {
             _eventStore = eventStore;
             _domainEventHandlers = domainEventHandlers;
             _snapshotStore = snapshotStore;
             _snapshotCreationStrategy = snapshotCreationStrategy;
+            _domainEventBus = domainEventBus;
         }
 
         public async Task SaveAsync(TAggregateRoot aggregateRoot, CancellationToken ct)
@@ -34,6 +38,7 @@ namespace EventSourced.Persistence
             await _eventStore.StoreEventsAsync(aggregateRoot.Id, typeof(TAggregateRoot), newDomainEvents, ct);
             await InvokeDomainEventHandlersAsync(aggregateRoot.Id, newDomainEvents, ct);
             await CreateSnapshotIfNeededAsync(aggregateRoot, ct);
+            await _domainEventBus.PublishDomainEventsAsync(newDomainEvents, ct);
         }
 
         public async Task<TAggregateRoot> GetByIdAsync(Guid id, CancellationToken ct)
