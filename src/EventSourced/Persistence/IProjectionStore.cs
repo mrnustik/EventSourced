@@ -20,7 +20,7 @@ namespace EventSourced.Persistence
             return (TAggregateProjection?) await LoadAggregateProjectionAsync(typeof(TAggregateProjection), aggregateRootId, ct);
         }
 
-        Task<object?> LoadAggregateProjectionAsync(Type aggregateRootProjection, Guid aggregateRootId, CancellationToken ct);
+        Task<object?> LoadAggregateProjectionAsync(Type projectionType, Guid aggregateRootId, CancellationToken ct);
 
         Task StoreProjectionAsync(object projection, CancellationToken ct);
         Task StoreAggregateProjectionAsync(Guid streamId, object aggregateProjection, CancellationToken ct);
