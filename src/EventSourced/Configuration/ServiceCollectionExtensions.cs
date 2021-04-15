@@ -16,8 +16,8 @@ namespace EventSourced.Configuration
         {
             serviceCollection.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             serviceCollection.AddTransient<IManualProjectionBuilder, ManualProjectionBuilder>();
-            serviceCollection.AddTransient<IDomainEventHandler, AutomaticProjectionDomainEventHandler>();
-            serviceCollection.AddTransient<IDomainEventHandler, AutomaticAggregateProjectionDomainEventHandler>();
+            serviceCollection.AddTransient<IEventStreamUpdatedEventHandler, AutomaticProjectionEventStreamUpdatedEventHandler>();
+            serviceCollection.AddTransient<IEventStreamUpdatedEventHandler, AutomaticAggregateProjectionEventStreamUpdatedEventHandler>();
             serviceCollection.AddTransient<IAutomaticProjectionRebuilder, AutomaticProjectionRebuilder>();
             serviceCollection.AddTransient(typeof(ISnapshotStore<>), typeof(NullSnapshotStore<>));
             serviceCollection.AddTransient<ISnapshotCreationStrategy, NullSnapshotCreationStrategy>();

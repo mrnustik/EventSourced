@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace EventSourced.Domain.Events
 {
-    public interface IDomainEventHandler
+    public interface IEventStreamUpdatedEventHandler
     {
         Task HandleDomainEventAsync(Type aggregateRootType, Guid aggregateRootId, IDomainEvent domainEvent, CancellationToken ct);
     }

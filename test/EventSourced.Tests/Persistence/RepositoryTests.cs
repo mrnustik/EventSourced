@@ -62,7 +62,7 @@ namespace EventSourced.Tests.Persistence
         public async Task SaveAsync_WithDomainEventHandlers_HandlersAreCalled()
         {
             //Arrange
-            var mockDomainEventListener = new Mock<IDomainEventHandler>();
+            var mockDomainEventListener = new Mock<IEventStreamUpdatedEventHandler>();
             var testAggregate = new TestAggregate();
             testAggregate.EnqueueTestEvent();
             var repository = CreateSut(mockDomainEventListener.Object);
@@ -257,7 +257,7 @@ namespace EventSourced.Tests.Persistence
             _snapshotStoreMock.Verify(s => s.StoreSnapshotAsync(It.IsAny<TestAggregate>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        private IRepository<TestAggregate> CreateSut(params IDomainEventHandler[] domainEventHandlers)
+        private IRepository<TestAggregate> CreateSut(params IEventStreamUpdatedEventHandler[] domainEventHandlers)
         {
             return new Repository<TestAggregate>(_eventStoreMock.Object,
                                                  domainEventHandlers.ToList(),

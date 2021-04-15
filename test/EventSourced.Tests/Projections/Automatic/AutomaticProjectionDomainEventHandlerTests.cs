@@ -62,7 +62,7 @@ namespace EventSourced.Tests.Projections.Automatic
                              .Be(42);
         }
 
-        private AutomaticProjectionDomainEventHandler CreateSut()
+        private AutomaticProjectionEventStreamUpdatedEventHandler CreateSut()
         {
             return new(_automaticProjectionEventMapperMock.Object, _projectionStoreMock.Object);
         }
