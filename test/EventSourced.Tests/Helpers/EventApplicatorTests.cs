@@ -52,8 +52,6 @@ namespace EventSourced.Tests.Helpers
             {
                 Number = number;
             }
-
-            public override int Version { get; set; }
         }
 
         private class OtherTestEvent : DomainEvent
@@ -64,8 +62,6 @@ namespace EventSourced.Tests.Helpers
             {
                 Number = number;
             }
-
-            public override int Version { get; set; }
         }
 
         private interface IObjectWithNumber
