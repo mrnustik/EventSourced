@@ -13,9 +13,14 @@ namespace EventSourced.Sample.Warehouse.Domain.WarehouseItem.Projections
         {
         }
 
-        private void Apply(WarehouseItemCreatedDomainEvent domainEvent)
+        private void Apply(WarehouseItemCreatedDomainEvent @event)
         {
-            Title = domainEvent.Title;
+            Title = @event.Title;
+        }
+
+        private void Apply(WarehouseItemTitleUpdatedDomainEvent @event)
+        {
+            Title = @event.NewTitle;
         }
     }
 }

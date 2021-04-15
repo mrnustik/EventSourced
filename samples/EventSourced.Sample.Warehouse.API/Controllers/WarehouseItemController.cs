@@ -15,14 +15,17 @@ namespace EventSourced.Sample.Warehouse.API.Controllers
         private readonly ICreateWarehouseItemApplicationService _createWarehouseItemApplicationService;
         private readonly IGetAllWarehouseItemsApplicationService _getAllWarehouseItemsApplicationService;
         private readonly IWarehouseItemDetailApplicationService _warehouseItemDetailApplicationService;
+        private readonly IUpdateWarehouseItemApplicationService _updateWarehouseItemApplicationService;
 
         public WarehouseItemController(ICreateWarehouseItemApplicationService createWarehouseItemApplicationService,
                                        IGetAllWarehouseItemsApplicationService getAllWarehouseItemsApplicationService,
-                                       IWarehouseItemDetailApplicationService warehouseItemDetailApplicationService)
+                                       IWarehouseItemDetailApplicationService warehouseItemDetailApplicationService,
+                                       IUpdateWarehouseItemApplicationService updateWarehouseItemApplicationService)
         {
             _createWarehouseItemApplicationService = createWarehouseItemApplicationService;
             _getAllWarehouseItemsApplicationService = getAllWarehouseItemsApplicationService;
             _warehouseItemDetailApplicationService = warehouseItemDetailApplicationService;
+            _updateWarehouseItemApplicationService = updateWarehouseItemApplicationService;
         }
 
         [HttpPost("create")]
@@ -47,6 +50,12 @@ namespace EventSourced.Sample.Warehouse.API.Controllers
         public Task<WarehouseItemDetailModel> GetDetail(Guid id, CancellationToken ct)
         {
             return _warehouseItemDetailApplicationService.GetWarehouseItemDetailAsync(id, ct);
+        }
+        
+        [HttpPut("update/{warehouseItemId:guid}")]
+        public Task Update(Guid warehouseItemId, [FromBody] UpdateWarehouseItemRequest request, CancellationToken ct)
+        {
+            return _updateWarehouseItemApplicationService.UpdateAsync(warehouseItemId, request.Title, ct);
         }
     }
 }
