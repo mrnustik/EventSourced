@@ -21,7 +21,7 @@ namespace EventSourced.Tests.Persistence.EntityFramework
             var aggregateId = Guid.NewGuid();
             var testAggregate = new TestAggregate(aggregateId);
             testAggregate.SetTitle("42");
-            var sut = CreateSut();
+            var sut = CreateSut(TestDbContextFactory.Create());
 
             //Act
             await sut.StoreSnapshotAsync(testAggregate, CancellationToken.None);
@@ -43,11 +43,13 @@ namespace EventSourced.Tests.Persistence.EntityFramework
             var aggregateId = Guid.NewGuid();
             var testAggregate = new TestAggregate(aggregateId);
             testAggregate.SetTitle("42");
-            var sut = CreateSut();
+            var dbContext = TestDbContextFactory.Create();
+            var sut = CreateSut(dbContext);
 
             //Act
             await sut.StoreSnapshotAsync(testAggregate, CancellationToken.None);
             testAggregate.SetTitle("420");
+            dbContext.ChangeTracker.Clear();
             await sut.StoreSnapshotAsync(testAggregate, CancellationToken.None);
             var loadedSnapshot = await sut.LoadSnapshotAsync(aggregateId, CancellationToken.None);
 
@@ -64,7 +66,7 @@ namespace EventSourced.Tests.Persistence.EntityFramework
         {
             //Arrange
             var aggregateId = Guid.NewGuid();
-            var sut = CreateSut();
+            var sut = CreateSut(TestDbContextFactory.Create());
 
             //Act
             var loadedSnapshot = await sut.LoadSnapshotAsync(aggregateId, CancellationToken.None);
@@ -74,11 +76,11 @@ namespace EventSourced.Tests.Persistence.EntityFramework
                           .BeNull();
         }
 
-        private ISnapshotStore<TestAggregate> CreateSut()
+        private ISnapshotStore<TestAggregate> CreateSut(EventSourcedDbContext dbContext)
         {
             var typeSerializer = new TypeSerializer();
             return new EntityFrameworkSnapshotStore<TestAggregate>(new AggregateSnapshotEntityMapper(typeSerializer),
-                                                                   TestDbContextFactory.Create(),
+                                                                   dbContext,
                                                                    new TypeSerializer());
         }
 
