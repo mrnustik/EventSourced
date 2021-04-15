@@ -17,10 +17,15 @@ namespace EventSourced.Persistence.EntityFramework.Configuration
             return options;
         }
 
-
         public static EventSourcedOptions UseEntityFrameworkSnapshotStore(this EventSourcedOptions options)
         {
             options.ServiceCollection.AddTransient(typeof(ISnapshotStore<>), typeof(EntityFrameworkSnapshotStore<>));
+            return options;
+        }
+        
+        public static EventSourcedOptions UseEntityFrameworkProjectionStore(this EventSourcedOptions options)
+        {
+            options.ServiceCollection.AddTransient(typeof(IProjectionStore), typeof(EntityFrameworkProjectionStore));
             return options;
         }
         
@@ -36,6 +41,8 @@ namespace EventSourced.Persistence.EntityFramework.Configuration
             options.ServiceCollection.AddTransient<IEventSerializer, EventSerializer>();
             options.ServiceCollection.AddTransient<ITypeSerializer, TypeSerializer>();
             options.ServiceCollection.AddTransient<IAggregateSnapshotEntityMapper, AggregateSnapshotEntityMapper>();
+            options.ServiceCollection.AddTransient<ITypeBaseProjectionEntityMapper, TypeBaseProjectionEntityMapper>();
+            options.ServiceCollection.AddTransient<IAggregateBasedProjectionEntityMapper, AggregateBasedProjectionEntityMapper>();
             return options;
         }
 

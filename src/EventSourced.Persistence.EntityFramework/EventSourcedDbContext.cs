@@ -7,10 +7,18 @@ namespace EventSourced.Persistence.EntityFramework
     {
         public DbSet<DomainEventEntity> Events { get; set; } = null!;
         public DbSet<AggregateSnapshotEntity> AggregateSnapshots { get; set; } = null!;
-        
+        public DbSet<TypeBasedProjectionEntity> TypeBasedProjections { get; set; } = null!;
+        public DbSet<AggregateBasedProjectionEntity> AggregateBasedProjections { get; set; } = null!;
+
         public EventSourcedDbContext(DbContextOptions options)
             : base(options)
         {
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<AggregateBasedProjectionEntity>()
+                        .HasKey(p => new {p.AggregateRootId, p.SerializedProjectionType});
         }
     }
 }
