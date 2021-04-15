@@ -29,9 +29,9 @@ namespace EventSourced.Persistence.InMemory
             return Task.FromResult(projection);
         }
 
-        public Task<object?> LoadAggregateProjectionAsync(Type aggregateRootProjection, Guid aggregateRootId, CancellationToken ct)
+        public Task<object?> LoadAggregateProjectionAsync(Type projectionType, Guid aggregateRootId, CancellationToken ct)
         {
-            if (AggregateProjectionsMap.TryGetValue(aggregateRootProjection, out var projectionByIdDictionary))
+            if (AggregateProjectionsMap.TryGetValue(projectionType, out var projectionByIdDictionary))
             {
                 if (projectionByIdDictionary.TryGetValue(aggregateRootId, out var projection))
                 {

@@ -36,7 +36,7 @@ namespace EventSourced.Sample.Warehouse.API
             services.AddEventSourced(options => options
                                                 .AddEntityFrameworkSupport(o => o.UseSqlServer(Configuration.GetConnectionString("EventStore")))
                                                 .UseEntityFrameworkEventStore()
-                                                .UseInMemoryProjectionStore()
+                                                .UseEntityFrameworkProjectionStore()
                                                 .UseEntityFrameworkSnapshotStore()
                                                 .UseEventCountBasedSnapshotStrategy(1)
                                                 .RegisterAutomaticProjection<WarehouseItemsCountProjection>()
