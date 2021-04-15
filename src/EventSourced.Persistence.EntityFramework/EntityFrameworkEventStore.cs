@@ -40,12 +40,14 @@ namespace EventSourced.Persistence.EntityFramework
 
         public async Task<IDomainEvent[]> GetByStreamIdAsync(Guid streamId,
                                                              Type aggregateRootType,
-                                                             int aggregateRootVersion,
+                                                             int fromEventVersion,
                                                              CancellationToken ct)
         {
             var serializedAggregateType = _typeSerializer.SerializeType(aggregateRootType);
-            var eventEntities = await _dbContext.Events.Where(e => e.StreamId == streamId)
+            var eventEntities = await _dbContext.Events
+                                                .Where(e => e.StreamId == streamId)
                                                 .Where(e => e.AggregateRootType == serializedAggregateType)
+                                                .Where(e => e.Version > fromEventVersion)
                                                 .ToListAsync(ct);
             return eventEntities.Select(_domainEventEntityMapper.MapToDomainEvent)
                                 .ToArray();

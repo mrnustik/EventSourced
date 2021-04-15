@@ -23,7 +23,8 @@ namespace EventSourced.Persistence.EntityFramework.Mappers
                 StreamId = streamId,
                 AggregateRootType = _typeSerializer.SerializeType(aggregateRootType),
                 EventType = _typeSerializer.SerializeType(domainEvent.GetType()),
-                SerializedEvent = _eventSerializer.SerializeEvent(domainEvent)
+                SerializedEvent = _eventSerializer.SerializeEvent(domainEvent),
+                Version = domainEvent.Version
             };
         }
 
