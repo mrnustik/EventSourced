@@ -4,11 +4,40 @@
 
 <html lang="cs" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <title>Warehouse</title>
-    <dot:ContentPlaceHolder ID="HeaderContent" />
+    <dot:RequiredResource Name="bootstrap-css"/>
+    <dot:RequiredResource Name="bootstrap-js"/>
+    <dot:ContentPlaceHolder ID="HeaderContent"/>
 </head>
 <body PostBack.Concurrency="Queue" Visible="{value: true}" style="display: none;">
-    <dot:ContentPlaceHolder ID="MainContent" />
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Warehouse sample</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link">Default</a>
+                </li>
+                <li class="nav-item">
+                    <dot:RouteLink RouteName="Pages/Items/List/List"
+                                   class="nav-link">
+                        Items
+                    </dot:RouteLink>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link">Containers</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<main class="container p-4">
+    <dot:ContentPlaceHolder ID="MainContent"/>
+</main>
 </body>
 </html>
