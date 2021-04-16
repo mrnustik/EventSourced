@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,6 +14,7 @@ namespace EventSourced.Persistence
         }
 
         Task<object?> LoadProjectionAsync(Type projectionType, CancellationToken ct);
+        Task<ICollection<object>> LoadAllProjectionsAsync(CancellationToken ct);
 
         public async Task<TAggregateProjection?> LoadAggregateProjectionAsync<TAggregateProjection, TAggregateRoot>(
             Guid aggregateRootId,

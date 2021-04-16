@@ -76,6 +76,13 @@ namespace EventSourced.Diagnostics.Web
 #else
                                   "embedded://EventSourced.Diagnostics.Web/Pages.AggregatesList.AggregatesList.dothtml");
 #endif
+            config.RouteTable.Add("Diagnostics_ProjectionsList",
+                                  "_diagnostics/EventSourced/ProjectionsList",
+#if DEBUG
+                                  "Pages/ProjectionsList/ProjectionsList.dothtml");
+#else
+                                  "embedded://EventSourced.Diagnostics.Web/Pages.ProjectionsList.ProjectionsList.dothtml");
+#endif
         }
 
         public void ConfigureServices(IDotvvmServiceCollection options)

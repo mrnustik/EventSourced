@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,11 +30,18 @@ namespace EventSourced.Persistence.EntityFramework
         public async Task<object?> LoadProjectionAsync(Type projectionType, CancellationToken ct)
         {
             var serializedProjectionType = _typeSerializer.SerializeType(projectionType);
-            var projectionEntity = await _eventSourcedDbContext.TypeBasedProjections.AsNoTracking()
+            var projectionEntity = await _eventSourcedDbContext.TypeBasedProjections
                                                                .SingleOrDefaultAsync(
                                                                    p => p.SerializedProjectionType == serializedProjectionType,
                                                                    ct);
             return projectionEntity != null ? _typeBasedProjectionEntityMapper.MapToProjection(projectionEntity) : null;
+        }
+
+        public async Task<ICollection<object>> LoadAllProjectionsAsync(CancellationToken ct)
+        {
+            var projectionEntities = await _eventSourcedDbContext.TypeBasedProjections.ToListAsync(ct);
+            return projectionEntities.Select(_typeBasedProjectionEntityMapper.MapToProjection)
+                                     .ToList();
         }
 
         public async Task<object?> LoadAggregateProjectionAsync(Type projectionType, Guid aggregateRootId, CancellationToken ct)
