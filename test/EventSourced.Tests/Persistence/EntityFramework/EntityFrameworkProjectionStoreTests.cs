@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain;
@@ -54,6 +55,28 @@ namespace EventSourced.Tests.Persistence.EntityFramework
 
             loadedProjection!.Value.Should()
                              .Be(420);
+        }
+
+        [Fact]
+        public async Task LoadAllProjectionAsync_WithExistingProjection_ReturnsIt()
+        {
+            //Arrange
+            var typeBasedProjection = new TestTypeBasedProjection(42);
+            var dbContext = TestDbContextFactory.Create();
+            var sut = CreateSut(dbContext);
+
+            //Act
+            await sut.StoreProjectionAsync(typeBasedProjection, CancellationToken.None);
+            var loadedProjections = await sut.LoadAllProjectionsAsync(CancellationToken.None);
+
+            //Assert
+            loadedProjections.Should()
+                             .HaveCount(1);
+
+            loadedProjections!.Single()
+                              .Should()
+                              .Match(p => p.As<TestTypeBasedProjection>()
+                                           .Value == 42);
         }
 
         [Fact]
@@ -139,6 +162,28 @@ namespace EventSourced.Tests.Persistence.EntityFramework
 
             loadedProjection!.Value.Should()
                              .Be(420);
+        }
+
+        [Fact]
+        public async Task LoadAllAggregateProjectionAsync_WithoutExistingValue_ReturnsNull()
+        {
+            //Arrange
+            var aggregateId = Guid.NewGuid();
+            var aggregateProjection = new TestAggregateBasedProjection(aggregateId);
+            var sut = CreateSut(TestDbContextFactory.Create());
+
+            //Act
+            await sut.StoreAggregateProjectionAsync(aggregateId, aggregateProjection, CancellationToken.None);
+            var loadedProjections = await sut.LoadAllAggregateProjectionsAsync(CancellationToken.None);
+
+            //Assert
+            loadedProjections.Should()
+                             .HaveCount(1);
+
+            loadedProjections.Values.SelectMany(p => p)
+                             .OfType<TestAggregateBasedProjection>()
+                             .Should()
+                             .ContainSingle(p => p.Id == aggregateId);
         }
 
         private IProjectionStore CreateSut(EventSourcedDbContext dbContext)
