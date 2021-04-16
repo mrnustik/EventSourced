@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -33,6 +34,22 @@ namespace EventSourced.Diagnostics.Web.Services
                               .Distinct()
                               .Select(p => new AggregateBasedProjectionTypeModel(p))
                               .ToList();
+        }
+
+        public async Task<ICollection<AggregateProjectionValueModel>> GetAggregateProjectionsOfTypeAsync(Type aggregateProjectionType, CancellationToken ct)
+        {
+            var alProjections = await _projectionStore.LoadAllAggregateProjectionsAsync(ct);
+            var aggregateProjections = new List<AggregateProjectionValueModel>();
+            foreach (var (aggregateId, projections) in alProjections.Where(v => v.Value.Any(v => v.GetType() == aggregateProjectionType)))
+            {
+                foreach (object projection in projections)
+                {
+                    var type = projection.GetType();
+                    if(type != aggregateProjectionType) continue;
+                    aggregateProjections.Add(new AggregateProjectionValueModel(aggregateId, JsonConvert.SerializeObject(projection)));
+                }
+            }
+            return aggregateProjections;
         }
     }
 }

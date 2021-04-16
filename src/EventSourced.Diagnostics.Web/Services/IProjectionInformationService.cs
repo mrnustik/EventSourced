@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Diagnostics.Web.Model.Projections;
@@ -9,5 +10,6 @@ namespace EventSourced.Diagnostics.Web.Services
     {
         Task<ICollection<TypeBasedProjectionModel>> GetTypeBasedProjectionsAsync(CancellationToken ct);
         Task<ICollection<AggregateBasedProjectionTypeModel>> GetAllAggregateProjectionTypesAsync(CancellationToken ct);
+        Task<ICollection<AggregateProjectionValueModel>> GetAggregateProjectionsOfTypeAsync(Type aggregateProjectionType, CancellationToken ct);
     }
 }

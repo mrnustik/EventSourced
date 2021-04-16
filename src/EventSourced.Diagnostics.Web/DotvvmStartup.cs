@@ -81,6 +81,11 @@ namespace EventSourced.Diagnostics.Web
                         "Diagnostics_AggregateProjectionsList",
                         "_diagnostics/EventSource/AggregateProjectionsList",
                         "Pages/AggregateProjectionsList/AggregateProjectionsList.dothtml");
+            
+            RegisterRoute(config,
+                          "Diagnostics_AggregateProjectionTypeDetail",
+                          "_diagnostics/EventSource/AggregateProjectionTypeDetail/{ProjectionType}",
+                          "Pages/AggregateProjectionTypeDetail/AggregateProjectionTypeDetail.dothtml");
         }
 
         private static void RegisterRoute(DotvvmConfiguration config, string routeName, string url, string pagePath)
