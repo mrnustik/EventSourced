@@ -24,7 +24,9 @@
                     </dot:RouteLink>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Projections</a>
+                    <dot:RouteLink RouteName="Diagnostics_ProjectionsList" class="nav-link">
+                        Projections
+                    </dot:RouteLink>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Snapshots</a>

@@ -9,6 +9,7 @@ namespace EventSourced.Diagnostics.Web.Configuration
         {
             serviceCollection.AddDotVVM<DotvvmStartup>();
             serviceCollection.AddTransient<IAggregateInformationService, AggregateInformationService>();
+            serviceCollection.AddTransient<IProjectionInformationService, ProjectionInformationService>();
             return serviceCollection;
         }
     }

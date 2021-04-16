@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Persistence.InMemory.Helpers;
@@ -27,6 +29,12 @@ namespace EventSourced.Persistence.InMemory
         {
             var projection = ProjectionsMap.GetValueOrDefault(projectionType);
             return Task.FromResult(projection);
+        }
+
+        public Task<ICollection<object>> LoadAllProjectionsAsync(CancellationToken ct)
+        {
+            var projection = ProjectionsMap.Values;
+            return Task.FromResult<ICollection<object>>(projection.ToList());
         }
 
         public Task<object?> LoadAggregateProjectionAsync(Type projectionType, Guid aggregateRootId, CancellationToken ct)

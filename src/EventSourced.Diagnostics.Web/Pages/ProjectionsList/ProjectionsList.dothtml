@@ -1,0 +1,67 @@
+﻿@viewModel EventSourced.Diagnostics.Web.Pages.ProjectionsList.ProjectionsListViewModel, EventSourced.Diagnostics.Web
+
+
+    <!DOCTYPE html>
+<html lang="cs" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <title>Event Sourced Diagnostics</title>
+    <dot:RequiredResource Name="bootstrap-css"/>
+    <dot:RequiredResource Name="bootstrap-js"/>
+</head>
+<body Visible="{value: true}" style="display: none;">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Event sourced diagnostics</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <dot:RouteLink RouteName="Diagnostics_AggregateTypesList" class="nav-link">
+                        Aggregates
+                    </dot:RouteLink>
+                </li>
+                <li class="nav-item">
+                    <dot:RouteLink RouteName="Diagnostics_ProjectionsList" class="nav-link active">
+                        Projections
+                    </dot:RouteLink>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Snapshots</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<main>
+    <div class="container">
+        <div class="row d-flex flex-row mb-3 mt-3">
+            <label class="col-sm-2 col-form-label font-weight-bold" for="combobox-aggregates">Projections:</label>
+            <div class="col-sm-4">
+                <dot:ComboBox id="combobox-aggregates"
+                              class="form-select"
+                              SelectionChanged="{command: OnProjectionChanged()}"
+                              DataSource="{value: TypeBasedProjections}"
+                              SelectedValue="{value: SelectedProjectionEncodedType}"
+                              ItemValueBinding="{value: EncodedTypeId}"
+                              ItemTextBinding="{value: DisplayName}"
+                              ItemTitleBinding="{value: DisplayName}"/>
+            </div>
+        </div>
+        <div class="row mb-3 d-flex flex-column">
+            <div class="d-flex flex-row justify-content-between align-items-center">
+                <p class="col-sm-2 font-weight-bold">Data:</p>
+                <cc:CopyJsonButton class="btn btn-secondary"
+                                   Json="{value: SelectedProjectionModel.SerializedProjection}">
+                    Copy json to clipboard
+                </cc:CopyJsonButton>
+            </div>
+            <cc:JsonViewer Json="{value: SelectedProjectionModel.SerializedProjection}"/>
+        </div>
+    </div>
+</main>
+</body>
+</html>
