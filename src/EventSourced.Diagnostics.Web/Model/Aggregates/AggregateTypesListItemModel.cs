@@ -17,7 +17,7 @@ namespace EventSourced.Diagnostics.Web.Model.Aggregates
             AggregateType = aggregateType;
             AssemblyQualifiedName = aggregateType.AssemblyQualifiedName!;
             DisplayName = aggregateType.Name;
-            EncodedTypeId = Base64Encoder.Encode(TypeSerializer.SerializeType(aggregateType));
+            EncodedTypeId = TypeEncoder.EncodeType(aggregateType);
         }
     }
 }
