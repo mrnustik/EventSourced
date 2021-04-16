@@ -24,5 +24,15 @@ namespace EventSourced.Diagnostics.Web.Services
             return projections.Select(p => new TypeBasedProjectionModel(p.GetType(), JsonConvert.SerializeObject(p)))
                               .ToList();
         }
+
+        public async Task<ICollection<AggregateBasedProjectionTypeModel>> GetAllAggregateProjectionTypesAsync(CancellationToken ct)
+        {
+            var projections = await _projectionStore.LoadAllAggregateProjectionsAsync(ct);
+            return projections.SelectMany(p => p.Value)
+                              .Select(p => p.GetType())
+                              .Distinct()
+                              .Select(p => new AggregateBasedProjectionTypeModel(p))
+                              .ToList();
+        }
     }
 }

@@ -42,7 +42,7 @@ namespace EventSourced.Diagnostics.Web
                                       });
             config.Resources.Register("json-viewer-css",
                                       new StylesheetResource(new UrlResourceLocation(
-                                                             "https://cdn.jsdelivr.net/npm/jquery.json-viewer@1.4.0/json-viewer/jquery.json-viewer.css")));
+                                                                 "https://cdn.jsdelivr.net/npm/jquery.json-viewer@1.4.0/json-viewer/jquery.json-viewer.css")));
 
             config.Resources.Register("json-viewer-control-js",
                                       new ScriptResource(new EmbeddedResourceLocation(
@@ -56,32 +56,42 @@ namespace EventSourced.Diagnostics.Web
                                                              typeof(DotvvmStartup).Assembly,
                                                              "EventSourced.Diagnostics.Web.Resources.CopyJsonButton.js"))
                                       {
-                                          Dependencies = new[] { "knockout"}
+                                          Dependencies = new[] {"knockout"}
                                       });
         }
 
         private static void ConfigureRoutes(DotvvmConfiguration config)
         {
-            config.RouteTable.Add("Diagnostics_AggregateTypesList",
-                                  "_diagnostics/EventSourced/AggregateTypesList",
+            RegisterRoute(config,
+                          "Diagnostics_AggregateTypesList",
+                          "_diagnostics/EventSourced/AggregateTypesList",
+                          "Pages/AggregateTypes/AggregateTypesList.dothtml");
+            
+            RegisterRoute(config,
+                          "Diagnostics_AggregatesList",
+                          "_diagnostics/EventSourced/AggregatesList/{AggregateType}",
+                          "Pages/AggregatesList/AggregatesList.dothtml");
+            
+            RegisterRoute(config,
+                          "Diagnostics_ProjectionsList",
+                          "_diagnostics/EventSourced/ProjectionsList",
+                          "Pages/ProjectionsList/ProjectionsList.dothtml");
+
+            RegisterRoute(config,
+                        "Diagnostics_AggregateProjectionsList",
+                        "_diagnostics/EventSource/AggregateProjectionsList",
+                        "Pages/AggregateProjectionsList/AggregateProjectionsList.dothtml");
+        }
+
+        private static void RegisterRoute(DotvvmConfiguration config, string routeName, string url, string pagePath)
+        {
+            var embeddedResourcePath = pagePath.Replace('/', '.');
+            config.RouteTable.Add(routeName,
+                                  url,
 #if DEBUG
-                                  "Pages/AggregateTypes/AggregateTypesList.dothtml");
-#else 
-                                  "embedded://EventSourced.Diagnostics.Web/Pages.AggregateTypes.AggregateTypesList.dothtml");
-#endif
-            config.RouteTable.Add("Diagnostics_AggregatesList",
-                                  "_diagnostics/EventSourced/AggregatesList/{AggregateType}",
-#if DEBUG
-                                  "Pages/AggregatesList/AggregatesList.dothtml");
+                                  pagePath);
 #else
-                                  "embedded://EventSourced.Diagnostics.Web/Pages.AggregatesList.AggregatesList.dothtml");
-#endif
-            config.RouteTable.Add("Diagnostics_ProjectionsList",
-                                  "_diagnostics/EventSourced/ProjectionsList",
-#if DEBUG
-                                  "Pages/ProjectionsList/ProjectionsList.dothtml");
-#else
-                                  "embedded://EventSourced.Diagnostics.Web/Pages.ProjectionsList.ProjectionsList.dothtml");
+                                  $"embedded://EventSourced.Diagnostics.Web/{embeddedResourcePath}");
 #endif
         }
 

@@ -30,10 +30,10 @@ namespace EventSourced.Persistence.EntityFramework
         public async Task<object?> LoadProjectionAsync(Type projectionType, CancellationToken ct)
         {
             var serializedProjectionType = _typeSerializer.SerializeType(projectionType);
-            var projectionEntity = await _eventSourcedDbContext.TypeBasedProjections
-                                                               .SingleOrDefaultAsync(
-                                                                   p => p.SerializedProjectionType == serializedProjectionType,
-                                                                   ct);
+            var projectionEntity =
+                await _eventSourcedDbContext.TypeBasedProjections.SingleOrDefaultAsync(
+                    p => p.SerializedProjectionType == serializedProjectionType,
+                    ct);
             return projectionEntity != null ? _typeBasedProjectionEntityMapper.MapToProjection(projectionEntity) : null;
         }
 
@@ -52,6 +52,16 @@ namespace EventSourced.Persistence.EntityFramework
                                          .Where(p => p.AggregateRootId == aggregateRootId)
                                          .SingleOrDefaultAsync(ct);
             return projectionEntity != null ? _aggregateBasedProjectionEntityMapper.MapToProjection(projectionEntity) : null;
+        }
+
+        public async Task<IDictionary<Guid, List<object>>> LoadAllAggregateProjectionsAsync(CancellationToken ct)
+        {
+            var projectionEntities = await _eventSourcedDbContext.AggregateBasedProjections.ToListAsync(ct);
+            return projectionEntities.GroupBy(p => p.AggregateRootId)
+                                     .ToDictionary(p => p.Key,
+                                                   p => p
+                                                        .Select(_aggregateBasedProjectionEntityMapper.MapToProjection)
+                                                        .ToList());
         }
 
         public async Task StoreProjectionAsync(object projection, CancellationToken ct)

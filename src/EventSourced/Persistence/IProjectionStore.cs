@@ -15,6 +15,7 @@ namespace EventSourced.Persistence
 
         Task<object?> LoadProjectionAsync(Type projectionType, CancellationToken ct);
         Task<ICollection<object>> LoadAllProjectionsAsync(CancellationToken ct);
+        Task StoreProjectionAsync(object projection, CancellationToken ct);
 
         public async Task<TAggregateProjection?> LoadAggregateProjectionAsync<TAggregateProjection, TAggregateRoot>(
             Guid aggregateRootId,
@@ -24,8 +25,7 @@ namespace EventSourced.Persistence
         }
 
         Task<object?> LoadAggregateProjectionAsync(Type projectionType, Guid aggregateRootId, CancellationToken ct);
-
-        Task StoreProjectionAsync(object projection, CancellationToken ct);
+        Task<IDictionary<Guid, List<object>>> LoadAllAggregateProjectionsAsync(CancellationToken ct);
         Task StoreAggregateProjectionAsync(Guid streamId, object aggregateProjection, CancellationToken ct);
     }
 }

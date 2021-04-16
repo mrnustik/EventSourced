@@ -8,5 +8,6 @@ namespace EventSourced.Diagnostics.Web.Services
     public interface IProjectionInformationService
     {
         Task<ICollection<TypeBasedProjectionModel>> GetTypeBasedProjectionsAsync(CancellationToken ct);
+        Task<ICollection<AggregateBasedProjectionTypeModel>> GetAllAggregateProjectionTypesAsync(CancellationToken ct);
     }
 }
