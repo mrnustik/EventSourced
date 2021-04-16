@@ -17,6 +17,8 @@
       <EmbeddedResource Include="Pages\AggregateTypes\AggregateTypesList.dothtml" />
       <None Remove="Pages\AggregatesList\AggregatesList.dothtml" />
       <EmbeddedResource Include="Pages\AggregatesList\AggregatesList.dothtml" />
+      <None Remove="Resources\JsonViewer.js" />
+      <EmbeddedResource Include="Resources\JsonViewer.js" />
     </ItemGroup>
 
 </Project>
