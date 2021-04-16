@@ -17,6 +17,7 @@ namespace EventSourced.Sample.Warehouse.Web
         private static void ConfigureRoutes(DotvvmConfiguration config)
         {
             config.RouteTable.Add("Default", "", "Pages/Default/Default.dothtml");
+            config.RouteTable.Add("Pages/Items/Edit/Edit", "Pages/Items/Edit/Edit/{WarehouseItemId?:guid}", "Pages/Items/Edit/Edit.dothtml");
             config.AutoRegisterRoutes("Pages");
         }
 
