@@ -34,9 +34,7 @@
                         Aggregate projections
                     </dot:RouteLink>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Snapshots</a>
-                </li>
+
             </ul>
         </div>
     </div>
