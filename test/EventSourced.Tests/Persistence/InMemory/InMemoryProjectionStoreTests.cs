@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain;
@@ -63,6 +64,27 @@ namespace EventSourced.Tests.Persistence.InMemory
         }
 
         [Fact]
+        public async Task LoadAllProjectionAsync_WithExistingType_ReturnsIt()
+        {
+            //Arrange
+            var projection = new TestProjection(42);
+            var sut = CreateSut(new Dictionary<Type, object>
+            {
+                {typeof(TestProjection), projection}
+            });
+
+            //Act
+            var loadAllProjections = await sut.LoadAllProjectionsAsync(CancellationToken.None);
+
+            //Assert
+            loadAllProjections.Should()
+                              .HaveCount(1);
+            loadAllProjections.Should()
+                              .ContainSingle(p => p.As<TestProjection>()
+                                                   .Number == 42);
+        }
+
+        [Fact]
         public async Task LoadAggregateProjectionAsync_WithNonExistingType_ReturnsNull()
         {
             //Arrange
@@ -98,6 +120,28 @@ namespace EventSourced.Tests.Persistence.InMemory
             //Assert
             loadedProjection.Should()
                             .NotBeNull();
+        }
+
+        [Fact]
+        public async Task LoadAllAggregateProjectionsAsync_WithExistingType_ReturnsIt()
+        {
+            //Arrange
+            var aggregateRootId = Guid.NewGuid();
+            var sut = CreateSut();
+            var storedProjection = new TestAggregateProjection(aggregateRootId);
+            await sut.StoreAggregateProjectionAsync(aggregateRootId, storedProjection, CancellationToken.None);
+
+            //Act
+            var loadedProjections = await sut.LoadAllAggregateProjectionsAsync(CancellationToken.None);
+
+            //Assert
+            loadedProjections.Should()
+                             .HaveCount(1);
+
+            loadedProjections.Values.SelectMany(p => p)
+                             .OfType<TestAggregateProjection>()
+                             .Should()
+                             .ContainSingle(p => p.Id == aggregateRootId);
         }
 
         private IProjectionStore CreateSut()
