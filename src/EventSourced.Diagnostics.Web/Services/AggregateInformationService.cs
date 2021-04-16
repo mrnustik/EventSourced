@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using EventSourced.Diagnostics.Web.Mappers;
 using EventSourced.Diagnostics.Web.Model.Aggregates;
 using EventSourced.Domain;
 using EventSourced.Domain.Events;
@@ -16,10 +17,12 @@ namespace EventSourced.Diagnostics.Web.Services
     public class AggregateInformationService : IAggregateInformationService
     {
         private readonly IEventStore _eventStore;
+        private readonly IAggregateInstancesListItemModelMapper _aggregateInstancesListItemModelMapper;
 
-        public AggregateInformationService(IEventStore eventStore)
+        public AggregateInformationService(IEventStore eventStore, IAggregateInstancesListItemModelMapper aggregateInstancesListItemModelMapper)
         {
             _eventStore = eventStore;
+            _aggregateInstancesListItemModelMapper = aggregateInstancesListItemModelMapper;
         }
 
         public async Task<ICollection<AggregateTypesListItemModel>> GetStoredAggregateTypesAsync(CancellationToken ct)
@@ -33,7 +36,7 @@ namespace EventSourced.Diagnostics.Web.Services
         {
             var streams = await _eventStore.GetAllStreamsOfType(aggregateType, ct);
             var aggregates = RebuildAggregatesFromStreams(streams, aggregateType);
-            return aggregates.Select(i => new AggregateInstancesListItemModel(i.Id, i.Version, JsonConvert.SerializeObject(i)))
+            return aggregates.Select((i) => _aggregateInstancesListItemModelMapper.MapToModel(i.aggregateRoot, i.events))
                              .ToList();
         }
 
@@ -42,11 +45,11 @@ namespace EventSourced.Diagnostics.Web.Services
             var stream = await _eventStore.GetByStreamIdAsync(aggregateId, aggregateType, 0, ct);
             var versionedStream = stream.Where(e => e.Version <= version)
                                      .ToArray();
-            var aggregate = RebuildAggregateFromStream(aggregateType, aggregateId, versionedStream);
-            return new AggregateInstancesListItemModel(aggregate.Id, aggregate.Version, JsonConvert.SerializeObject(aggregate));
+            var item = RebuildAggregateFromStream(aggregateType, aggregateId, versionedStream);
+            return _aggregateInstancesListItemModelMapper.MapToModel(item.aggregateRoot, item.events);
         }
 
-        private IEnumerable<AggregateRoot> RebuildAggregatesFromStreams(IDictionary<Guid, DomainEvent[]> streams, Type aggregateType)
+        private IEnumerable<(AggregateRoot aggregateRoot, DomainEvent[] events)> RebuildAggregatesFromStreams(IDictionary<Guid, DomainEvent[]> streams, Type aggregateType)
         {
             foreach (var (streamId, events) in streams)
             {
@@ -54,11 +57,11 @@ namespace EventSourced.Diagnostics.Web.Services
             }
         }
 
-        private static AggregateRoot RebuildAggregateFromStream(Type aggregateType, Guid streamId, DomainEvent[] events)
+        private static (AggregateRoot aggregateRoot, DomainEvent[] events) RebuildAggregateFromStream(Type aggregateType, Guid streamId, DomainEvent[] events)
         {
             var aggregateRoot = AggregateRootFactory.CreateAggregateRoot(streamId, aggregateType);
             aggregateRoot.RebuildFromEvents(events);
-            return aggregateRoot;
+            return (aggregateRoot, events);
         }
     }
 }

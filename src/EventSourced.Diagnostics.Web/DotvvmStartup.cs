@@ -103,11 +103,11 @@ namespace EventSourced.Diagnostics.Web
             var embeddedResourcePath = pagePath.Replace('/', '.');
             config.RouteTable.Add(routeName,
                                   url,
-#if DEBUG
-                                  pagePath);
-#else
+// #if DEBUG
+//                                   pagePath);
+// #else
                                   $"embedded://EventSourced.Diagnostics.Web/{embeddedResourcePath}");
-#endif
+// #endif
         }
 
         public void ConfigureServices(IDotvvmServiceCollection options)
