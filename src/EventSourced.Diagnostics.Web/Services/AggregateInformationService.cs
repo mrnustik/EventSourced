@@ -46,7 +46,7 @@ namespace EventSourced.Diagnostics.Web.Services
             return new AggregateInstancesListItemModel(aggregate.Id, aggregate.Version, JsonConvert.SerializeObject(aggregate));
         }
 
-        private IEnumerable<AggregateRoot> RebuildAggregatesFromStreams(IDictionary<Guid, IDomainEvent[]> streams, Type aggregateType)
+        private IEnumerable<AggregateRoot> RebuildAggregatesFromStreams(IDictionary<Guid, DomainEvent[]> streams, Type aggregateType)
         {
             foreach (var (streamId, events) in streams)
             {
@@ -54,7 +54,7 @@ namespace EventSourced.Diagnostics.Web.Services
             }
         }
 
-        private static AggregateRoot RebuildAggregateFromStream(Type aggregateType, Guid streamId, IDomainEvent[] events)
+        private static AggregateRoot RebuildAggregateFromStream(Type aggregateType, Guid streamId, DomainEvent[] events)
         {
             var aggregateRoot = AggregateRootFactory.CreateAggregateRoot(streamId, aggregateType);
             aggregateRoot.RebuildFromEvents(events);
