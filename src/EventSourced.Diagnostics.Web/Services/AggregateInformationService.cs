@@ -29,7 +29,7 @@ namespace EventSourced.Diagnostics.Web.Services
                         .ToList();
         }
 
-        public async Task<ICollection<AggregateInstancesListItemModel>> GetStoredAggregatesOfType(Type aggregateType, CancellationToken ct)
+        public async Task<ICollection<AggregateInstancesListItemModel>> GetStoredAggregatesOfTypeAsync(Type aggregateType, CancellationToken ct)
         {
             var streams = await _eventStore.GetAllStreamsOfType(aggregateType, ct);
             var aggregates = RebuildAggregatesFromStreams(streams, aggregateType);
@@ -37,14 +37,28 @@ namespace EventSourced.Diagnostics.Web.Services
                              .ToList();
         }
 
+        public async Task<AggregateInstancesListItemModel> GetStoredAggregateByIdAndVersionAsync(Guid aggregateId, Type aggregateType, int version, CancellationToken ct)
+        {
+            var stream = await _eventStore.GetByStreamIdAsync(aggregateId, aggregateType, 0, ct);
+            var versionedStream = stream.Where(e => e.Version <= version)
+                                     .ToArray();
+            var aggregate = RebuildAggregateFromStream(aggregateType, aggregateId, versionedStream);
+            return new AggregateInstancesListItemModel(aggregate.Id, aggregate.Version, JsonConvert.SerializeObject(aggregate));
+        }
+
         private IEnumerable<AggregateRoot> RebuildAggregatesFromStreams(IDictionary<Guid, IDomainEvent[]> streams, Type aggregateType)
         {
             foreach (var (streamId, events) in streams)
             {
-                var aggregateRoot = AggregateRootFactory.CreateAggregateRoot(streamId, aggregateType);
-                aggregateRoot.RebuildFromEvents(events);
-                yield return aggregateRoot;
+                yield return RebuildAggregateFromStream(aggregateType, streamId, events);
             }
+        }
+
+        private static AggregateRoot RebuildAggregateFromStream(Type aggregateType, Guid streamId, IDomainEvent[] events)
+        {
+            var aggregateRoot = AggregateRootFactory.CreateAggregateRoot(streamId, aggregateType);
+            aggregateRoot.RebuildFromEvents(events);
+            return aggregateRoot;
         }
     }
 }
