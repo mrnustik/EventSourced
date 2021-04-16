@@ -1,14 +1,71 @@
 @viewModel EventSourced.Diagnostics.Web.Pages.AggregatesList.AggregatesListViewModel, EventSourced.Diagnostics.Web
 
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="cs" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <title>Event Sourced Diagnostics</title>
+    <dot:RequiredResource Name="bootstrap-css"/>
+    <dot:RequiredResource Name="bootstrap-js"/>
 </head>
 <body Visible="{value: true}" style="display: none;">
-<dot:Repeater DataSource="{value: AggregateInstances}">
-    {{value: Id}} <br/>
-</dot:Repeater>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Event sourced diagnostics</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <dot:RouteLink RouteName="Diagnostics_AggregateTypesList" class="nav-link active">
+                        Aggregates
+                    </dot:RouteLink>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Projections</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Snapshots</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<main>
+    <div class="container">
+        <div class="row">
+            <h2>{{value: AggregateDisplayName}}</h2>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-2">Full name:</div>
+            <div class="col-sm-4">
+                {{value: AggregateFullName}}
+            </div>
+        </div>
+        <div class="row d-flex flex-row mb-3">
+            <label class="col-sm-2 col-form-label" for="combobox-aggregates">Aggregate ids:</label>
+            <div class="col-sm-4">
+                <dot:ComboBox id="combobox-aggregates"
+                              class="form-select"
+                              DataSource="{value: AggregateInstances}"
+                              SelectedValue="{value: SelectedAggregateInstance}"
+                              ItemTextBinding="{value: Id}"
+                              ItemTitleBinding="{value: Id}"/>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-sm-2">Version:</div>
+            <div class="col-sm-4">
+                {{value: SelectedAggregateInstance.Version}}
+            </div>
+        </div>
+        <div class="row mb-3 d-flex flex-column">
+            <div class="col-sm-2">Data:</div>
+            <dot:HtmlLiteral Html="{value: SelectedAggregateInstance.SerializedAggregate}"/>
+        </div>
+    </div>
+</main>
 </body>
 </html>
