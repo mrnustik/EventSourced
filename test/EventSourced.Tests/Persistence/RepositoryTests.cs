@@ -156,7 +156,7 @@ namespace EventSourced.Tests.Persistence
         
         #endregion
 
-        #region GetByIdAsync
+        #region GetByIdAsync()
 
         [Fact]
         public async Task GetByIdAsync_WithExistingAggregate_RebuildsItFromEvents()
@@ -262,6 +262,42 @@ namespace EventSourced.Tests.Persistence
 
         #endregion
 
+        #region ExistsAsync()
+
+        [Fact]
+        public async Task ExistsAsync_WithExistingStream_ReturnsTrue()
+        {
+            //Arrange
+            var aggregateId = Guid.NewGuid();
+            _eventStoreMock.WithStreamExistsAsync(true);
+            var repository = CreateSut();
+
+            //Act
+            var result = await repository.ExistsAsync(aggregateId, CancellationToken.None);
+
+            //Assert
+            result.Should()
+                  .BeTrue();
+        }
+
+        [Fact]
+        public async Task ExistsAsync_WithNonExistingStream_ReturnsFalse()
+        {
+            //Arrange
+            var aggregateId = Guid.NewGuid();
+            _eventStoreMock.WithStreamExistsAsync(true);
+            var repository = CreateSut();
+
+            //Act
+            var result = await repository.ExistsAsync(aggregateId, CancellationToken.None);
+
+            //Assert
+            result.Should()
+                  .BeFalse();
+        }
+        
+        #endregion
+        
         private void VerifyEventStoreSaveMethodCalled()
         {
             _eventStoreMock.Verify(s => s.StoreEventsAsync(It.IsAny<Guid>(),

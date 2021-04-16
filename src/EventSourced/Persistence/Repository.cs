@@ -63,6 +63,11 @@ namespace EventSourced.Persistence
             return aggregateCollection;
         }
 
+        public Task<bool> ExistsAsync(Guid id, CancellationToken ct)
+        {
+            return _eventStore.StreamExistsAsync(id, typeof(TAggregateRoot), ct);
+        }
+
         private async Task VerifyAggregateDidNotChangeAsync(TAggregateRoot aggregateRoot, CancellationToken ct)
         {
             if (await _eventStore.StreamExistsAsync(aggregateRoot.Id, typeof(TAggregateRoot), ct))

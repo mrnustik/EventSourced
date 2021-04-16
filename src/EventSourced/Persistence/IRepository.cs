@@ -11,5 +11,6 @@ namespace EventSourced.Persistence
         Task SaveAsync(TAggregateRoot aggregateRoot, CancellationToken ct);
         Task<TAggregateRoot> GetByIdAsync(Guid id, CancellationToken ct);
         Task<ICollection<TAggregateRoot>> GetAllAsync(CancellationToken ct);
+        Task<bool> ExistsAsync(Guid id, CancellationToken ct);
     }
 }
