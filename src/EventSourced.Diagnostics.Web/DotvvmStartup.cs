@@ -64,12 +64,18 @@ namespace EventSourced.Diagnostics.Web
         {
             config.RouteTable.Add("Diagnostics_AggregateTypesList",
                                   "_diagnostics/EventSourced/AggregateTypesList",
+#if DEBUG
                                   "Pages/AggregateTypes/AggregateTypesList.dothtml");
-            // "embedded://EventSourced.Diagnostics.Web/Pages.AggregateTypes.AggregateTypesList.dothtml");
+#else 
+                                  "embedded://EventSourced.Diagnostics.Web/Pages.AggregateTypes.AggregateTypesList.dothtml");
+#endif
             config.RouteTable.Add("Diagnostics_AggregatesList",
                                   "_diagnostics/EventSourced/AggregatesList/{AggregateType}",
+#if DEBUG
                                   "Pages/AggregatesList/AggregatesList.dothtml");
-            // "embedded://EventSourced.Diagnostics.Web/Pages.AggregatesList.AggregatesList.dothtml");
+#else
+                                  "embedded://EventSourced.Diagnostics.Web/Pages.AggregatesList.AggregatesList.dothtml");
+#endif
         }
 
         public void ConfigureServices(IDotvvmServiceCollection options)
