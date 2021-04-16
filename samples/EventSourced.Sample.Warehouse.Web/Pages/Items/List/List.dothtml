@@ -19,6 +19,11 @@
                     {{value: Title}}
                 </div>
                 <div>
+                    <dot:RouteLink RouteName="Pages/Items/Detail/Detail"
+                                   class="btn btn-primary"
+                                   Param-WarehouseItemId="{value: Id}">
+                        Detail
+                    </dot:RouteLink>
                     <dot:RouteLink RouteName="Pages/Items/Edit/Edit"
                                    class="btn btn-primary"
                                    Param-WarehouseItemId="{value: Id}">

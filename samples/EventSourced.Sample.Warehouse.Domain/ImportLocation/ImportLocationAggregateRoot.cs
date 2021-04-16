@@ -42,7 +42,8 @@ namespace EventSourced.Sample.Warehouse.Domain.ImportLocation
             {
                 ImportedItems.Remove(existingValueObject);
             }
-            ImportedItems.Add(new ImportedItemsValueObject(domainEvent.WarehouseItemId, domainEvent.Amount + existingValueObject?.Amount ?? 0));
+            var existingAmount = existingValueObject?.Amount ?? 0;
+            ImportedItems.Add(new ImportedItemsValueObject(domainEvent.WarehouseItemId, domainEvent.Amount + existingAmount));
         }
     }
 }

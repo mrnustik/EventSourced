@@ -1,0 +1,22 @@
+@viewModel EventSourced.Sample.Warehouse.Web.Pages.Items.Detail.DetailViewModel
+@masterPage Pages/MasterPage.dotmaster
+
+<dot:Content ContentPlaceholderId="MainContent">
+    <h1>Warehouse item detail: {{value: Title}}</h1>
+    <form>
+        <div class="mb-3">
+            <h2>Import items</h2>
+        </div>
+        <div class="mb-3">
+            <label for="textBox-amount" class="form-label">Amount</label>
+            <dot:TextBox class="form-control"
+                         id="textBox-amount"
+                         Type="number"
+                         Text="{value: Amount}"
+                         placeholder="Amount"/>
+        </div>
+        <dot:Button Text="Import"
+                    class="btn btn-success"
+                    Click="{command: ImportAsync()}"/>
+    </form>
+</dot:Content>
