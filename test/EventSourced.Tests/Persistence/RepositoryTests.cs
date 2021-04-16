@@ -285,7 +285,7 @@ namespace EventSourced.Tests.Persistence
         {
             //Arrange
             var aggregateId = Guid.NewGuid();
-            _eventStoreMock.WithStreamExistsAsync(true);
+            _eventStoreMock.WithStreamExistsAsync(false);
             var repository = CreateSut();
 
             //Act
