@@ -7,8 +7,10 @@ using EventSourced.Diagnostics.Web.Configuration;
 using EventSourced.Persistence.EntityFramework.Configuration;
 using EventSourced.Persistence.InMemory.Configuration;
 using EventSourced.Sample.Warehouse.Application.Configuration;
+using EventSourced.Sample.Warehouse.Domain.Configuration;
 using EventSourced.Sample.Warehouse.Domain.WarehouseItem;
 using EventSourced.Sample.Warehouse.Domain.WarehouseItem.Projections;
+using EventSourced.Sample.Warehouse.Web.HostedServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -39,10 +41,9 @@ namespace EventSourced.Sample.Warehouse.Web
                                                 .UseInMemoryProjectionStore()
                                                 .UseEntityFrameworkSnapshotStore()
                                                 .UseEventCountBasedSnapshotStrategy(1)
-                                                .RegisterAutomaticProjection<WarehouseItemsCountProjection>()
-                                                .RegisterAutomaticAggregateProjection<WarehouseItemDetailProjection,
-                                                    WarehouseItemAggregateRoot>())
+                                                .ConfigureDomainObjects())
                     .AddEventSourcedDiagnostics();
+            services.AddHostedService<CreateImportLocationHostedService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

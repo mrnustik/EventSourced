@@ -1,4 +1,5 @@
 ﻿using EventSourced.Sample.Warehouse.Application.Services;
+using EventSourced.Sample.Warehouse.Domain.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EventSourced.Sample.Warehouse.Application.Configuration
@@ -11,6 +12,8 @@ namespace EventSourced.Sample.Warehouse.Application.Configuration
                                          .AddClasses(c => c.AssignableTo<ApplicationServiceBase>())
                                          .AsSelfWithInterfaces()
                                          .WithTransientLifetime());
+
+            serviceCollection.AddDomainServices();
         }
     }
 }
