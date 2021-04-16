@@ -1,0 +1,11 @@
+@viewModel EventSourced.Sample.Warehouse.Web.Pages.Items.List.ListViewModel
+    @masterPage Pages/MasterPage.dotmaster
+
+<dot:Content ContentPlaceholderId="MainContent">
+    <h1>Warehouse items</h1>
+    <ul class="list-group">
+        <dot:Repeater DataSource="{value: WarehouseListItems}">
+            <li class="list-group-item">{{value: Title}}</li>
+        </dot:Repeater>
+    </ul>
+</dot:Content>
