@@ -1,4 +1,4 @@
-﻿@viewModel EventSourced.Diagnostics.Web.Pages.AggregateProjectionsList.AggregateProjectionsListViewModel, EventSourced.Diagnostics.Web
+﻿@viewModel EventSourced.Diagnostics.Web.Pages.AggregateProjectionTypeDetail.AggregateProjectionTypeDetailViewModel, EventSourced.Diagnostics.Web
 
     <!DOCTYPE html>
 <html lang="cs" xmlns="http://www.w3.org/1999/xhtml">
@@ -42,19 +42,36 @@
 </nav>
 <main>
     <div class="container">
-        <div class="row mt-3 mb-3">
-            <h2>Aggregate projections:</h2>
+        <div class="row">
+            <h2>{{value: ProjectionDisplayName}}</h2>
         </div>
-        <div class="row p-3">
-            <div class="list-group col-md-6">
-                <dot:Repeater DataSource="{value: AggregateProjectionTypes}">
-                    <dot:RouteLink class="list-group-item list-group-item-action"
-                                   RouteName="Diagnostics_AggregateProjectionTypeDetail"
-                                   Param-ProjectionType="{value: EncodedTypeId}">
-                        {{value: DisplayName}}
-                    </dot:RouteLink>
-                </dot:Repeater>
+        <div class="row mb-3">
+            <div class="col-sm-2 font-weight-bold">Full name:</div>
+            <div class="col-sm-4">
+                {{value: ProjectionFullName}}
             </div>
+        </div>
+        <div class="row d-flex flex-row mb-3">
+            <label class="col-sm-2 col-form-label font-weight-bold" for="combobox-aggregates">Aggregate ids:</label>
+            <div class="col-sm-4">
+                <dot:ComboBox id="combobox-aggregates"
+                              class="form-select"
+                              SelectionChanged="{command: OnSelectedAggregateChanged()}"
+                              DataSource="{value: ProjectionValues}"
+                              SelectedValue="{value: SelectedAggregateId}"
+                              ItemValueBinding="{value: AggregateId}"
+                              ItemTextBinding="{value: AggregateId}"
+                              ItemTitleBinding="{value: AggregateId}"/>
+            </div>
+        </div>
+        <div class="row mb-3 d-flex flex-column">
+            <div class="d-flex flex-row justify-content-between align-items-center">
+                <p class="col-sm-2 font-weight-bold">Data:</p>
+                <cc:CopyJsonButton class="btn btn-secondary" Json="{value: SelectedValue.SerializedProjection}">
+                    Copy json to clipboard
+                </cc:CopyJsonButton>
+            </div>
+            <cc:JsonViewer Json="{value: SelectedValue.SerializedProjection}"/>
         </div>
     </div>
 </main>
