@@ -2,7 +2,7 @@
 using DotVVM.Framework.ViewModel;
 using EventSourced.Diagnostics.Web.Helpers;
 
-namespace EventSourced.Diagnostics.Web.Model
+namespace EventSourced.Diagnostics.Web.Model.Aggregates
 {
     public class AggregateTypesListItemModel
     {

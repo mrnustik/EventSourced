@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DotVVM.Framework.ViewModel;
 using EventSourced.Diagnostics.Web.Helpers;
-using EventSourced.Diagnostics.Web.Model;
+using EventSourced.Diagnostics.Web.Model.Aggregates;
 using EventSourced.Diagnostics.Web.Services;
 
 namespace EventSourced.Diagnostics.Web.Pages.AggregatesList
