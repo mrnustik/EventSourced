@@ -13,14 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Pages\AggregateList\AggregateList.dothtml" />
-      <EmbeddedResource Include="Pages\AggregateTypes\AggregateTypesList.dothtml" />
-      <None Remove="Pages\AggregatesList\AggregatesList.dothtml" />
-      <EmbeddedResource Include="Pages\AggregatesList\AggregatesList.dothtml" />
-      <None Remove="Resources\JsonViewer.js" />
-      <EmbeddedResource Include="Resources\JsonViewer.js" />
-      <None Remove="Resources\CopyJsonButton.js" />
-      <EmbeddedResource Include="Resources\CopyJsonButton.js" />
+      <EmbeddedResource Include="Pages\**\*.dothtml" />
+      <EmbeddedResource Include="Resources\*.js" />
     </ItemGroup>
 
 </Project>
