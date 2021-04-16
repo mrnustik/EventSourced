@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using EventSourced.Diagnostics.Web.Model;
+ using EventSourced.Diagnostics.Web.Model.Aggregates;
 
-namespace EventSourced.Diagnostics.Web.Services
+ namespace EventSourced.Diagnostics.Web.Services
 {
     public interface IAggregateInformationService
     {

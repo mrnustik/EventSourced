@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EventSourced.Diagnostics.Web.Model;
+using EventSourced.Diagnostics.Web.Model.Aggregates;
 using EventSourced.Domain;
 using EventSourced.Domain.Events;
 using EventSourced.Helpers;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EventSourced.Diagnostics.Web.Model
+namespace EventSourced.Diagnostics.Web.Model.Aggregates
 {
     public class AggregateInstancesListItemModel
     {
