@@ -6,6 +6,7 @@ using EventSourced.Domain;
 using EventSourced.Domain.Events;
 using EventSourced.EventBus;
 using EventSourced.Exceptions;
+using EventSourced.Helpers;
 using EventSourced.Snapshots;
 
 namespace EventSourced.Persistence
@@ -55,8 +56,7 @@ namespace EventSourced.Persistence
             var aggregateCollection = new List<TAggregateRoot>();
             foreach (var (streamId, events) in aggregateToEventsMap)
             {
-                var aggregateRootId = streamId;
-                var aggregateRoot = ConstructAggregateRoot(aggregateRootId);
+                var aggregateRoot = AggregateRootFactory.CreateAggregateRoot<TAggregateRoot>(streamId);
                 aggregateRoot.RebuildFromEvents(events);
                 aggregateCollection.Add(aggregateRoot);
             }
@@ -88,13 +88,7 @@ namespace EventSourced.Persistence
         private async Task<TAggregateRoot> LoadFromSnapshotOrCreateAsync(Guid id, CancellationToken ct)
         {
             var aggregateFromSnapshot = await _snapshotStore.LoadSnapshotAsync(id, ct);
-            return aggregateFromSnapshot ?? ConstructAggregateRoot(id);
-        }
-        
-        private static TAggregateRoot ConstructAggregateRoot(Guid id)
-        {
-            var aggregateRoot = (TAggregateRoot) Activator.CreateInstance(typeof(TAggregateRoot), id)!;
-            return aggregateRoot;
+            return aggregateFromSnapshot ?? AggregateRootFactory.CreateAggregateRoot<TAggregateRoot>(id);
         }
 
         private async Task CreateSnapshotIfNeededAsync(TAggregateRoot aggregateRoot, CancellationToken ct)
