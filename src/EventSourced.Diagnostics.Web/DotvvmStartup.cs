@@ -51,6 +51,13 @@ namespace EventSourced.Diagnostics.Web
                                       {
                                           Dependencies = new[] {"json-viewer-js", "knockout"}
                                       });
+            config.Resources.Register("copy-json-button-js",
+                                      new ScriptResource(new EmbeddedResourceLocation(
+                                                             typeof(DotvvmStartup).Assembly,
+                                                             "EventSourced.Diagnostics.Web.Resources.CopyJsonButton.js"))
+                                      {
+                                          Dependencies = new[] { "knockout"}
+                                      });
         }
 
         private static void ConfigureRoutes(DotvvmConfiguration config)
