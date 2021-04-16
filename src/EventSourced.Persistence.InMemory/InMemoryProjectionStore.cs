@@ -49,6 +49,27 @@ namespace EventSourced.Persistence.InMemory
             return Task.FromResult<object?>(null);
         }
 
+        public Task<IDictionary<Guid, List<object>>> LoadAllAggregateProjectionsAsync(CancellationToken ct)
+        {
+            var aggregateIdToProjectionsMap = new Dictionary<Guid, List<object>>();
+            foreach (var projectionsByAggregateId in AggregateProjectionsMap.Values)
+            {
+                foreach (var (aggregateId, projection) in projectionsByAggregateId)
+                {
+                    if (aggregateIdToProjectionsMap.ContainsKey(aggregateId))
+                    {
+                        aggregateIdToProjectionsMap[aggregateId]
+                            .Add(projection);
+                    }
+                    else
+                    {
+                        aggregateIdToProjectionsMap[aggregateId] = new List<object> {projection};
+                    }
+                }
+            }
+            return Task.FromResult<IDictionary<Guid, List<object>>>(aggregateIdToProjectionsMap);
+        }
+
         public Task StoreProjectionAsync(object projection, CancellationToken ct)
         {
             ProjectionsMap[projection.GetType()] = projection.DeepClone();
