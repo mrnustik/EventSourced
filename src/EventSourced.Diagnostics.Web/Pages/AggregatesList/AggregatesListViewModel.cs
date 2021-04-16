@@ -20,11 +20,11 @@ namespace EventSourced.Diagnostics.Web.Pages.AggregatesList
         }
 
         [Bind(Direction.None)]
-        public Type AggregateType => TypeSerializer.DeserializeType(Base64Encoder.Decode(EncodedAggregateTypeId));
+        public Type AggregateRootType => TypeEncoder.DecodeType(EncodedAggregateRootType);
         [FromRoute("AggregateType")]
-        public string EncodedAggregateTypeId { get; set; } = null!;
-        public string? AggregateDisplayName => AggregateType.Name;
-        public string? AggregateFullName => AggregateType.FullName;
+        public string EncodedAggregateRootType { get; set; } = null!;
+        public string? AggregateDisplayName => AggregateRootType.Name;
+        public string? AggregateFullName => AggregateRootType.FullName;
         [Bind(Direction.ServerToClientFirstRequest)]
         public ICollection<AggregateInstancesListItemModel> AggregateInstances { get; set; } =
             new List<AggregateInstancesListItemModel>();
@@ -40,7 +40,7 @@ namespace EventSourced.Diagnostics.Web.Pages.AggregatesList
             if (!Context.IsPostBack)
             {
                 AggregateInstances =
-                    await _aggregateInformationService.GetStoredAggregatesOfTypeAsync(AggregateType, RequestCancellationToken);
+                    await _aggregateInformationService.GetStoredAggregatesOfTypeAsync(AggregateRootType, RequestCancellationToken);
                 SelectedAggregateInstance = AggregateInstances.FirstOrDefault();
                 SelectedAggregateInstanceId = SelectedAggregateInstance?.Id;
                 SelectedVersion = SelectedAggregateInstance?.Version;
@@ -51,7 +51,7 @@ namespace EventSourced.Diagnostics.Web.Pages.AggregatesList
         public async Task OnAggregateInstanceChanged()
         {
             AggregateInstances =
-                await _aggregateInformationService.GetStoredAggregatesOfTypeAsync(AggregateType, RequestCancellationToken);
+                await _aggregateInformationService.GetStoredAggregatesOfTypeAsync(AggregateRootType, RequestCancellationToken);
             SelectedAggregateInstance = AggregateInstances.SingleOrDefault(i => i.Id == SelectedAggregateInstanceId);
             SelectedVersion = SelectedAggregateInstance?.Version;
             SelectedMaxVersion = SelectedVersion;
@@ -63,7 +63,7 @@ namespace EventSourced.Diagnostics.Web.Pages.AggregatesList
             SelectedAggregateInstance =
                 await _aggregateInformationService.GetStoredAggregateByIdAndVersionAsync(
                     SelectedAggregateInstanceId.Value,
-                    AggregateType,
+                    AggregateRootType,
                     version,
                     RequestCancellationToken);
             SelectedVersion = SelectedAggregateInstance.Version;
