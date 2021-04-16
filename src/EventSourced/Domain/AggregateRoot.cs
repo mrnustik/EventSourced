@@ -39,7 +39,7 @@ namespace EventSourced.Domain
             return lastAppliedEventVersion + 1;
         }
 
-        internal void RebuildFromEvents(IEnumerable<DomainEvent> domainEvents)
+        public void RebuildFromEvents(IEnumerable<DomainEvent> domainEvents)
         {
             foreach (var domainEvent in domainEvents)
             {
