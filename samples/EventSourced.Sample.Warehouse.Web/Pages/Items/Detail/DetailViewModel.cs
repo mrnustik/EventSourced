@@ -28,6 +28,7 @@ namespace EventSourced.Sample.Warehouse.Web.Pages.Items.Detail
             await base.Load();
         }
 
+        [BusinessRuleExceptionFilter(nameof(Amount))]
         public async Task ImportAsync()
         {
             await _importWarehouseItemApplicationService.ImportWarehouseItemAsync(WarehouseItemId, Amount, RequestCancellationToken);
