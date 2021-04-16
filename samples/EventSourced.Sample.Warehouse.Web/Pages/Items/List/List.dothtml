@@ -3,9 +3,29 @@
 
 <dot:Content ContentPlaceholderId="MainContent">
     <h1>Warehouse items</h1>
-    <ul class="list-group">
+    <div class="mb-3 d-flex flex-row justify-content-end">
+        <div>
+            <dot:RouteLink RouteName="Pages/Items/Edit/Edit"
+                           class="btn btn-primary">
+                Create new
+            </dot:RouteLink>
+        </div>
+    </div>
+    <div class="list-group">
         <dot:Repeater DataSource="{value: WarehouseListItems}">
-            <li class="list-group-item">{{value: Title}}</li>
+            <div class="list-group-item d-flex flex-row justify-content-between align-items-center">
+                <div>
+                    <b>Title: </b>
+                    {{value: Title}}
+                </div>
+                <div>
+                    <dot:RouteLink RouteName="Pages/Items/Edit/Edit"
+                                   class="btn btn-primary"
+                                   Param-WarehouseItemId="{value: Id}">
+                        Edit
+                    </dot:RouteLink>
+                </div>
+            </div>
         </dot:Repeater>
-    </ul>
+    </div>
 </dot:Content>

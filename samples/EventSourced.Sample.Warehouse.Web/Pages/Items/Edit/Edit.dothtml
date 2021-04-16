@@ -1,0 +1,17 @@
+@viewModel EventSourced.Sample.Warehouse.Web.Pages.Items.Edit.EditViewModel
+@masterPage Pages/MasterPage.dotmaster
+
+<dot:Content ContentPlaceholderId="MainContent">
+    <h1>Warehouse item edit</h1>
+    <form>
+        <div class="mb-3">
+            <label for="textBox-name" class="form-label">Title</label>
+            <dot:TextBox class="form-control"
+                         id="textBox-name" 
+                         Text="{value: Title}"
+                         placeholder="Title"/>
+        </div>
+        <dot:Button Text="Save" 
+                    Click="{command: SaveAsync()}"/>
+    </form>
+</dot:Content>
