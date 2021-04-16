@@ -9,8 +9,18 @@ namespace EventSourced.Diagnostics.Web
     {
         public void Configure(DotvvmConfiguration config, string applicationPath)
         {
+            ConfigureDiagnostics(config);
+        }
+
+        internal static void ConfigureDiagnostics(DotvvmConfiguration config)
+        {
             ConfigureRoutes(config);
             ConfigureResources(config);
+            ConfigureControls(config);
+        }
+
+        private static void ConfigureControls(DotvvmConfiguration config)
+        {
             config.Markup.AddCodeControls("cc", typeof(JsonViewer));
         }
 
