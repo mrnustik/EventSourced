@@ -25,14 +25,28 @@ namespace EventSourced.Diagnostics.Web.Pages.AggregatesList
         public string EncodedAggregateTypeId { get; set; } = null!;
         public string? AggregateDisplayName => AggregateType.Name;
         public string? AggregateFullName => AggregateType.FullName;
+        [Bind(Direction.ServerToClient)]
         public ICollection<AggregateInstancesListItemModel> AggregateInstances { get; set; } = new List<AggregateInstancesListItemModel>();
+        [Bind(Direction.ServerToClient)]
         public AggregateInstancesListItemModel? SelectedAggregateInstance { get; set; }
+        public Guid? SelectedAggregateInstanceId { get; set; }
         
-        public override async Task PreRender()
+        public override async Task Load()
         {
-            await base.PreRender();
+            await base.Load();
+            if (!Context.IsPostBack)
+            {
+                AggregateInstances =
+                    await _aggregateInformationService.GetStoredAggregatesOfType(AggregateType, RequestCancellationToken);
+                SelectedAggregateInstance = AggregateInstances.FirstOrDefault();
+                SelectedAggregateInstanceId = SelectedAggregateInstance?.Id;
+            }
+        }
+
+        public async Task OnAggregateInstanceChanged()
+        {
             AggregateInstances = await _aggregateInformationService.GetStoredAggregatesOfType(AggregateType, RequestCancellationToken);
-            SelectedAggregateInstance = AggregateInstances.FirstOrDefault();
+            SelectedAggregateInstance = AggregateInstances.SingleOrDefault(i => i.Id == SelectedAggregateInstanceId);
         }
     }
 }

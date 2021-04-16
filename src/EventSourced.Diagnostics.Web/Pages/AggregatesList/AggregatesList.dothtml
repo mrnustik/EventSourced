@@ -49,8 +49,10 @@
             <div class="col-sm-4">
                 <dot:ComboBox id="combobox-aggregates"
                               class="form-select"
+                              SelectionChanged="{command: OnAggregateInstanceChanged()}"
                               DataSource="{value: AggregateInstances}"
-                              SelectedValue="{value: SelectedAggregateInstance}"
+                              SelectedValue="{value: SelectedAggregateInstanceId}"
+                              ItemValueBinding="{value: Id}"
                               ItemTextBinding="{value: Id}"
                               ItemTitleBinding="{value: Id}"/>
             </div>
