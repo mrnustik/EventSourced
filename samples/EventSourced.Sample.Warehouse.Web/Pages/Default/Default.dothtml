@@ -1,0 +1,6 @@
+﻿@viewModel EventSourced.Sample.Warehouse.Web.Pages.Default.DefaultViewModel
+@masterPage Pages/MasterPage.dotmaster
+
+<dot:Content ContentPlaceholderId="MainContent">
+    <h1>Default</h1>
+</dot:Content>

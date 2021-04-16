@@ -1,0 +1,14 @@
+﻿@viewModel EventSourced.Sample.Warehouse.Web.Pages.MasterPageViewModel, EventSourced.Sample.Warehouse.Web
+
+<!DOCTYPE html>
+
+<html lang="cs" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Warehouse</title>
+    <dot:ContentPlaceHolder ID="HeaderContent" />
+</head>
+<body PostBack.Concurrency="Queue" Visible="{value: true}" style="display: none;">
+    <dot:ContentPlaceHolder ID="MainContent" />
+</body>
+</html>

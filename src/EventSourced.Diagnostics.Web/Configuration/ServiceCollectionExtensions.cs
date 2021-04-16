@@ -26,7 +26,7 @@ namespace EventSourced.Diagnostics.Web.Configuration
 
         private static bool AlreadyContainsDotvvm(this IServiceCollection serviceCollection)
         {
-            return serviceCollection.Any(s => s.ServiceType == typeof(IDotvvmStartup));
+            return serviceCollection.Any(s => s.ServiceType.Assembly.FullName?.StartsWith("DotVVM.Framework") == false);
         }
     }
 }
