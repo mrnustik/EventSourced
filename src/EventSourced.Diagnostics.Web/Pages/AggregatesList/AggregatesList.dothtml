@@ -39,13 +39,13 @@
             <h2>{{value: AggregateDisplayName}}</h2>
         </div>
         <div class="row mb-3">
-            <div class="col-sm-2">Full name:</div>
+            <div class="col-sm-2 font-weight-bold">Full name:</div>
             <div class="col-sm-4">
                 {{value: AggregateFullName}}
             </div>
         </div>
         <div class="row d-flex flex-row mb-3">
-            <label class="col-sm-2 col-form-label" for="combobox-aggregates">Aggregate ids:</label>
+            <label class="col-sm-2 col-form-label font-weight-bold" for="combobox-aggregates">Aggregate ids:</label>
             <div class="col-sm-4">
                 <dot:ComboBox id="combobox-aggregates"
                               class="form-select"
@@ -56,14 +56,14 @@
             </div>
         </div>
         <div class="row mb-3">
-            <div class="col-sm-2">Version:</div>
+            <div class="col-sm-2 font-weight-bold">Version:</div>
             <div class="col-sm-4">
                 {{value: SelectedAggregateInstance.Version}}
             </div>
         </div>
         <div class="row mb-3 d-flex flex-column">
-            <div class="col-sm-2">Data:</div>
-            <dot:HtmlLiteral Html="{value: SelectedAggregateInstance.SerializedAggregate}"/>
+            <p class="col-sm-2 font-weight-bold">Data:</p>
+            <cc:JsonViewer Json="{value: SelectedAggregateInstance.SerializedAggregate}"/>
         </div>
     </div>
 </main>
