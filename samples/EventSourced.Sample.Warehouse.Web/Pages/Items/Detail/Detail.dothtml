@@ -13,7 +13,14 @@
                          id="textBox-amount"
                          Type="number"
                          Text="{value: Amount}"
+                         Validator.Value="{value: Amount}"
+                         Validator.InvalidCssClass="is-invalid"
                          placeholder="Amount"/>
+            <div class="invalid-feedback">
+                <dot:Validator Value="{value: Amount}"
+                               HideWhenValid="true"
+                               ShowErrorMessageText="true"/>
+            </div>
         </div>
         <dot:Button Text="Import"
                     class="btn btn-success"
