@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using DotVVM.Framework.Configuration;
+using EventSourced.Diagnostics.Web.Mappers;
 using EventSourced.Diagnostics.Web.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,6 +23,7 @@ namespace EventSourced.Diagnostics.Web.Configuration
             }
             serviceCollection.AddTransient<IAggregateInformationService, AggregateInformationService>();
             serviceCollection.AddTransient<IProjectionInformationService, ProjectionInformationService>();
+            serviceCollection.AddTransient<IAggregateInstancesListItemModelMapper, AggregateInstancesListItemModelMapper>();
             return serviceCollection;
         }
 
