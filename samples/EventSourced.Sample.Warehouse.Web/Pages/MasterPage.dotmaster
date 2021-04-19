@@ -30,7 +30,10 @@
                     </dot:RouteLink>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link">Containers</a>
+                    <dot:RouteLink RouteName="Pages/Container/List"
+                                   class="nav-link">
+                        Containers
+                    </dot:RouteLink>
                 </li>
             </ul>
         </div>

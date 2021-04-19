@@ -1,0 +1,36 @@
+﻿@viewModel EventSourced.Sample.Warehouse.Web.Pages.Container.ListViewModel
+    @masterPage Pages/MasterPage.dotmaster
+
+<dot:Content ContentPlaceholderId="MainContent">
+    <h1>Containers</h1>
+    <div class="mb-3 d-flex flex-row justify-content-end">
+        <div>
+            <dot:RouteLink RouteName="Pages/Container/Edit"
+                           class="btn btn-primary">
+                Create new
+            </dot:RouteLink>
+        </div>
+    </div>
+    <div class="list-group">
+        <dot:Repeater DataSource="{value: Containers}">
+            <div class="list-group-item d-flex flex-row justify-content-between align-items-center">
+                <div>
+                    <b>Identifier: </b>
+                    {{value: Identifier}}
+                </div>
+                <div>
+<!--                    <dot:RouteLink RouteName="Pages/Items/Detail/Detail"-->
+<!--                                   class="btn btn-primary"-->
+<!--                                   Param-WarehouseItemId="{value: Identifier}">-->
+<!--                        Detail-->
+<!--                    </dot:RouteLink>-->
+<!--                    <dot:RouteLink RouteName="Pages/Items/Edit/Edit"-->
+<!--                                   class="btn btn-primary"-->
+<!--                                   Param-WarehouseItemId="{value: Identifier}">-->
+<!--                        Edit-->
+<!--                    </dot:RouteLink>-->
+                </div>
+            </div>
+        </dot:Repeater>
+    </div>
+</dot:Content>

@@ -19,6 +19,7 @@ namespace EventSourced.Sample.Warehouse.Web
             config.RouteTable.Add("Default", "", "Pages/Default/Default.dothtml");
             config.RouteTable.Add("Pages/Items/Edit/Edit", "Pages/Items/Edit/Edit/{WarehouseItemId?:guid}", "Pages/Items/Edit/Edit.dothtml");
             config.RouteTable.Add("Pages/Items/Detail/Detail", "Pages/Items/Detail/Detail/{WarehouseItemId:guid}", "Pages/Items/Detail/Detail.dothtml");
+            config.RouteTable.Add("Pages/Container/Edit", "Pages/Container/Edit/{ContainerId?:guid}", "Pages/Container/Edit.dothtml");
             config.AutoRegisterRoutes("Pages");
         }
 
