@@ -1,4 +1,5 @@
 ﻿using EventSourced.Domain;
+using EventSourced.ExternalEvents;
 using EventSourced.Projections;
 using EventSourced.Snapshots;
 using EventSourced.Snapshots.Strategies;
@@ -32,6 +33,15 @@ namespace EventSourced.Configuration
             options.ServiceCollection.Replace(new ServiceDescriptor(typeof(ISnapshotCreationStrategy),
                                                                     new EventCountBasedSnapshotCreationStrategy(
                                                                         numberOfEventBetweenSnapshots)));
+            return options;
+        }
+
+        public static EventSourcedOptions RegisterExternalEventHandler<TExternalEvent, TExternalEventHandler>(this EventSourcedOptions options)
+            where TExternalEventHandler : class, IExternalEventHandler<TExternalEvent>
+            where TExternalEvent : class
+        {
+            options.ServiceCollection.AddTransient<IExternalEventHandler<TExternalEvent>, TExternalEventHandler>();
+            options.ExternalEventsOptions.RegisteredExternalEvents.Add(typeof(TExternalEvent));
             return options;
         }
     }
