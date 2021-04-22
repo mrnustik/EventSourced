@@ -1,6 +1,7 @@
 ﻿using System;
 using EventSourced.Domain.Events;
 using EventSourced.EventBus;
+using EventSourced.ExternalEvents;
 using EventSourced.Persistence;
 using EventSourced.Persistence.Null;
 using EventSourced.Projections;
@@ -23,15 +24,17 @@ namespace EventSourced.Configuration
             serviceCollection.AddTransient(typeof(ISnapshotStore<>), typeof(NullSnapshotStore<>));
             serviceCollection.AddTransient<ISnapshotCreationStrategy, NullSnapshotCreationStrategy>();
             serviceCollection.AddTransient<IDomainEventBus, InProcessDomainEventBus>();
+            serviceCollection.AddTransient<IExternalEventPublisher, ExternalEventPublisher>();
             
             var options = new EventSourcedOptions(serviceCollection);
             optionsConfiguration(options);
             serviceCollection.AddSingleton(options.AutomaticProjectionOptions);
+            serviceCollection.AddSingleton(options.ExternalEventsOptions);
 
             var automaticProjectionsEventMapper = new AutomaticProjectionsEventMapper(options.AutomaticProjectionOptions);
             automaticProjectionsEventMapper.Initialize();
             serviceCollection.AddSingleton<IAutomaticProjectionsEventMapper>(automaticProjectionsEventMapper);
-
+            
             if (options.AutomaticProjectionOptions.RebuildAutomaticProjectionsOnStart)
             {
                 serviceCollection.AddHostedService<AutomaticProjectionRebuilderHostedService>();
