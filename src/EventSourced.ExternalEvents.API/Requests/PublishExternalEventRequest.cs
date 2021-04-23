@@ -1,4 +1,6 @@
-﻿namespace EventSourced.ExternalEvents.API.Requests
+﻿using Newtonsoft.Json.Linq;
+
+namespace EventSourced.ExternalEvents.API.Requests
 {
-    public record PublishExternalEventRequest(string EventType, string EventData);
+    public record PublishExternalEventRequest(string EventType, JObject EventData);
 }
