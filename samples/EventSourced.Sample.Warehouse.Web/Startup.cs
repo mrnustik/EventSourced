@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EventSourced.Configuration;
 using EventSourced.Diagnostics.Web.Configuration;
+using EventSourced.ExternalEvents.API.Configuration;
 using EventSourced.Persistence.EntityFramework.Configuration;
 using EventSourced.Persistence.InMemory.Configuration;
 using EventSourced.Sample.Warehouse.Application.Configuration;
@@ -42,7 +43,8 @@ namespace EventSourced.Sample.Warehouse.Web
                                                 .UseEntityFrameworkSnapshotStore()
                                                 .UseEventCountBasedSnapshotStrategy(1)
                                                 .ConfigureDomainObjects())
-                    .AddEventSourcedDiagnostics();
+                    .AddEventSourcedDiagnostics()
+                    .AddEventSourcedExternalEventsWebApi(new EventSourcedExternalWebApiOptions("/EventSourced/ExternalEvents"));
             services.AddHostedService<CreateImportLocationHostedService>();
         }
 
@@ -52,7 +54,8 @@ namespace EventSourced.Sample.Warehouse.Web
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
+            app.UseEventSourcedExternalEventsWebApi();
             app.UseDotVVM<DotvvmStartup>();
         }
     }
