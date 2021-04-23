@@ -29,33 +29,33 @@ jobs:
           PROJECT_FILE_PATH: src/EventSourced/EventSourced.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
           NUGET_SOURCE: https://api.nuget.org
-          VERSION_STATIC: 0.1-alpha
+          VERSION_STATIC: 0.9-beta
     - name: Publish EventSourced.Persistence.InMemory
       uses: brandedoutcast/publish-nuget@v2.5.2
       with:
           PROJECT_FILE_PATH: src/EventSourced.Persistence.InMemory/EventSourced.Persistence.InMemory.csproj
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
           NUGET_SOURCE: https://api.nuget.org
-          VERSION_STATIC: 0.1-alpha
+          VERSION_STATIC: 0.9-beta
     - name: Publish EventSourced.Persistence.EntityFramework
       uses: brandedoutcast/publish-nuget@v2.5.2
       with:
         PROJECT_FILE_PATH: src/EventSourced.Persistence.EntityFramework/EventSourced.Persistence.EntityFramework.csproj
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
         NUGET_SOURCE: https://api.nuget.org
-        VERSION_STATIC: 0.1-alpha
+        VERSION_STATIC: 0.9-beta
     - name: Publish EventSourced.Diagnostics.Web
       uses: brandedoutcast/publish-nuget@v2.5.2
       with:
         PROJECT_FILE_PATH: src/EventSourced.Diagnostics.Web/EventSourced.Diagnostics.Web.csproj
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
         NUGET_SOURCE: https://api.nuget.org
-        VERSION_STATIC: 0.1-alpha
+        VERSION_STATIC: 0.9-beta
     - name: Publish EventSourced.ExternalEvents.API
       uses: brandedoutcast/publish-nuget@v2.5.2
       with:
         PROJECT_FILE_PATH: src/EventSourced.ExternalEvents.API/EventSourced.ExternalEvents.API.csproj
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
         NUGET_SOURCE: https://api.nuget.org
-        VERSION_STATIC: 0.1-alpha
+        VERSION_STATIC: 0.9-beta
 
