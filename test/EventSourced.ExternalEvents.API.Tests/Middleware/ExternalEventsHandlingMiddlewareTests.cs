@@ -2,15 +2,16 @@
 using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using EventSourced.Configuration;
 using EventSourced.Exceptions;
 using EventSourced.ExternalEvents.API.Configuration;
 using EventSourced.ExternalEvents.API.Requests;
+using EventSourced.Persistence.InMemory.Configuration;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Moq;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -18,8 +19,6 @@ namespace EventSourced.ExternalEvents.API.Tests.Middleware
 {
     public class ExternalEventsHandlingMiddlewareTests
     {
-        private readonly Mock<IExternalEventPublisher> _externalEventPublisherMock = new();
-
         [Fact]
         public async Task HandleAsync_WithoutCorrectPathString_CallsNext()
         {
@@ -67,19 +66,18 @@ namespace EventSourced.ExternalEvents.API.Tests.Middleware
             response.StatusCode.Should()
                     .Be(HttpStatusCode.UnprocessableEntity);
         }
-        
+
         [Fact]
         public async Task HandleAsync_WithCorrectPathStringWithCorrectMethodWithValidBodyWithUnregisteredEventType_ReturnsNotFound()
         {
             //Arrange
             var options = new EventSourcedExternalWebApiOptions("/EventSourced/ExternalEvent");
             using var webHost = await CreateWebHost(options);
-            _externalEventPublisherMock
-                .Setup(m => m.PublishExternalEventAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ThrowsAsync(new ExternalEventNotRegisteredException("Mock exception"));
+
             //Act
             var response = await webHost.GetTestClient()
-                                        .PostAsJsonAsync("/EventSourced/ExternalEvent", new PublishExternalEventRequest("TestEventType", new JObject()));
+                                        .PostAsJsonAsync("/EventSourced/ExternalEvent",
+                                                         new PublishExternalEventRequest(nameof(UnregisteredEvent), new JObject()));
 
             //Arrange
             response.StatusCode.Should()
@@ -92,16 +90,17 @@ namespace EventSourced.ExternalEvents.API.Tests.Middleware
             //Arrange
             var options = new EventSourcedExternalWebApiOptions("/EventSourced/ExternalEvent");
             using var webHost = await CreateWebHost(options);
-            
+
             //Act
             var response = await webHost.GetTestClient()
-                                        .PostAsJsonAsync("/EventSourced/ExternalEvent", new PublishExternalEventRequest("TestEventType", new JObject()));
+                                        .PostAsJsonAsync("/EventSourced/ExternalEvent",
+                                                         new PublishExternalEventRequest(nameof(TestEventType), new JObject()));
 
             //Arrange
             response.StatusCode.Should()
                     .Be(HttpStatusCode.OK);
         }
-        
+
         private Task<IHost> CreateWebHost(EventSourcedExternalWebApiOptions options)
         {
             return new HostBuilder().ConfigureWebHost(webBuilder =>
@@ -109,12 +108,32 @@ namespace EventSourced.ExternalEvents.API.Tests.Middleware
                                         webBuilder.UseTestServer()
                                                   .ConfigureServices(services =>
                                                   {
+                                                      services.AddEventSourced(o => o.UseInMemoryEventStore()
+                                                                                     .UseInMemoryProjectionStore()
+                                                                                     .UseInMemorySnapshotStore()
+                                                                                     .RegisterExternalEventHandler<TestEventType, TestEventHandler>());
                                                       services.AddEventSourcedExternalEventsWebApi(options);
-                                                      services.AddSingleton(_externalEventPublisherMock.Object);
                                                   })
                                                   .Configure(app => app.UseEventSourcedExternalEventsWebApi());
                                     })
                                     .StartAsync();
+        }
+
+        private class TestEventType
+        {
+        }
+
+        private class UnregisteredEvent
+        {
+            
+        }
+        
+        private class TestEventHandler: IExternalEventHandler<TestEventType>
+        {
+            public Task HandleAsync(TestEventType externalEvent, CancellationToken ct)
+            {
+                return Task.CompletedTask;
+            }
         }
     }
 }
