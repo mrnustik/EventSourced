@@ -1,6 +1,7 @@
 ﻿using System;
 using EventSourced.Domain;
 using EventSourced.Domain.Snapshosts;
+using EventSourced.Helpers;
 using EventSourced.Persistence.EntityFramework.Entities;
 using EventSourced.Persistence.EntityFramework.Helpers;
 using JsonNet.ContractResolvers;
@@ -39,7 +40,7 @@ namespace EventSourced.Persistence.EntityFramework.Mappers
         public TAggregateRoot MapToAggregateRoot<TAggregateRoot>(AggregateSnapshotEntity entity)
             where TAggregateRoot : AggregateRoot
         {
-            var aggregateRoot = (TAggregateRoot) Activator.CreateInstance(typeof(TAggregateRoot), entity.Id)!;
+            var aggregateRoot = AggregateRootFactory.CreateAggregateRoot<TAggregateRoot>(entity.Id);
             JsonConvert.PopulateObject(entity.SerializedAggregateState, aggregateRoot, SerializerSettings);
             return aggregateRoot;
         }
