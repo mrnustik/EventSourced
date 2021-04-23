@@ -1,13 +1,13 @@
 ﻿using System;
+using System.IO;
 using System.Net;
-using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Exceptions;
 using EventSourced.ExternalEvents.API.Configuration;
 using EventSourced.ExternalEvents.API.Requests;
 using EventSourced.ExternalEvents.API.Responses;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace EventSourced.ExternalEvents.API.Middleware
 {
@@ -31,27 +31,28 @@ namespace EventSourced.ExternalEvents.API.Middleware
                 if (context.Request.Method != "POST")
                 {
                     context.Response.StatusCode = (int) HttpStatusCode.MethodNotAllowed;
-                    await ReturnErrorAsync(context, new ErrorResponse("Only POST method is supported"), cancellationToken);
+                    await ReturnErrorAsync(context, new ErrorResponse("Only POST method is supported"));
                     return;
                 }
-                var deserializedEvent = await JsonSerializer.DeserializeAsync<PublishExternalEventRequest>(context.Request.Body, null, cancellationToken);
+
+                var deserializedEvent = await DeserializeExternalEventAsync(context);
                 if (deserializedEvent == null)
                 {
                     context.Response.StatusCode = (int) HttpStatusCode.UnprocessableEntity;
-                    await ReturnErrorAsync(context, new ErrorResponse("External event could not be deserialized."), cancellationToken);
+                    await ReturnErrorAsync(context, new ErrorResponse("External event could not be deserialized."));
                     return;
                 }
                 try
                 {
                     await _externalEventPublisher.PublishExternalEventAsync(deserializedEvent.EventType,
-                                                                            deserializedEvent.EventData,
+                                                                            deserializedEvent.EventData.ToString(),
                                                                             cancellationToken);
                     context.Response.StatusCode = (int) HttpStatusCode.OK;
                 }
                 catch (ExternalEventNotRegisteredException exception)
                 {
                     context.Response.StatusCode = (int) HttpStatusCode.NotFound;
-                    await ReturnErrorAsync(context, new ErrorResponse(exception.Message), cancellationToken);
+                    await ReturnErrorAsync(context, new ErrorResponse(exception.Message));
                 }
 
                 return;
@@ -60,9 +61,18 @@ namespace EventSourced.ExternalEvents.API.Middleware
             await next(context);
         }
 
-        private static async Task ReturnErrorAsync(HttpContext context, ErrorResponse? errorResponse, CancellationToken cancellationToken)
+        private async Task<PublishExternalEventRequest?> DeserializeExternalEventAsync(HttpContext context)
         {
-            await JsonSerializer.SerializeAsync(context.Response.Body, errorResponse, null, cancellationToken);
+            using var streamReader = new StreamReader(context.Request.Body);
+            var requestBody = await streamReader.ReadToEndAsync();
+            return JsonConvert.DeserializeObject<PublishExternalEventRequest>(requestBody);
+        }
+
+        private static async Task ReturnErrorAsync(HttpContext context, ErrorResponse? errorResponse)
+        {
+            await using var streamWriter = new StreamWriter(context.Response.Body);
+            var serializedResponse = JsonConvert.SerializeObject(errorResponse);
+            await streamWriter.WriteAsync(serializedResponse);
         }
     }
 }
