@@ -33,7 +33,11 @@
                         Aggregate projections
                     </dot:RouteLink>
                 </li>
-
+                <li class="nav-item">
+                    <dot:RouteLink RouteName="Diagnostics_ExternalEvents" class="nav-link">
+                        External events
+                    </dot:RouteLink>
+                </li>
             </ul>
         </div>
     </div>

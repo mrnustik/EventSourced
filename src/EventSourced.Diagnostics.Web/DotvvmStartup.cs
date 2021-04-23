@@ -76,26 +76,31 @@ namespace EventSourced.Diagnostics.Web
                           "Diagnostics_AggregateTypesList",
                           "_diagnostics/EventSourced/AggregateTypesList",
                           "Pages/AggregateTypes/AggregateTypesList.dothtml");
-            
+
             RegisterRoute(config,
                           "Diagnostics_AggregatesList",
                           "_diagnostics/EventSourced/AggregatesList/{AggregateType}",
                           "Pages/AggregatesList/AggregatesList.dothtml");
-            
+
             RegisterRoute(config,
                           "Diagnostics_ProjectionsList",
                           "_diagnostics/EventSourced/ProjectionsList",
                           "Pages/ProjectionsList/ProjectionsList.dothtml");
 
             RegisterRoute(config,
-                        "Diagnostics_AggregateProjectionsList",
-                        "_diagnostics/EventSource/AggregateProjectionsList",
-                        "Pages/AggregateProjectionsList/AggregateProjectionsList.dothtml");
-            
+                          "Diagnostics_AggregateProjectionsList",
+                          "_diagnostics/EventSourced/AggregateProjectionsList",
+                          "Pages/AggregateProjectionsList/AggregateProjectionsList.dothtml");
+
             RegisterRoute(config,
                           "Diagnostics_AggregateProjectionTypeDetail",
-                          "_diagnostics/EventSource/AggregateProjectionTypeDetail/{ProjectionType}",
+                          "_diagnostics/EventSourced/AggregateProjectionTypeDetail/{ProjectionType}",
                           "Pages/AggregateProjectionTypeDetail/AggregateProjectionTypeDetail.dothtml");
+
+            RegisterRoute(config,
+                          "Diagnostics_ExternalEvents",
+                          "_diagnostics/EventSourced/ExternalEvents",
+                          "Pages/ExternalEvents/ExternalEvents.dothtml");
         }
 
         private static void RegisterRoute(DotvvmConfiguration config, string routeName, string url, string pagePath)
@@ -103,11 +108,7 @@ namespace EventSourced.Diagnostics.Web
             var embeddedResourcePath = pagePath.Replace('/', '.');
             config.RouteTable.Add(routeName,
                                   url,
-// #if DEBUG
-//                                   pagePath);
-// #else
                                   $"embedded://EventSourced.Diagnostics.Web/{embeddedResourcePath}");
-// #endif
         }
 
         public void ConfigureServices(IDotvvmServiceCollection options)
