@@ -24,6 +24,7 @@ namespace EventSourced.Diagnostics.Web.Configuration
             serviceCollection.AddTransient<IAggregateInformationService, AggregateInformationService>();
             serviceCollection.AddTransient<IProjectionInformationService, ProjectionInformationService>();
             serviceCollection.AddTransient<IAggregateInstancesListItemModelMapper, AggregateInstancesListItemModelMapper>();
+            serviceCollection.AddTransient<IExternalEventInformationService, ExternalEventInformationService>();
             return serviceCollection;
         }
 

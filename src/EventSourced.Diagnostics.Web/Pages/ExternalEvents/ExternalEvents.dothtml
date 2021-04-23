@@ -1,4 +1,4 @@
-﻿@viewModel EventSourced.Diagnostics.Web.Pages.AggregateProjectionsList.AggregateProjectionsListViewModel, EventSourced.Diagnostics.Web
+﻿@viewModel EventSourced.Diagnostics.Web.Pages.ExternalEvents.ExternalEventsViewModel, EventSourced.Diagnostics.Web
 
     <!DOCTYPE html>
 <html lang="cs" xmlns="http://www.w3.org/1999/xhtml">
@@ -44,19 +44,32 @@
 </nav>
 <main>
     <div class="container">
-        <div class="row mt-3 mb-3">
-            <h2>Aggregate projections:</h2>
-        </div>
-        <div class="row p-3">
-            <div class="list-group col-md-6">
-                <dot:Repeater DataSource="{value: AggregateProjectionTypes}">
-                    <dot:RouteLink class="list-group-item list-group-item-action"
-                                   RouteName="Diagnostics_AggregateProjectionTypeDetail"
-                                   Param-ProjectionType="{value: EncodedTypeId}">
-                        {{value: DisplayName}}
-                    </dot:RouteLink>
-                </dot:Repeater>
+        <div class="row d-flex flex-row mb-3">
+            <label class="col-sm-2 col-form-label font-weight-bold" for="combobox-external-event-type">
+                External events:
+            </label>
+            <div class="col-sm-4">
+                <dot:ComboBox id="combobox-external-event-type"
+                              class="form-select"
+                              DataSource="{value: ExternalEvents}"
+                              SelectedValue="{value: SelectedExternalEventName}"
+                              ItemValueBinding="{value: DisplayName}"
+                              ItemTextBinding="{value: DisplayName}"
+                              ItemTitleBinding="{value: DisplayName}"/>
             </div>
+        </div>
+        <div class="row mb-3">
+            <label class="form-label font-weight-bold" for="textbox-event-data">
+                Event data:
+            </label>
+            <dot:TextBox id="textbox-event-data"
+                         Type="Multiline"
+                         Text="{value: EventData}"/>
+        </div>
+        <div class="row mb-3">
+            <dot:Button class="btn btn-primary"
+                        Click="{command: TriggerEvent()}"
+                        Text="Trigger event"/>
         </div>
     </div>
 </main>
