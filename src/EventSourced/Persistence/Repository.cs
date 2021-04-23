@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using EventSourced.Domain;
@@ -38,7 +39,7 @@ namespace EventSourced.Persistence
             var newDomainEvents = aggregateRoot.DequeueDomainEvents();
             await _eventStore.StoreEventsAsync(aggregateRoot.Id, typeof(TAggregateRoot), newDomainEvents, ct);
             await InvokeDomainEventHandlersAsync(aggregateRoot.Id, newDomainEvents, ct);
-            await CreateSnapshotIfNeededAsync(aggregateRoot, ct);
+            await CreateSnapshotIfNeededAsync(aggregateRoot, newDomainEvents.LastOrDefault()?.Version ?? aggregateRoot.Version, ct);
             await _domainEventBus.PublishDomainEventsAsync(newDomainEvents, ct);
         }
 
@@ -96,10 +97,11 @@ namespace EventSourced.Persistence
             return aggregateFromSnapshot ?? AggregateRootFactory.CreateAggregateRoot<TAggregateRoot>(id);
         }
 
-        private async Task CreateSnapshotIfNeededAsync(TAggregateRoot aggregateRoot, CancellationToken ct)
+        private async Task CreateSnapshotIfNeededAsync(TAggregateRoot aggregateRoot, int version, CancellationToken ct)
         {
             if (_snapshotCreationStrategy.ShouldCreateSnapshot(aggregateRoot))
             {
+                aggregateRoot.Version = version;
                 await _snapshotStore.StoreSnapshotAsync(aggregateRoot, ct);
             }
         }
