@@ -31,6 +31,22 @@ namespace EventSourced.Sample.Warehouse.Domain.ImportLocation
             EnqueueAndApplyEvent(new NewItemsImportedDomainEvent(warehouseItemId, amount));
         }
 
+        public void MoveItem(Guid warehouseItemId, int amount)
+        {
+            var importedItem = ImportedItems.SingleOrDefault(i => i.WarehouseItemId == warehouseItemId);
+            if (importedItem == null)
+            {
+                throw new BusinessRuleException($"Warehouse item with id {warehouseItemId} is not present at import location");
+            }
+            
+            if (importedItem.Amount < amount)
+            {
+                throw new BusinessRuleException($"Removed warehouse item amount is greater then existing");
+            }
+            
+            EnqueueAndApplyEvent(new ItemMovedFromImportLocationDomainEvent(warehouseItemId, amount));
+        }
+
         private void Apply(ImportLocationCreatedDomainEvent domainEvent)
         {
         }
@@ -44,6 +60,16 @@ namespace EventSourced.Sample.Warehouse.Domain.ImportLocation
             }
             var existingAmount = existingValueObject?.Amount ?? 0;
             ImportedItems.Add(new ImportedItemsValueObject(domainEvent.WarehouseItemId, domainEvent.Amount + existingAmount));
+        }
+
+        private void Apply(ItemMovedFromImportLocationDomainEvent domainEvent)
+        {
+            var existingValueObject = ImportedItems.Single(i => i.WarehouseItemId == domainEvent.WarehouseItemId);
+            ImportedItems.Remove(existingValueObject);
+            if (existingValueObject.Amount != domainEvent.Amount)
+            {
+                ImportedItems.Add(new ImportedItemsValueObject(domainEvent.WarehouseItemId, existingValueObject.Amount - domainEvent.Amount));
+            }
         }
     }
 }

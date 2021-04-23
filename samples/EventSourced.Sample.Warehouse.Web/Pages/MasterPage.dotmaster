@@ -35,6 +35,12 @@
                         Containers
                     </dot:RouteLink>
                 </li>
+                <li class="nav-item">
+                    <dot:RouteLink RouteName="Pages/ImportLocation/Detail"
+                                   class="nav-link">
+                        Import location
+                    </dot:RouteLink>
+                </li>
             </ul>
         </div>
     </div>

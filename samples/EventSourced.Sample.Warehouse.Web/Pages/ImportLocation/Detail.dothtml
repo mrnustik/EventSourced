@@ -1,0 +1,60 @@
+﻿@viewModel EventSourced.Sample.Warehouse.Web.Pages.ImportLocation.DetailViewModel
+    @masterPage Pages/MasterPage.dotmaster
+
+<dot:Content ContentPlaceholderId="MainContent">
+    <h1>Import location content</h1>
+    <div class="list-group">
+        <dot:Repeater DataSource="{value: ImportLocationContents}">
+            <div class="list-group-item d-flex flex-row justify-content-between align-items-center">
+                <div>
+                    {{value: WarehouseItemName}}
+                </div>
+                <div>
+                    <b>Amount:</b>
+                    {{value: Amount}}
+                </div>
+            </div>
+        </dot:Repeater>
+    </div>
+    <div class="row">
+        <form>
+            <h2>Move to container</h2>
+            <dot:ValidationSummary/>
+            <div class="form-group row mb-3">
+                <label class="col-sm-2 col-form-label" for="combobox-item">Item:</label>
+                <div class="col-sm-4">
+                    <dot:ComboBox id="combobox-item"
+                                  class="form-select"
+                                  DataSource="{value: ImportLocationContents}"
+                                  SelectedValue="{value: SelectedWarehouseItemId}"
+                                  ItemValueBinding="{value: WarehouseItemId}"
+                                  ItemTextBinding="{value: WarehouseItemName}"
+                                  ItemTitleBinding="{value: WarehouseItemName}"/>
+                </div>
+            </div>
+            <div class="form-group row mb-3">
+                <label class="col-sm-2 col-form-label" for="combobox-container">Container:</label>
+                <div class="col-sm-4">
+                    <dot:ComboBox id="combobox-container"
+                                  class="form-select"
+                                  DataSource="{value: Containers}"
+                                  SelectedValue="{value: SelectedContainerId}"
+                                  ItemValueBinding="{value: ContainerId}"
+                                  ItemTextBinding="{value: Identifier}"
+                                  ItemTitleBinding="{value: Identifier}"/>
+                </div>
+            </div>
+            <div class="form-group row mb-3">
+                <label class="col-sm-2 col-form-label" for="combobox-container">Amount:</label>
+                <div class="col-sm-4">
+                    <dot:TextBox Text="{value: Amount}"
+                                 class="form-control"
+                                 Type="Number"/>
+                </div>
+            </div>
+            <dot:Button class="btn btn-primary"
+                        Text="Move to container"
+                        Click="{command: MoveToContainer()}"/>
+        </form>
+    </div>
+</dot:Content>
