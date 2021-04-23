@@ -8,10 +8,6 @@ namespace EventSourced.Sample.Warehouse.Domain.ImportLocation
         public Guid WarehouseItemId { get; private set; }
         public int Amount { get; private set; }
 
-        public ImportedItemsValueObject()
-        {
-        }
-
         public ImportedItemsValueObject(Guid warehouseItemId, int amount)
         {
             WarehouseItemId = warehouseItemId;
