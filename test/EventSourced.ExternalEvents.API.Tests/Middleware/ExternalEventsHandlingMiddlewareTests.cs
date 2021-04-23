@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Moq;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace EventSourced.ExternalEvents.API.Tests.Middleware
@@ -78,7 +79,7 @@ namespace EventSourced.ExternalEvents.API.Tests.Middleware
                 .ThrowsAsync(new ExternalEventNotRegisteredException("Mock exception"));
             //Act
             var response = await webHost.GetTestClient()
-                                        .PostAsJsonAsync("/EventSourced/ExternalEvent", new PublishExternalEventRequest("TestEventType", "{}"));
+                                        .PostAsJsonAsync("/EventSourced/ExternalEvent", new PublishExternalEventRequest("TestEventType", new JObject()));
 
             //Arrange
             response.StatusCode.Should()
@@ -94,7 +95,7 @@ namespace EventSourced.ExternalEvents.API.Tests.Middleware
             
             //Act
             var response = await webHost.GetTestClient()
-                                        .PostAsJsonAsync("/EventSourced/ExternalEvent", new PublishExternalEventRequest("TestEventType", "{}"));
+                                        .PostAsJsonAsync("/EventSourced/ExternalEvent", new PublishExternalEventRequest("TestEventType", new JObject()));
 
             //Arrange
             response.StatusCode.Should()
