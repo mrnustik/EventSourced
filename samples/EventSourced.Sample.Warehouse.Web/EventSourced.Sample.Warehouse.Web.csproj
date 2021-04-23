@@ -6,6 +6,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\EventSourced.Diagnostics.Web\EventSourced.Diagnostics.Web.csproj" />
+      <ProjectReference Include="..\..\src\EventSourced.ExternalEvents.API\EventSourced.ExternalEvents.API.csproj" />
       <ProjectReference Include="..\..\src\EventSourced.Persistence.EntityFramework\EventSourced.Persistence.EntityFramework.csproj" />
       <ProjectReference Include="..\..\src\EventSourced.Persistence.InMemory\EventSourced.Persistence.InMemory.csproj" />
       <ProjectReference Include="..\EventSourced.Sample.Warehouse.Application\EventSourced.Sample.Warehouse.Application.csproj" />
