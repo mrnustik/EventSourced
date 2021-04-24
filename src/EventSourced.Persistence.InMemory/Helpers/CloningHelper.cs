@@ -1,9 +1,6 @@
 ﻿using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using JsonNet.ContractResolvers;
 using Newtonsoft.Json;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace EventSourced.Persistence.InMemory.Helpers
 {
