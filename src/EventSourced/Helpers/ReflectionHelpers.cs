@@ -29,7 +29,7 @@ namespace EventSourced.Helpers
                              .Where(m => m.GetParameters()
                                           .Length == 1)
                              .SelectMany(m => m.GetParameters())
-                             .Where(p => p.ParameterType.IsAssignableTo(typeof(DomainEvent)))
+                             .Where(p => typeof(DomainEvent).IsAssignableFrom(p.ParameterType))
                              .Select(p => p.ParameterType);
         }
 
