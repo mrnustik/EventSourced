@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\EventSourced.TestsSupport\EventSourced.TestsSupport.csproj" />
       <ProjectReference Include="..\EventSourced.Sample.Warehouse.Domain\EventSourced.Sample.Warehouse.Domain.csproj" />
     </ItemGroup>
 
