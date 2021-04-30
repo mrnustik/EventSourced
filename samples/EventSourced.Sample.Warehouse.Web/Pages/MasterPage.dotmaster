@@ -24,7 +24,7 @@
                     <a class="nav-link">Default</a>
                 </li>
                 <li class="nav-item">
-                    <dot:RouteLink RouteName="Pages/Items/List/List"
+                    <dot:RouteLink RouteName="Pages/Items/List"
                                    class="nav-link">
                         Items
                     </dot:RouteLink>
