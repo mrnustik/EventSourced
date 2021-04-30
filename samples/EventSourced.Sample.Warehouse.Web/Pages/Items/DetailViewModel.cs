@@ -32,6 +32,7 @@ namespace EventSourced.Sample.Warehouse.Web.Pages.Items
         public async Task ImportAsync()
         {
             await _importWarehouseItemApplicationService.ImportWarehouseItemAsync(WarehouseItemId, Amount, RequestCancellationToken);
+            Context.RedirectToRoute("Pages/ImportLocation/Detail");
         }
     }
 }
