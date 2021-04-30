@@ -3,6 +3,16 @@
 
 <dot:Content ContentPlaceholderId="MainContent">
     <h1>{{value: ContainerDetailModel.Identifier}} - detail</h1>
+    <h2>Actions</h2>
+    <div class="display-flex flex-row justify-content-end">
+        <dot:Button ButtonTagName="button"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal"
+                    Click="{command: ShowConsumeItemsDialog()}">
+            Consume items
+        </dot:Button>
+    </div>
     <h2>Contents</h2>
     <div class="list-group">
         <dot:Repeater DataSource="{value: ContainerDetailModel.ContainerContents}">
@@ -16,5 +26,53 @@
                 </div>
             </div>
         </dot:Repeater>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Consume items</h5>
+                </div>
+                <div class="modal-body" DataContext="{value: ConsumeItemsDialogModel}">
+                    <dot:ValidationSummary />
+                    <form>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-2 col-form-label" for="combobox-item">Item:</label>
+                            <div class="col-sm-4">
+                                <dot:ComboBox id="combobox-item"
+                                              class="form-select"
+                                              DataSource="{value: AvailableWarehouseItems}"
+                                              SelectedValue="{value: SelectedWarehouseItemId}"
+                                              ItemValueBinding="{value: WarehouseItemId}"
+                                              ItemTextBinding="{value: WarehouseItemName}"
+                                              ItemTitleBinding="{value: WarehouseItemName}"/>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label for="textBox-amount" class="form-label">Amount:</label>
+                            <div class="col-sm-4">
+                                <dot:TextBox class="form-control"
+                                             id="textBox-amount"
+                                             Text="{value: Amount}"
+                                             placeholder="Amount"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <dot:Button ButtonTagName="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                                Click="{staticCommand: ConsumeItemsDialogModel = null;}">
+                        Close
+                    </dot:Button>
+                    <dot:Button type="button" 
+                            Click="{command: ConsumeItemsAsync(ConsumeItemsDialogModel)}"
+                            class="btn btn-primary">
+                        Consume
+                    </dot:Button>
+                </div>
+            </div>
+        </div>
     </div>
 </dot:Content>
