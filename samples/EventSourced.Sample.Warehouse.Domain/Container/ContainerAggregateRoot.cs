@@ -9,7 +9,6 @@ namespace EventSourced.Sample.Warehouse.Domain.Container
 {
     public class ContainerAggregateRoot : AggregateRoot
     {
-        
         public string Identifier { get; private set; } = string.Empty;
         public ICollection<WarehouseItemInContainerValueObject> WarehouseItemsInContainer { get; } =
             new List<WarehouseItemInContainerValueObject>();
@@ -102,6 +101,11 @@ namespace EventSourced.Sample.Warehouse.Domain.Container
         }
         
         private void Apply(ReceivedItemFromImportLocationDomainEvent domainEvent)
+        {
+            AddOrUpdateAmountOfItemsInContainer(domainEvent.WarehouseItemId, domainEvent.Amount);
+        }
+
+        private void Apply(ItemMovedToContainerDomainEvent domainEvent)
         {
             AddOrUpdateAmountOfItemsInContainer(domainEvent.WarehouseItemId, domainEvent.Amount);
         }

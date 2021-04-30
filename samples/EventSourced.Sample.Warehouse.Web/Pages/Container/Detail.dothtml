@@ -8,9 +8,16 @@
         <dot:Button ButtonTagName="button"
                     class="btn btn-primary"
                     data-bs-toggle="modal"
-                    data-bs-target="#exampleModal"
+                    data-bs-target="#consumeModal"
                     Click="{command: ShowConsumeItemsDialog()}">
             Consume items
+        </dot:Button>
+        <dot:Button ButtonTagName="button"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#moveModal"
+                    Click="{command: ShowMoveItemsDialogAsync()}">
+            Move items
         </dot:Button>
     </div>
     <h2>Contents</h2>
@@ -27,14 +34,14 @@
             </div>
         </dot:Repeater>
     </div>
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="consumeModal" tabindex="-1" aria-labelledby="consumeModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Consume items</h5>
+                    <h5 class="modal-title" id="consumeModalLabel">Consume items</h5>
                 </div>
                 <div class="modal-body" DataContext="{value: ConsumeItemsDialogModel}">
-                    <dot:ValidationSummary />
+                    <dot:ValidationSummary/>
                     <form>
                         <div class="form-group row mb-3">
                             <label class="col-sm-2 col-form-label" for="combobox-item">Item:</label>
@@ -49,7 +56,7 @@
                             </div>
                         </div>
                         <div class="form-group row mb-3">
-                            <label for="textBox-amount" class="form-label">Amount:</label>
+                            <label for="textBox-amount" class="col-sm-2 form-label">Amount:</label>
                             <div class="col-sm-4">
                                 <dot:TextBox class="form-control"
                                              id="textBox-amount"
@@ -66,9 +73,70 @@
                                 Click="{staticCommand: ConsumeItemsDialogModel = null;}">
                         Close
                     </dot:Button>
-                    <dot:Button type="button" 
-                            Click="{command: ConsumeItemsAsync(ConsumeItemsDialogModel)}"
-                            class="btn btn-primary">
+                    <dot:Button ButtonTagName="button"
+                                Click="{command: ConsumeItemsAsync(ConsumeItemsDialogModel)}"
+                                class="btn btn-primary">
+                        Consume
+                    </dot:Button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="moveModal" tabindex="-1" aria-labelledby="moveModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="moveModalLabel">Move items</h5>
+                </div>
+                <div class="modal-body" DataContext="{value: MoveItemsDialogModel}">
+                    <dot:ValidationSummary/>
+                    <form>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-2 col-form-label" for="combobox-item">Item:</label>
+                            <div class="col-sm-10">
+                                <dot:ComboBox id="combobox-item"
+                                              class="form-select"
+                                              DataSource="{value: AvailableWarehouseItems}"
+                                              SelectedValue="{value: SelectedWarehouseItemId}"
+                                              ItemValueBinding="{value: WarehouseItemId}"
+                                              ItemTextBinding="{value: WarehouseItemName}"
+                                              ItemTitleBinding="{value: WarehouseItemName}"/>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-2 col-form-label" for="combobox-container">Destination
+                                container:</label>
+                            <div class="col-sm-10">
+                                <dot:ComboBox id="combobox-container"
+                                              class="form-select"
+                                              DataSource="{value: AvailableContainers}"
+                                              SelectedValue="{value: DestinationContainerId}"
+                                              ItemValueBinding="{value: ContainerId}"
+                                              ItemTextBinding="{value: Identifier}"
+                                              ItemTitleBinding="{value: Identifier}"/>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label for="textBox-amount" class="col-sm-2 form-label">Amount:</label>
+                            <div class="col-sm-10">
+                                <dot:TextBox class="form-control"
+                                             id="textBox-amount"
+                                             Text="{value: Amount}"
+                                             placeholder="Amount"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <dot:Button ButtonTagName="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                                Click="{staticCommand: MoveItemsDialogModel = null;}">
+                        Close
+                    </dot:Button>
+                    <dot:Button ButtonTagName="button"
+                                Click="{command: MoveItemsAsync(MoveItemsDialogModel)}"
+                                class="btn btn-primary">
                         Consume
                     </dot:Button>
                 </div>
