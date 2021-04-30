@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using DotVVM.Framework.ViewModel;
 using EventSourced.Sample.Warehouse.Application.Services.WarehouseItem;
 
-namespace EventSourced.Sample.Warehouse.Web.Pages.Items.Detail
+namespace EventSourced.Sample.Warehouse.Web.Pages.Items
 {
     public class DetailViewModel : MasterPageViewModel
     {
