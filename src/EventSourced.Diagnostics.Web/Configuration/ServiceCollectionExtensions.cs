@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using DotVVM.Framework.Configuration;
+using DotVVM.Framework.ResourceManagement;
 using EventSourced.Diagnostics.Web.Mappers;
 using EventSourced.Diagnostics.Web.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +9,7 @@ namespace EventSourced.Diagnostics.Web.Configuration
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddEventSourcedDiagnostics(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddEventSourcedDiagnostics(this IServiceCollection serviceCollection, EventSourcedDiagnosticsOptions options)
         {
             if (serviceCollection.AlreadyContainsDotvvm())
             {
@@ -25,6 +26,7 @@ namespace EventSourced.Diagnostics.Web.Configuration
             serviceCollection.AddTransient<IProjectionInformationService, ProjectionInformationService>();
             serviceCollection.AddTransient<IAggregateInstancesListItemModelMapper, AggregateInstancesListItemModelMapper>();
             serviceCollection.AddTransient<IExternalEventInformationService, ExternalEventInformationService>();
+            serviceCollection.AddSingleton(options);
             return serviceCollection;
         }
 

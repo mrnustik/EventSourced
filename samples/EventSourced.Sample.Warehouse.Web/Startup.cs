@@ -43,7 +43,7 @@ namespace EventSourced.Sample.Warehouse.Web
                                                 .UseEntityFrameworkSnapshotStore()
                                                 .UseEventCountBasedSnapshotStrategy(1)
                                                 .ConfigureDomainObjects())
-                    .AddEventSourcedDiagnostics()
+                    .AddEventSourcedDiagnostics(new EventSourcedDiagnosticsOptions())
                     .AddEventSourcedExternalEventsWebApi(new EventSourcedExternalWebApiOptions("/EventSourced/ExternalEvents"));
             services.AddHostedService<CreateImportLocationHostedService>();
         }
