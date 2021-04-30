@@ -85,6 +85,23 @@ namespace EventSourced.ExternalEvents.API.Tests.Middleware
         }
 
         [Fact]
+        public async Task HandleAsync_WithAuthorizationFailed_ReturnsForbidden()
+        {
+            //Arrange
+            var options = new EventSourcedExternalWebApiOptions("/EventSourced/ExternalEvent", context => Task.FromResult(false));
+            using var webHost = await CreateWebHost(options);
+
+            //Act
+            var response = await webHost.GetTestClient()
+                                        .PostAsJsonAsync("/EventSourced/ExternalEvent",
+                                                         new PublishExternalEventRequest(nameof(TestEventType), new JObject()));
+
+            //Arrange
+            response.StatusCode.Should()
+                    .Be(HttpStatusCode.Forbidden);
+        }
+        
+        [Fact]
         public async Task HandleAsync_WithEverythingValid_ReturnsOK()
         {
             //Arrange

@@ -15,11 +15,13 @@ namespace EventSourced.ExternalEvents.API.Middleware
     {
         private readonly EventSourcedExternalWebApiOptions _eventSourcedExternalWebApiOptions;
         private readonly IExternalEventPublisher _externalEventPublisher;
+        private readonly IAuthorizationHandler _authorizationHandler;
 
-        public ExternalEventsHandlingMiddleware(EventSourcedExternalWebApiOptions eventSourcedExternalWebApiOptions, IExternalEventPublisher externalEventPublisher)
+        public ExternalEventsHandlingMiddleware(EventSourcedExternalWebApiOptions eventSourcedExternalWebApiOptions, IExternalEventPublisher externalEventPublisher, IAuthorizationHandler authorizationHandler)
         {
             _eventSourcedExternalWebApiOptions = eventSourcedExternalWebApiOptions;
             _externalEventPublisher = externalEventPublisher;
+            _authorizationHandler = authorizationHandler;
         }
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -27,6 +29,13 @@ namespace EventSourced.ExternalEvents.API.Middleware
             if (context.Request.Path.StartsWithSegments(_eventSourcedExternalWebApiOptions.ExternalEventsEndpoint, StringComparison.Ordinal))
             {
                 var cancellationToken = context.RequestAborted;
+                
+                if (!await _authorizationHandler.AuthorizeAsync(context, cancellationToken))
+                {
+                    context.Response.StatusCode = (int) HttpStatusCode.Forbidden;
+                    await ReturnErrorAsync(context, new ErrorResponse("Authorization failed"));
+                    return;
+                }
 
                 if (context.Request.Method != "POST")
                 {
