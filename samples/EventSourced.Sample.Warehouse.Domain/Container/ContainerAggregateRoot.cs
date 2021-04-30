@@ -11,7 +11,7 @@ namespace EventSourced.Sample.Warehouse.Domain.Container
     {
         
         public string Identifier { get; private set; } = string.Empty;
-        private ICollection<WarehouseItemInContainerValueObject> WarehouseItemsInContainer { get; } =
+        public ICollection<WarehouseItemInContainerValueObject> WarehouseItemsInContainer { get; } =
             new List<WarehouseItemInContainerValueObject>();
 
         public ContainerAggregateRoot(string identifier)
@@ -35,7 +35,7 @@ namespace EventSourced.Sample.Warehouse.Domain.Container
             EnqueueAndApplyEvent(new ReceivedItemFromImportLocationDomainEvent(warehouseItemId, amount));
         }
 
-        public void MoveItemFromContainer(Guid warehouseItemId, int amount)
+        public void RemoveItemFromContainer(Guid warehouseItemId, int amount)
         {
             var warehouseItemInContainer = FindWarehouseItemInContainer(warehouseItemId);
             if (warehouseItemInContainer == null)
