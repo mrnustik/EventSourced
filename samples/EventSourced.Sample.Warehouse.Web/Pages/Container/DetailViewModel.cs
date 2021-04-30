@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DotVVM.Framework.ViewModel;
@@ -12,11 +13,15 @@ namespace EventSourced.Sample.Warehouse.Web.Pages.Container
     {
         private readonly IContainerDetailApplicationService _containerDetailApplicationService;
         private readonly IConsumeItemsFromContainerApplicationService _consumeItemsFromContainerApplicationService;
+        private readonly IGetAllContainersApplicationService _getAllContainersApplicationService;
+        private readonly IMoveItemsBetweenContainersApplicationService _moveItemsBetweenContainersApplicationService;
 
-        public DetailViewModel(IContainerDetailApplicationService containerDetailApplicationService, IConsumeItemsFromContainerApplicationService consumeItemsFromContainerApplicationService)
+        public DetailViewModel(IContainerDetailApplicationService containerDetailApplicationService, IConsumeItemsFromContainerApplicationService consumeItemsFromContainerApplicationService, IGetAllContainersApplicationService getAllContainersApplicationService, IMoveItemsBetweenContainersApplicationService moveItemsBetweenContainersApplicationService)
         {
             _containerDetailApplicationService = containerDetailApplicationService;
             _consumeItemsFromContainerApplicationService = consumeItemsFromContainerApplicationService;
+            _getAllContainersApplicationService = getAllContainersApplicationService;
+            _moveItemsBetweenContainersApplicationService = moveItemsBetweenContainersApplicationService;
         }
         
         [FromRoute(nameof(ContainerId))]
@@ -25,6 +30,7 @@ namespace EventSourced.Sample.Warehouse.Web.Pages.Container
         public ContainerDetailModel ContainerDetailModel { get; set; }
 
         public ConsumeItemsDialogModel? ConsumeItemsDialogModel { get; set; }
+        public MoveItemsDialogModel? MoveItemsDialogModel { get; set; }
         
         public override async Task Load()
         {
@@ -40,20 +46,45 @@ namespace EventSourced.Sample.Warehouse.Web.Pages.Container
         public void ShowConsumeItemsDialog()
         {
             ConsumeItemsDialogModel = new ConsumeItemsDialogModel(ContainerId,
-                                                                  ContainerDetailModel
-                                                                      .ContainerContents
-                                                                      .Select(
-                                                                          c => new ConsumeItemsDialogModel.ConsumeItemsDialogItemModel(
-                                                                              c.WarehouseItemId,
-                                                                              c.WarehouseItemName))
-                                                                      .ToList(),
-                                                                  0);
+                                                                  GetAvailableWarehouseItems());
         }
 
+        public async Task ShowMoveItemsDialogAsync()
+        {
+            var containers = await _getAllContainersApplicationService.GetAllAsync(RequestCancellationToken);
+
+            MoveItemsDialogModel = new MoveItemsDialogModel(ContainerId,
+                                                            GetAvailableWarehouseItems(),
+                                                            containers.Where(c => c.ContainerId != ContainerId)
+                                                                      .ToList());
+        }
+
+        private List<DialogWarehouseItemModel> GetAvailableWarehouseItems()
+        {
+            return ContainerDetailModel
+                   .ContainerContents
+                   .Select(
+                       c => new DialogWarehouseItemModel(
+                           c.WarehouseItemId,
+                           c.WarehouseItemName))
+                   .ToList();
+        }
+        
         [BusinessRuleExceptionFilter(nameof(ConsumeItemsDialogModel))]
         public async Task ConsumeItemsAsync(ConsumeItemsDialogModel dialogModel)
         {
             await _consumeItemsFromContainerApplicationService.ConsumeItemsAsync(dialogModel.ContainerId, dialogModel.SelectedWarehouseItemId, dialogModel.Amount, RequestCancellationToken);
+            await ReloadDataAsync();
+        }
+
+        [BusinessRuleExceptionFilter(nameof(MoveItemsDialogModel))]
+        public async Task MoveItemsAsync(MoveItemsDialogModel dialogModel)
+        {
+            await _moveItemsBetweenContainersApplicationService.MoveItemBetweenContainersAsync(dialogModel.SourceContainerId,
+                dialogModel.DestinationContainerId,
+                dialogModel.SelectedWarehouseItemId,
+                dialogModel.Amount,
+                RequestCancellationToken);
             await ReloadDataAsync();
         }
     }
