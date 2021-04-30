@@ -19,7 +19,7 @@ namespace EventSourced.Sample.Warehouse.Domain.Container.Services
             var sourceContainer = await _containerRepository.GetByIdAsync(sourceContainerId, ct);
             var destinationContainer = await _containerRepository.GetByIdAsync(destinationContainerId, ct);
             
-            sourceContainer.MoveItemFromContainer(warehouseItemId, amount);
+            sourceContainer.RemoveItemFromContainer(warehouseItemId, amount);
             destinationContainer.MoveItemToContainer(warehouseItemId, amount);
             
             await _containerRepository.SaveAsync(sourceContainer, ct);

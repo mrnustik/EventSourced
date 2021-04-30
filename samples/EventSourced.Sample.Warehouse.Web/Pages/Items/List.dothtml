@@ -5,7 +5,7 @@
     <h1>Warehouse items</h1>
     <div class="mb-3 d-flex flex-row justify-content-end">
         <div>
-            <dot:RouteLink RouteName="Pages/Items/Edit/Edit"
+            <dot:RouteLink RouteName="Pages/Items/Edit"
                            class="btn btn-primary">
                 Create new
             </dot:RouteLink>

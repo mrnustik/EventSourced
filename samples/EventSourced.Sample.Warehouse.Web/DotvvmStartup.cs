@@ -17,9 +17,10 @@ namespace EventSourced.Sample.Warehouse.Web
         private static void ConfigureRoutes(DotvvmConfiguration config)
         {
             config.RouteTable.Add("Default", "", "Pages/Default/Default.dothtml");
-            config.RouteTable.Add("Pages/Items/Edit/Edit", "Pages/Items/Edit/Edit/{WarehouseItemId?:guid}", "Pages/Items/Edit/Edit.dothtml");
-            config.RouteTable.Add("Pages/Items/Detail/Detail", "Pages/Items/Detail/Detail/{WarehouseItemId:guid}", "Pages/Items/Detail/Detail.dothtml");
+            config.RouteTable.Add("Pages/Items/Edit", "Pages/Items/Edit/{WarehouseItemId?:guid}", "Pages/Items/Edit.dothtml");
+            config.RouteTable.Add("Pages/Items/Detail", "Pages/Items/Detail/{WarehouseItemId:guid}", "Pages/Items/Detail.dothtml");
             config.RouteTable.Add("Pages/Container/Edit", "Pages/Container/Edit/{ContainerId?:guid}", "Pages/Container/Edit.dothtml");
+            config.RouteTable.Add("Pages/Container/Detail", "Pages/Container/Detail/{ContainerId:guid}", "Pages/Container/Detail.dothtml");
             config.AutoRegisterRoutes("Pages");
         }
 

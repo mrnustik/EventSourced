@@ -19,16 +19,16 @@
                     {{value: Identifier}}
                 </div>
                 <div>
-<!--                    <dot:RouteLink RouteName="Pages/Items/Detail/Detail"-->
-<!--                                   class="btn btn-primary"-->
-<!--                                   Param-WarehouseItemId="{value: Identifier}">-->
-<!--                        Detail-->
-<!--                    </dot:RouteLink>-->
-<!--                    <dot:RouteLink RouteName="Pages/Items/Edit/Edit"-->
-<!--                                   class="btn btn-primary"-->
-<!--                                   Param-WarehouseItemId="{value: Identifier}">-->
-<!--                        Edit-->
-<!--                    </dot:RouteLink>-->
+                    <dot:RouteLink RouteName="Pages/Container/Detail"
+                                   class="btn btn-primary"
+                                   Param-ContainerId="{value: ContainerId}">
+                        Detail
+                    </dot:RouteLink>
+                    <dot:RouteLink RouteName="Pages/Container/Edit"
+                                   class="btn btn-primary"
+                                   Param-ContainerId="{value: ContainerId}">
+                        Edit
+                    </dot:RouteLink>
                 </div>
             </div>
         </dot:Repeater>
