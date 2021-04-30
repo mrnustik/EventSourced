@@ -4,7 +4,7 @@ using DotVVM.Framework.ViewModel;
 using EventSourced.Sample.Warehouse.Application.Model;
 using EventSourced.Sample.Warehouse.Application.Services.WarehouseItem;
 
-namespace EventSourced.Sample.Warehouse.Web.Pages.Items.List
+namespace EventSourced.Sample.Warehouse.Web.Pages.Items
 {
     public class ListViewModel : MasterPageViewModel
     {

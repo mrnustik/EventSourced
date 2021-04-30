@@ -1,4 +1,4 @@
-@viewModel EventSourced.Sample.Warehouse.Web.Pages.Items.Detail.DetailViewModel
+@viewModel EventSourced.Sample.Warehouse.Web.Pages.Items.DetailViewModel
 @masterPage Pages/MasterPage.dotmaster
 
 <dot:Content ContentPlaceholderId="MainContent">

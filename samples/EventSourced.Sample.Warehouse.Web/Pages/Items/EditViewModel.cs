@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using DotVVM.Framework.ViewModel;
 using EventSourced.Sample.Warehouse.Application.Services.WarehouseItem;
 
-namespace EventSourced.Sample.Warehouse.Web.Pages.Items.Edit
+namespace EventSourced.Sample.Warehouse.Web.Pages.Items
 {
     public class EditViewModel : MasterPageViewModel
     {
