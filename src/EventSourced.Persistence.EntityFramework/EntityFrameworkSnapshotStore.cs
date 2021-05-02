@@ -27,7 +27,7 @@ namespace EventSourced.Persistence.EntityFramework
         {
             var aggregateSnapshot = new AggregateSnapshot<TAggregateRoot>(aggregateRoot);
             var aggregateSnapshotEntity = _aggregateSnapshotEntityMapper.MapToEntity(aggregateSnapshot);
-            if (await _dbContext.AggregateSnapshots.AnyAsync(s => s.Id == aggregateRoot.Id, cancellationToken: ct))
+            if (await _dbContext.AggregateSnapshots.AnyAsync(s => s.AggregateRootId == aggregateRoot.Id, cancellationToken: ct))
             {
                 _dbContext.AggregateSnapshots.Update(aggregateSnapshotEntity);
             }
@@ -43,7 +43,7 @@ namespace EventSourced.Persistence.EntityFramework
             var aggregateType = typeof(TAggregateRoot);
             var serializedAggregateType = _typeSerializer.SerializeType(aggregateType);
             var existingSnapshot = await _dbContext.AggregateSnapshots.Where(s => s.AggregateRootType == serializedAggregateType)
-                      .Where(s => s.Id == aggregateRootId)
+                      .Where(s => s.AggregateRootId == aggregateRootId)
                       .SingleOrDefaultAsync(ct);
             return existingSnapshot != null
                 ? _aggregateSnapshotEntityMapper.MapToAggregateRoot<TAggregateRoot>(existingSnapshot)

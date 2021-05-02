@@ -30,7 +30,7 @@ namespace EventSourced.Persistence.EntityFramework.Mappers
 
             return new AggregateSnapshotEntity
             {
-                Id = aggregateSnapshot.Id,
+                AggregateRootId = aggregateSnapshot.Id,
                 Version = aggregateSnapshot.Version,
                 AggregateRootType = serializedAggregateRootType,
                 SerializedAggregateState = JsonConvert.SerializeObject(aggregateSnapshot.AggregateState, SerializerSettings)
@@ -40,7 +40,7 @@ namespace EventSourced.Persistence.EntityFramework.Mappers
         public TAggregateRoot MapToAggregateRoot<TAggregateRoot>(AggregateSnapshotEntity entity)
             where TAggregateRoot : AggregateRoot
         {
-            var aggregateRoot = AggregateRootFactory.CreateAggregateRoot<TAggregateRoot>(entity.Id);
+            var aggregateRoot = AggregateRootFactory.CreateAggregateRoot<TAggregateRoot>(entity.AggregateRootId);
             JsonConvert.PopulateObject(entity.SerializedAggregateState, aggregateRoot, SerializerSettings);
             return aggregateRoot;
         }
