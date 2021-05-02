@@ -20,7 +20,7 @@ namespace EventSourced.Sample.Warehouse.Domain.Tests
             var importLocationAggregateRoot = TestAggregateRootFactory.CreateAggregateFromState<ImportLocationAggregateRoot>(new Guid("3de7b3d9-0c35-4cd3-8dea-e29baea0f8af"), aggregateState);
             
             //Act
-            Action action = () => importLocationAggregateRoot.MoveItem(new Guid("4af48b93-7c96-49d0-b055-f19380636563"), 10);
+            Action action = () => importLocationAggregateRoot.MoveItem(new Guid("4af48b93-7c96-49d0-b055-f19380636563"), Guid.NewGuid(), 10);
             
             //Assert
             action.Should()

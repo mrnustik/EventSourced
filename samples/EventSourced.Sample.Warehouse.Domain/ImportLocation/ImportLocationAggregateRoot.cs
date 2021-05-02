@@ -31,7 +31,7 @@ namespace EventSourced.Sample.Warehouse.Domain.ImportLocation
             EnqueueAndApplyEvent(new NewItemsImportedDomainEvent(warehouseItemId, amount));
         }
 
-        public void MoveItem(Guid warehouseItemId, int amount)
+        public void MoveItem(Guid destinationContainerId, Guid warehouseItemId, int amount)
         {
             var importedItem = ImportedItems.SingleOrDefault(i => i.WarehouseItemId == warehouseItemId);
             if (importedItem == null)
@@ -44,7 +44,7 @@ namespace EventSourced.Sample.Warehouse.Domain.ImportLocation
                 throw new BusinessRuleException($"Removed warehouse item amount is greater then existing");
             }
             
-            EnqueueAndApplyEvent(new ItemMovedFromImportLocationDomainEvent(warehouseItemId, amount));
+            EnqueueAndApplyEvent(new ItemMovedFromImportLocationDomainEvent(warehouseItemId, destinationContainerId, amount));
         }
 
         private void Apply(ImportLocationCreatedDomainEvent domainEvent)
