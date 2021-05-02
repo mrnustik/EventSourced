@@ -9,12 +9,6 @@ namespace EventSourced.Sample.Warehouse.Domain.WarehouseItem.Projections
     {
         public ICollection<WarehouseListItem> Items { get; } = new List<WarehouseListItem>();
 
-        public string GetWarehouseItemTitle(Guid warehouseItemId)
-        {
-            var warehouseListItem = Items.Single(i => i.Id == warehouseItemId);
-            return warehouseListItem.Title;
-        }
-        
         private void Apply(WarehouseItemCreatedDomainEvent @event)
         {
             Items.Add(new WarehouseListItem(@event.WarehouseItemId, @event.Title));
