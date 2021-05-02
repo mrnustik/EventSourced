@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using DotVVM.Framework.ViewModel;
+using EventSourced.Diagnostics.Web.Configuration;
 using EventSourced.Diagnostics.Web.Model.ExternalEvents;
 using EventSourced.Diagnostics.Web.Services;
 
@@ -11,7 +12,9 @@ namespace EventSourced.Diagnostics.Web.Pages.ExternalEvents
     {
         private readonly IExternalEventInformationService _externalEventInformationService;
 
-        public ExternalEventsViewModel(IExternalEventInformationService externalEventInformationService)
+        public ExternalEventsViewModel(IExternalEventInformationService externalEventInformationService,
+                                       EventSourcedDiagnosticsOptions options)
+            : base(options)
         {
             _externalEventInformationService = externalEventInformationService;
         }

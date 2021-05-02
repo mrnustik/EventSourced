@@ -10,6 +10,7 @@ namespace EventSourced.ExternalEvents.API.Configuration
         {
             serviceCollection.AddSingleton(options);
             serviceCollection.AddScoped<ExternalEventsHandlingMiddleware>();
+            serviceCollection.AddTransient<IAuthorizationHandler, AuthorizationHandler>();
             return serviceCollection;
         }
     }

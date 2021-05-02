@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using DotVVM.Framework.ViewModel;
+using EventSourced.Diagnostics.Web.Configuration;
 using EventSourced.Diagnostics.Web.Helpers;
 using EventSourced.Diagnostics.Web.Model.Aggregates;
 using EventSourced.Diagnostics.Web.Services;
@@ -14,7 +15,9 @@ namespace EventSourced.Diagnostics.Web.Pages.AggregatesList
     {
         private readonly IAggregateInformationService _aggregateInformationService;
 
-        public AggregatesListViewModel(IAggregateInformationService aggregateInformationService)
+        public AggregatesListViewModel(IAggregateInformationService aggregateInformationService,
+                                       EventSourcedDiagnosticsOptions options)
+            : base(options)
         {
             _aggregateInformationService = aggregateInformationService;
         }
