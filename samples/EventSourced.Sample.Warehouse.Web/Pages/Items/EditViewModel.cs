@@ -49,7 +49,7 @@ namespace EventSourced.Sample.Warehouse.Web.Pages.Items
             {
                 await _createWarehouseItemApplicationService.CreateWarehouseItemAsync(Title, RequestCancellationToken);
             }
-            Context.RedirectToRoute("Pages/Items/List/List");
+            Context.RedirectToRoute("Pages/Items/List");
         }
     }
 }
