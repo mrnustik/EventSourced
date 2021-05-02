@@ -9,6 +9,7 @@ using EventSourced.Sample.Warehouse.Domain.Exceptions;
 using EventSourced.Sample.Warehouse.Domain.ImportLocation;
 using EventSourced.Sample.Warehouse.Domain.ImportLocation.Projections;
 using EventSourced.Sample.Warehouse.Domain.WarehouseItem.Projections;
+using EventSourced.Sample.Warehouse.Domain.WarehouseItem.Services;
 
 namespace EventSourced.Sample.Warehouse.Application.Services.ImportLocation
 {
@@ -16,12 +17,15 @@ namespace EventSourced.Sample.Warehouse.Application.Services.ImportLocation
     {
         private readonly IProjectionStore _projectionStore;
         private readonly IManualProjectionBuilder _manualProjectionBuilder;
+        private readonly IWarehouseItemTitleService _warehouseItemTitleService;
 
         public GetImportLocationDataApplicationService(IProjectionStore projectionStore,
-                                                       IManualProjectionBuilder manualProjectionBuilder)
+                                                       IManualProjectionBuilder manualProjectionBuilder,
+                                                       IWarehouseItemTitleService warehouseItemTitleService)
         {
             _projectionStore = projectionStore;
             _manualProjectionBuilder = manualProjectionBuilder;
+            _warehouseItemTitleService = warehouseItemTitleService;
         }
 
         public async Task<ICollection<ImportLocationContentListItemModel>> GetImportLocationContentAsync(CancellationToken ct)
@@ -32,13 +36,15 @@ namespace EventSourced.Sample.Warehouse.Application.Services.ImportLocation
                 throw new BusinessRuleException("Import location was not found");
             }
             var importLocationContentProjection = await _manualProjectionBuilder.BuildAggregateProjection<ImportLocationContentProjection, ImportLocationAggregateRoot>(importLocationProjection.ImportLocationId, ct);
-            var allWarehouseItemProjection = await _projectionStore.LoadProjectionAsync<AllWarehouseItemsListProjection>(ct);
-            return importLocationContentProjection.ImportedItems.Select(i => new ImportLocationContentListItemModel(i.WarehouseItemId,
-                                                                            allWarehouseItemProjection!.Items
-                                                                                .Single(x => i.WarehouseItemId == x.Id)
-                                                                                .Title,
-                                                                            i.Amount))
-                                                  .ToList();
+            var contents = new List<ImportLocationContentListItemModel>();
+            foreach (var importedItem in importLocationContentProjection.ImportedItems)
+            {
+                var warehouseItemTitle = await _warehouseItemTitleService.GetWarehouseItemTitleAsync(importedItem.WarehouseItemId, ct);
+                contents.Add(new ImportLocationContentListItemModel(importedItem.WarehouseItemId,
+                                                                    warehouseItemTitle,
+                                                                    importedItem.Amount));
+            }
+            return contents;
         }
     }
 }

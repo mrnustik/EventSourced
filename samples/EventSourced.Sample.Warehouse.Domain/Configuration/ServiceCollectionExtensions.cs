@@ -1,5 +1,6 @@
 ﻿using EventSourced.Sample.Warehouse.Domain.Container.Services;
 using EventSourced.Sample.Warehouse.Domain.ImportLocation.Services;
+using EventSourced.Sample.Warehouse.Domain.WarehouseItem.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EventSourced.Sample.Warehouse.Domain.Configuration
@@ -10,6 +11,7 @@ namespace EventSourced.Sample.Warehouse.Domain.Configuration
         {
             serviceCollection.AddTransient<ICreateImportLocationDomainService, CreateImportLocationDomainService>();
             serviceCollection.AddTransient<IMoveItemBetweenContainersService, MoveItemBetweenContainersService>();
+            serviceCollection.AddTransient<IWarehouseItemTitleService, WarehouseItemTitleService>();
             return serviceCollection;
         }
     }
