@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DotVVM.Framework.ViewModel;
+using EventSourced.Diagnostics.Web.Configuration;
 using EventSourced.Diagnostics.Web.Helpers;
 using EventSourced.Diagnostics.Web.Model.Projections;
 using EventSourced.Diagnostics.Web.Services;
@@ -13,7 +14,9 @@ namespace EventSourced.Diagnostics.Web.Pages.AggregateProjectionTypeDetail
     {
         private readonly IProjectionInformationService _projectionInformationService;
 
-        public AggregateProjectionTypeDetailViewModel(IProjectionInformationService projectionInformationService)
+        public AggregateProjectionTypeDetailViewModel(IProjectionInformationService projectionInformationService,
+                                                      EventSourcedDiagnosticsOptions options)
+            : base(options)
         {
             _projectionInformationService = projectionInformationService;
         }

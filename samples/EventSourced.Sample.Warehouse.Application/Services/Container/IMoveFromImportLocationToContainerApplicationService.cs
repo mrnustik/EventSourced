@@ -35,13 +35,10 @@ namespace EventSourced.Sample.Warehouse.Application.Services.Container
                 throw new BusinessRuleException("Import location was not found in system.");
             }
             var importLocation = await _importLocationRepository.GetByIdAsync(importLocationProjection.ImportLocationId, ct);
-            var container = await _containerRepository.GetByIdAsync(containerId, ct);
 
-            importLocation.MoveItem(warehouseItemId, amount);
-            container.ReceiveItemFromImportLocation(warehouseItemId, amount);
+            importLocation.MoveItem(containerId, warehouseItemId, amount);
 
             await _importLocationRepository.SaveAsync(importLocation, ct);
-            await _containerRepository.SaveAsync(container, ct);
         }
     }
 }
